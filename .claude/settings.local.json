@@ -1,0 +1,7 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(/c/Users/plk_l/Karisma-1/README.md:*)"
+    ]
+  }
+}
