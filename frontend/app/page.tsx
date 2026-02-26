@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useEffect } from 'react'
+import { useRouter } from 'next/navigation'
 import { get } from '@/lib/api'
 import type { Product, CartItem } from '@/types'
 
@@ -256,6 +257,12 @@ export default function HomePage() {
 
   const itemCount = cart.reduce((sum, i) => sum + i.quantity, 0)
   const total = cart.reduce((sum, i) => sum + i.product.price * i.quantity, 0)
+  const router = useRouter()
+
+  const handleCheckout = () => {
+    sessionStorage.setItem('karisma_cart', JSON.stringify(cart))
+    router.push('/checkout/summary')
+  }
 
   return (
     <div style={s.page}>
@@ -356,7 +363,9 @@ export default function HomePage() {
                   <span>TOTAL</span>
                   <span>${total.toFixed(2)}</span>
                 </div>
-                <button style={s.checkoutBtn}>CHECKOUT</button>
+                <button style={s.checkoutBtn} onClick={handleCheckout}>
+                  CHECKOUT
+                </button>
               </>
             )}
           </div>

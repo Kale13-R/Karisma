@@ -34,3 +34,12 @@ class CartItem(BaseModel):
     product: Product
     size: str
     quantity: int
+
+
+class CheckoutRequest(BaseModel):
+    cart_items: List[CartItem]
+    base_url: str
+
+
+class CheckoutResponse(BaseModel):
+    checkout_url: str

@@ -8,6 +8,13 @@ class Settings(BaseSettings):
     SESSION_SECRET: str = "changeme-use-a-long-random-string-in-production"
     SESSION_EXPIRE_HOURS: int = 24
     ALLOWED_ORIGINS: str = "http://localhost:3000"
+    STRIPE_SECRET_KEY: str = ""
+    STRIPE_WEBHOOK_SECRET: str = ""
+    STRIPE_CURRENCY: str = "usd"
+    RESEND_API_KEY: str = ""
+    RESEND_FROM_EMAIL: str = "orders@karisma.com"
+    ADMIN_SECRET: str = ""
+    DATABASE_URL: str = "sqlite:///./karisma.db"
 
 
 settings = Settings()

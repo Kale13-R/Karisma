@@ -1,45 +1,27 @@
-from typing import List
+import json
 
-from fastapi import APIRouter
+from fastapi import APIRouter, Depends
+from sqlalchemy.orm import Session
 
-from app.models.schemas import Product
+from app.db import models
+from app.db.base import get_db
 
 router = APIRouter()
 
-SAMPLE_PRODUCTS: List[Product] = [
-    Product(
-        id="prod_001",
-        name="Void Hoodie 001",
-        price=185.00,
-        description="Heavyweight cotton fleece. Oversized silhouette. Drop-shoulder construction. Unbranded exterior.",
-        imageUrl="/images/void-hoodie-001.jpg",
-        sizes=["XS", "S", "M", "L", "XL"],
-        inStock=True,
-        dropId="drop_ss26",
-    ),
-    Product(
-        id="prod_002",
-        name="Archive Tee SS26",
-        price=85.00,
-        description="Garment-dyed heavyweight tee. Distressed graphic on reverse. Single-stitch construction.",
-        imageUrl="/images/archive-tee-ss26.jpg",
-        sizes=["S", "M", "L", "XL", "XXL"],
-        inStock=True,
-        dropId="drop_ss26",
-    ),
-    Product(
-        id="prod_003",
-        name="Karisma Track Pant 001",
-        price=145.00,
-        description="Nylon-shell track pant. Tapered leg. Zip ankles. Dual-pocket utility design.",
-        imageUrl="/images/track-pant-001.jpg",
-        sizes=["S", "M", "L", "XL"],
-        inStock=True,
-        dropId="drop_ss26",
-    ),
-]
 
-
-@router.get("/products", response_model=List[Product])
-async def get_products():
-    return SAMPLE_PRODUCTS
+@router.get("/products")
+def get_products(db: Session = Depends(get_db)):
+    products = db.query(models.Product).filter_by(in_stock=True).all()
+    return [
+        {
+            "id": p.id,
+            "name": p.name,
+            "price": p.price,
+            "description": p.description,
+            "imageUrl": p.image_url,
+            "sizes": json.loads(p.sizes),
+            "inStock": p.in_stock,
+            "dropId": p.drop_id,
+        }
+        for p in products
+    ]

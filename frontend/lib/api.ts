@@ -1,3 +1,5 @@
+import type { CartItem } from '@/types'
+
 const BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000'
 
 export async function post<T>(path: string, body: unknown): Promise<T> {
@@ -20,4 +22,14 @@ export async function get<T>(path: string): Promise<T> {
   })
   if (!res.ok) throw new Error('Request failed')
   return res.json()
+}
+
+export async function createCheckoutSession(
+  cartItems: CartItem[],
+  baseUrl: string
+): Promise<{ checkout_url: string }> {
+  return post<{ checkout_url: string }>('/api/checkout/session', {
+    cart_items: cartItems,
+    base_url: baseUrl,
+  })
 }

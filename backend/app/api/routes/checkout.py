@@ -1,0 +1,15 @@
+from fastapi import APIRouter, HTTPException
+
+from app.models.schemas import CheckoutRequest, CheckoutResponse
+from app.services.stripe_service import create_checkout_session
+
+router = APIRouter()
+
+
+@router.post("/checkout/session", response_model=CheckoutResponse)
+async def create_session(payload: CheckoutRequest):
+    try:
+        url = create_checkout_session(payload.cart_items, payload.base_url)
+        return CheckoutResponse(checkout_url=url)
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
