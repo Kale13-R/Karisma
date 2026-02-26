@@ -1,7 +1,13 @@
 {
   "permissions": {
     "allow": [
-      "Bash(/c/Users/plk_l/Karisma-1/README.md:*)"
+      "Bash(/c/Users/plk_l/Karisma-1/README.md:*)",
+      "Bash(pip --version)",
+      "Bash(pip3 --version)",
+      "Bash(pip install -r requirements.txt -r requirements-dev.txt)",
+      "Bash(npm install)",
+      "Bash(python -m pytest tests/ -v)",
+      "Bash(npx jest --watchAll=false)"
     ]
   }
 }
