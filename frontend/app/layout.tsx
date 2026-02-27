@@ -1,5 +1,6 @@
 import type { Metadata } from 'next'
 import './globals.css'
+import AnimateWrapper from '@/components/AnimateWrapper'
 
 export const metadata: Metadata = {
   title: 'KARISMA',
@@ -13,7 +14,9 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <body>{children}</body>
+      <body suppressHydrationWarning>
+        <AnimateWrapper>{children}</AnimateWrapper>
+      </body>
     </html>
   )
 }

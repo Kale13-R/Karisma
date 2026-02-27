@@ -3,14 +3,16 @@
 import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
+import Image from 'next/image'
+import { motion } from 'framer-motion'
 import { get } from '@/lib/api'
 import type { Product, CartItem } from '@/types'
 
 const s = {
   page: {
     minHeight: '100vh',
-    backgroundColor: '#0a0a0a',
-    color: '#f0f0f0',
+    backgroundColor: 'var(--bg)',
+    color: 'var(--fg)',
     fontFamily: "'Inter', 'Helvetica Neue', Arial, sans-serif",
   } as React.CSSProperties,
   header: {
@@ -18,10 +20,10 @@ const s = {
     justifyContent: 'space-between',
     alignItems: 'center',
     padding: '24px 48px',
-    borderBottom: '1px solid #1a1a1a',
+    borderBottom: '1px solid var(--border)',
     position: 'sticky',
     top: 0,
-    backgroundColor: '#0a0a0a',
+    backgroundColor: 'var(--bg)',
     zIndex: 100,
   } as React.CSSProperties,
   logo: {
@@ -31,8 +33,8 @@ const s = {
   } as React.CSSProperties,
   cartBtn: {
     background: 'none',
-    border: '1px solid #2a2a2a',
-    color: '#f0f0f0',
+    border: '1px solid var(--border)',
+    color: 'var(--fg)',
     padding: '8px 18px',
     fontSize: '10px',
     letterSpacing: '0.2em',
@@ -46,7 +48,7 @@ const s = {
   dropLabel: {
     fontSize: '10px',
     letterSpacing: '0.3em',
-    color: '#555',
+    color: 'var(--fg-muted)',
     marginBottom: '8px',
     textTransform: 'uppercase',
   } as React.CSSProperties,
@@ -66,11 +68,6 @@ const s = {
     flexDirection: 'column',
     gap: '14px',
   } as React.CSSProperties,
-  imagePlaceholder: {
-    backgroundColor: '#111',
-    aspectRatio: '4 / 5',
-    border: '1px solid #1a1a1a',
-  } as React.CSSProperties,
   productName: {
     fontSize: '12px',
     fontWeight: 600,
@@ -79,7 +76,7 @@ const s = {
   } as React.CSSProperties,
   price: {
     fontSize: '12px',
-    color: '#888',
+    color: 'var(--fg-muted)',
     letterSpacing: '0.05em',
   } as React.CSSProperties,
   sizes: {
@@ -88,9 +85,9 @@ const s = {
     flexWrap: 'wrap',
   } as React.CSSProperties,
   addBtn: {
-    border: '1px solid #f0f0f0',
+    border: '1px solid var(--fg)',
     background: 'none',
-    color: '#f0f0f0',
+    color: 'var(--fg)',
     padding: '11px 0',
     fontSize: '10px',
     letterSpacing: '0.2em',
@@ -106,7 +103,7 @@ const s = {
     height: '300px',
     fontSize: '10px',
     letterSpacing: '0.3em',
-    color: '#444',
+    color: 'var(--fg-muted)',
   } as React.CSSProperties,
   overlay: {
     position: 'fixed',
@@ -120,8 +117,8 @@ const s = {
     right: 0,
     height: '100vh',
     width: '380px',
-    backgroundColor: '#0d0d0d',
-    borderLeft: '1px solid #1a1a1a',
+    backgroundColor: 'var(--bg)',
+    borderLeft: '1px solid var(--border)',
     zIndex: 201,
     display: 'flex',
     flexDirection: 'column',
@@ -142,7 +139,7 @@ const s = {
   closeBtn: {
     background: 'none',
     border: 'none',
-    color: '#888',
+    color: 'var(--fg-muted)',
     fontSize: '18px',
     cursor: 'pointer',
     lineHeight: 1,
@@ -153,7 +150,7 @@ const s = {
     alignItems: 'flex-start',
     paddingBottom: '20px',
     marginBottom: '20px',
-    borderBottom: '1px solid #1a1a1a',
+    borderBottom: '1px solid var(--border)',
   } as React.CSSProperties,
   cartItemLeft: {
     flex: 1,
@@ -166,7 +163,7 @@ const s = {
   } as React.CSSProperties,
   cartItemMeta: {
     fontSize: '10px',
-    color: '#555',
+    color: 'var(--fg-muted)',
     letterSpacing: '0.08em',
   } as React.CSSProperties,
   cartItemRight: {
@@ -180,7 +177,7 @@ const s = {
   removeBtn: {
     background: 'none',
     border: 'none',
-    color: '#444',
+    color: 'var(--fg-muted)',
     fontSize: '10px',
     cursor: 'pointer',
     letterSpacing: '0.08em',
@@ -198,8 +195,8 @@ const s = {
   checkoutBtn: {
     width: '100%',
     padding: '15px 0',
-    backgroundColor: '#f0f0f0',
-    color: '#0a0a0a',
+    backgroundColor: 'var(--fg)',
+    color: 'var(--bg)',
     border: 'none',
     fontSize: '10px',
     fontWeight: 700,
@@ -208,7 +205,7 @@ const s = {
     marginTop: '16px',
   } as React.CSSProperties,
   emptyCart: {
-    color: '#444',
+    color: 'var(--fg-muted)',
     fontSize: '11px',
     letterSpacing: '0.15em',
     marginTop: '48px',
@@ -286,18 +283,31 @@ export default function HomePage() {
             {products.map(product => (
               <Link key={product.id} href={`/products/${product.id}`} style={{ textDecoration: 'none', color: 'inherit' }}>
               <div style={s.card}>
-                <div style={s.imagePlaceholder} />
+                <motion.div
+                  layoutId={`product-image-${product.id}`}
+                  whileHover={{ scale: 1.05 }}
+                  transition={{ duration: 0.2 }}
+                  style={{ position: 'relative', aspectRatio: '4/5', overflow: 'hidden', border: '1px solid var(--border)' }}
+                >
+                  <Image
+                    src={product.imageUrl}
+                    alt={product.name}
+                    fill
+                    style={{ objectFit: 'cover' }}
+                    sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
+                  />
+                </motion.div>
                 <p style={s.productName}>{product.name}</p>
                 <p style={s.price}>${product.price.toFixed(2)}</p>
                 <div style={s.sizes}>
                   {product.sizes.map(size => (
                     <button
                       key={size}
-                      onClick={() => selectSize(product.id, size)}
+                      onClick={(e) => { e.preventDefault(); selectSize(product.id, size) }}
                       style={{
-                        background: selectedSizes[product.id] === size ? '#f0f0f0' : 'none',
-                        color: selectedSizes[product.id] === size ? '#0a0a0a' : '#f0f0f0',
-                        border: '1px solid #2a2a2a',
+                        background: selectedSizes[product.id] === size ? 'var(--fg)' : 'none',
+                        color: selectedSizes[product.id] === size ? 'var(--bg)' : 'var(--fg)',
+                        border: '1px solid var(--border)',
                         padding: '5px 10px',
                         fontSize: '10px',
                         letterSpacing: '0.1em',
@@ -314,7 +324,7 @@ export default function HomePage() {
                     ...s.addBtn,
                     opacity: selectedSizes[product.id] ? 1 : 0.4,
                   }}
-                  onClick={() => addToCart(product)}
+                  onClick={(e) => { e.preventDefault(); addToCart(product) }}
                   disabled={!selectedSizes[product.id]}
                 >
                   ADD TO CART

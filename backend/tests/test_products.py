@@ -11,11 +11,11 @@ def test_get_products_returns_list(client):
 
 
 def test_get_product_by_id_returns_correct_fields(client):
-    response = client.get("/products/karisma-void-hoodie-001")
+    response = client.get("/products/karisma-archive-001")
     assert response.status_code == 200
     data = response.json()
-    assert data["id"] == "karisma-void-hoodie-001"
-    assert data["name"] == "Karisma Void Hoodie 001"
+    assert data["id"] == "karisma-archive-001"
+    assert data["name"] == "Karisma Archive 001"
     assert data["price"] == 148.00
     assert isinstance(data["sizes"], list)
     assert "imageUrl" in data

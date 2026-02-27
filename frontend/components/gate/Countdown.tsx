@@ -14,8 +14,8 @@ export default function Countdown({ timeRemaining }: CountdownProps) {
     <div
       style={{
         minHeight: '100vh',
-        backgroundColor: '#0a0a0a',
-        color: '#f0f0f0',
+        backgroundColor: 'var(--bg)',
+        color: 'var(--fg)',
         display: 'flex',
         flexDirection: 'column',
         justifyContent: 'center',
@@ -39,7 +39,7 @@ export default function Countdown({ timeRemaining }: CountdownProps) {
         style={{
           fontSize: '11px',
           letterSpacing: '0.45em',
-          color: '#555',
+          color: 'var(--fg-muted)',
           textTransform: 'uppercase',
         }}
       >

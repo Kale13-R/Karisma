@@ -6,24 +6,34 @@
   padding: 0;
 }
 
+/* Dark mode (default) */
 :root {
   --bg: #0a0a0a;
-  --bg-elevated: #0f0f0f;
-  --bg-surface: #111111;
-  --text: #f0f0f0;
-  --text-muted: #666666;
-  --text-faint: #333333;
+  --fg: #f0f0f0;
+  --fg-muted: #666666;
   --accent: #ffffff;
-  --warm: #c8b89a;
   --border: #1a1a1a;
+  --card-bg: #0d0d0d;
   --font-sans: 'Inter', 'Helvetica Neue', Arial, sans-serif;
   --font-mono: 'Courier New', Courier, monospace;
+}
+
+/* Light mode — follows OS preference */
+@media (prefers-color-scheme: light) {
+  :root {
+    --bg: #f5f5f0;
+    --fg: #0a0a0a;
+    --fg-muted: #888888;
+    --accent: #0a0a0a;
+    --border: #e0e0e0;
+    --card-bg: #ebebeb;
+  }
 }
 
 html,
 body {
   background-color: var(--bg);
-  color: var(--text);
+  color: var(--fg);
   font-family: var(--font-sans);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;

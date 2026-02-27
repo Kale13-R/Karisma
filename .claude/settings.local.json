@@ -7,7 +7,12 @@
       "Bash(pip install -r requirements.txt -r requirements-dev.txt)",
       "Bash(npm install)",
       "Bash(python -m pytest tests/ -v)",
-      "Bash(npx jest --watchAll=false)"
+      "Bash(npx jest --watchAll=false)",
+      "Bash(python -m pytest tests/test_products.py tests/test_auth.py -v)",
+      "Bash(ls /c/Users/plk_l/Karisma-1/frontend/tailwind.config*)",
+      "Bash(npm install framer-motion)",
+      "Bash(node -e \"const p=require\\(''./package.json''\\); console.log\\(p.dependencies[''framer-motion'']\\)\")",
+      "Bash(npm install framer-motion@^11.0.0)"
     ]
   }
 }

@@ -37,8 +37,8 @@ export default function PasswordEntry() {
     <div
       style={{
         minHeight: '100vh',
-        backgroundColor: '#0a0a0a',
-        color: '#f0f0f0',
+        backgroundColor: 'var(--bg)',
+        color: 'var(--fg)',
         display: 'flex',
         flexDirection: 'column',
         justifyContent: 'center',
@@ -51,7 +51,7 @@ export default function PasswordEntry() {
         style={{
           fontSize: '11px',
           letterSpacing: '0.45em',
-          color: '#555',
+          color: 'var(--fg-muted)',
           textTransform: 'uppercase',
           marginBottom: '48px',
         }}
@@ -80,8 +80,8 @@ export default function PasswordEntry() {
             width: '100%',
             background: 'none',
             border: 'none',
-            borderBottom: '1px solid #333',
-            color: '#f0f0f0',
+            borderBottom: '1px solid var(--border)',
+            color: 'var(--fg)',
             fontSize: '14px',
             letterSpacing: '0.1em',
             padding: '10px 0',
@@ -96,8 +96,8 @@ export default function PasswordEntry() {
           disabled={loading || !password}
           style={{
             background: 'none',
-            border: '1px solid #333',
-            color: loading || !password ? '#444' : '#f0f0f0',
+            border: '1px solid var(--border)',
+            color: loading || !password ? 'var(--fg-muted)' : 'var(--fg)',
             padding: '10px 40px',
             fontSize: '10px',
             letterSpacing: '0.3em',
@@ -116,7 +116,7 @@ export default function PasswordEntry() {
             marginTop: '24px',
             fontSize: '10px',
             letterSpacing: '0.15em',
-            color: '#c8b89a',
+            color: '#ff4444',
             textTransform: 'uppercase',
           }}
         >

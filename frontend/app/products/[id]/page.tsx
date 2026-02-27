@@ -1,17 +1,42 @@
-import { notFound } from 'next/navigation'
+'use client'
+
+import { useEffect, useState } from 'react'
+import { useParams } from 'next/navigation'
 import ProductDetail from '@/components/product/ProductDetail'
+import { get } from '@/lib/api'
+import type { Product } from '@/types'
 
-async function getProduct(id: string) {
-  const res = await fetch(
-    `${process.env.NEXT_PUBLIC_API_URL}/products/${id}`,
-    { cache: 'no-store' }
-  )
-  if (!res.ok) return null
-  return res.json()
-}
+export default function ProductPage() {
+  const params = useParams()
+  const id = params.id as string
+  const [product, setProduct] = useState<Product | null>(null)
+  const [notFound, setNotFound] = useState(false)
 
-export default async function ProductPage({ params }: { params: { id: string } }) {
-  const product = await getProduct(params.id)
-  if (!product) notFound()
+  useEffect(() => {
+    get<Product>(`/products/${id}`)
+      .then(setProduct)
+      .catch(() => setNotFound(true))
+  }, [id])
+
+  if (notFound) {
+    return (
+      <div style={{
+        minHeight: '100vh',
+        display: 'flex',
+        justifyContent: 'center',
+        alignItems: 'center',
+        backgroundColor: 'var(--bg)',
+        color: 'var(--fg-muted)',
+        fontSize: '11px',
+        letterSpacing: '0.3em',
+        textTransform: 'uppercase',
+      }}>
+        PRODUCT NOT FOUND
+      </div>
+    )
+  }
+
+  if (!product) return null
+
   return <ProductDetail product={product} />
 }
