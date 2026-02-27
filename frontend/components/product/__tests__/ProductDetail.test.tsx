@@ -1,0 +1,54 @@
+import { render, screen, fireEvent } from '@testing-library/react'
+import ProductDetail from '../ProductDetail'
+import type { Product } from '@/types'
+
+jest.mock('next/navigation', () => ({
+  useRouter: () => ({ push: jest.fn() }),
+}))
+
+jest.mock('next/image', () => ({
+  __esModule: true,
+  default: ({ src, alt }: { src: string; alt: string }) => (
+    // eslint-disable-next-line @next/next/no-img-element
+    <img src={src} alt={alt} />
+  ),
+}))
+
+const mockProduct: Product = {
+  id: 'karisma-void-hoodie-001',
+  name: 'Karisma Void Hoodie 001',
+  price: 148.00,
+  description: 'Cut from brushed fleece in a colour that refuses definition.',
+  imageUrl: '/images/IMG_8709.png',
+  sizes: ['S', 'M', 'L', 'XL'],
+  inStock: true,
+  dropId: 'ss26',
+}
+
+describe('ProductDetail', () => {
+  it('renders the product name', () => {
+    render(<ProductDetail product={mockProduct} />)
+    expect(screen.getByRole('heading', { name: /Karisma Void Hoodie 001/i })).toBeInTheDocument()
+  })
+
+  it('renders all 4 size buttons', () => {
+    render(<ProductDetail product={mockProduct} />)
+    expect(screen.getByRole('button', { name: 'S' })).toBeInTheDocument()
+    expect(screen.getByRole('button', { name: 'M' })).toBeInTheDocument()
+    expect(screen.getByRole('button', { name: 'L' })).toBeInTheDocument()
+    expect(screen.getByRole('button', { name: 'XL' })).toBeInTheDocument()
+  })
+
+  it('ADD TO YOUR COLLECTION button is disabled when no size selected', () => {
+    render(<ProductDetail product={mockProduct} />)
+    const addBtn = screen.getByRole('button', { name: /ADD TO YOUR COLLECTION/i })
+    expect(addBtn).toBeDisabled()
+  })
+
+  it('ADD TO YOUR COLLECTION button enables after size selection', () => {
+    render(<ProductDetail product={mockProduct} />)
+    fireEvent.click(screen.getByRole('button', { name: 'M' }))
+    const addBtn = screen.getByRole('button', { name: /ADD TO YOUR COLLECTION/i })
+    expect(addBtn).not.toBeDisabled()
+  })
+})

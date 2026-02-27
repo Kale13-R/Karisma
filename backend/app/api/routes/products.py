@@ -1,6 +1,6 @@
 import json
 
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 
 from app.db import models
@@ -25,3 +25,22 @@ def get_products(db: Session = Depends(get_db)):
         }
         for p in products
     ]
+
+
+@router.get("/products/{product_id}")
+def get_product(product_id: str, db: Session = Depends(get_db)):
+    product = db.query(models.Product).filter(
+        models.Product.id == product_id
+    ).first()
+    if not product:
+        raise HTTPException(status_code=404, detail="Product not found")
+    return {
+        "id": product.id,
+        "name": product.name,
+        "price": product.price,
+        "description": product.description,
+        "imageUrl": product.image_url,
+        "sizes": json.loads(product.sizes),
+        "inStock": product.in_stock,
+        "dropId": product.drop_id,
+    }

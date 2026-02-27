@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
+import Link from 'next/link'
 import { get } from '@/lib/api'
 import type { Product, CartItem } from '@/types'
 
@@ -283,7 +284,8 @@ export default function HomePage() {
         {!loading && !error && (
           <div style={s.grid}>
             {products.map(product => (
-              <div key={product.id} style={s.card}>
+              <Link key={product.id} href={`/products/${product.id}`} style={{ textDecoration: 'none', color: 'inherit' }}>
+              <div style={s.card}>
                 <div style={s.imagePlaceholder} />
                 <p style={s.productName}>{product.name}</p>
                 <p style={s.price}>${product.price.toFixed(2)}</p>
@@ -318,6 +320,7 @@ export default function HomePage() {
                   ADD TO CART
                 </button>
               </div>
+              </Link>
             ))}
           </div>
         )}
