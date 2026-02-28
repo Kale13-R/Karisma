@@ -1,6 +1,9 @@
 import type { Metadata } from 'next'
 import './globals.css'
 import AnimateWrapper from '@/components/AnimateWrapper'
+import { CartProvider } from '@/context/CartContext'
+import Header from '@/components/layout/Header'
+import CartDrawer from '@/components/layout/CartDrawer'
 
 export const metadata: Metadata = {
   title: 'KARISMA',
@@ -15,7 +18,11 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body suppressHydrationWarning>
-        <AnimateWrapper>{children}</AnimateWrapper>
+        <CartProvider>
+          <Header />
+          <CartDrawer />
+          <AnimateWrapper>{children}</AnimateWrapper>
+        </CartProvider>
       </body>
     </html>
   )

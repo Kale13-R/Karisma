@@ -3,7 +3,8 @@
 import { useState } from 'react'
 import Image from 'next/image'
 import { motion } from 'framer-motion'
-import type { Product, CartItem } from '@/types'
+import { useCart } from '@/context/CartContext'
+import type { Product } from '@/types'
 
 interface Props {
   product: Product
@@ -12,34 +13,31 @@ interface Props {
 export default function ProductDetail({ product }: Props) {
   const [selectedSize, setSelectedSize] = useState<string | null>(null)
   const [added, setAdded] = useState(false)
+  const { addItem } = useCart()
 
   const handleAddToCart = () => {
     if (!selectedSize) return
-    const existing = JSON.parse(sessionStorage.getItem('karisma_cart') || '[]') as CartItem[]
-    const item: CartItem = { product, size: selectedSize, quantity: 1 }
-    const updated = [...existing, item]
-    sessionStorage.setItem('karisma_cart', JSON.stringify(updated))
+    addItem({ product, size: selectedSize, quantity: 1 })
     setAdded(true)
     setTimeout(() => setAdded(false), 2000)
   }
 
   return (
     <main style={{
-      display: 'flex',
-      flexDirection: 'row',
-      minHeight: '100vh',
-      height: '100vh',
+      display: 'grid',
+      gridTemplateColumns: '1fr 1fr',
+      minHeight: 'calc(100vh - 56px)',
       background: 'var(--bg)',
       color: 'var(--fg)',
-      overflow: 'hidden',
     }}>
       {/* LEFT — Image Panel */}
       <motion.div
         layoutId={`product-image-${product.id}`}
         style={{
-          flex: '0 0 50%',
           position: 'relative',
-          height: '100%',
+          width: '100%',
+          aspectRatio: '3/4',
+          alignSelf: 'start',
           overflow: 'hidden',
         }}
       >
@@ -48,7 +46,7 @@ export default function ProductDetail({ product }: Props) {
           alt={product.name}
           fill
           style={{
-            objectFit: 'cover',
+            objectFit: 'contain',
             objectPosition: 'center top',
           }}
           priority
@@ -62,13 +60,13 @@ export default function ProductDetail({ product }: Props) {
         animate={{ opacity: 1, x: 0 }}
         transition={{ duration: 0.5, ease: [0.25, 0.46, 0.45, 0.94] }}
         style={{
-          flex: '0 0 50%',
-          height: '100%',
-          overflowY: 'auto',
           padding: 'clamp(32px, 5vw, 64px)',
           display: 'flex',
           flexDirection: 'column',
-          background: 'var(--bg)',
+          position: 'sticky',
+          top: '56px',
+          height: 'calc(100vh - 56px)',
+          overflowY: 'auto',
         }}
       >
         <div>

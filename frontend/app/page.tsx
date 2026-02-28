@@ -1,12 +1,12 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import Image from 'next/image'
 import { motion } from 'framer-motion'
 import { get } from '@/lib/api'
-import type { Product, CartItem } from '@/types'
+import { useCart } from '@/context/CartContext'
+import type { Product } from '@/types'
 
 const s = {
   page: {
@@ -14,31 +14,6 @@ const s = {
     backgroundColor: 'var(--bg)',
     color: 'var(--fg)',
     fontFamily: "'Inter', 'Helvetica Neue', Arial, sans-serif",
-  } as React.CSSProperties,
-  header: {
-    display: 'flex',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    padding: '24px 48px',
-    borderBottom: '1px solid var(--border)',
-    position: 'sticky',
-    top: 0,
-    backgroundColor: 'var(--bg)',
-    zIndex: 100,
-  } as React.CSSProperties,
-  logo: {
-    fontSize: '18px',
-    fontWeight: 700,
-    letterSpacing: '0.25em',
-  } as React.CSSProperties,
-  cartBtn: {
-    background: 'none',
-    border: '1px solid var(--border)',
-    color: 'var(--fg)',
-    padding: '8px 18px',
-    fontSize: '10px',
-    letterSpacing: '0.2em',
-    cursor: 'pointer',
   } as React.CSSProperties,
   main: {
     padding: '64px 48px',
@@ -105,121 +80,14 @@ const s = {
     letterSpacing: '0.3em',
     color: 'var(--fg-muted)',
   } as React.CSSProperties,
-  overlay: {
-    position: 'fixed',
-    inset: 0,
-    backgroundColor: 'rgba(0,0,0,0.75)',
-    zIndex: 200,
-  } as React.CSSProperties,
-  drawer: {
-    position: 'fixed',
-    top: 0,
-    right: 0,
-    height: '100vh',
-    width: '380px',
-    backgroundColor: 'var(--bg)',
-    borderLeft: '1px solid var(--border)',
-    zIndex: 201,
-    display: 'flex',
-    flexDirection: 'column',
-    padding: '32px',
-    overflowY: 'auto',
-  } as React.CSSProperties,
-  drawerHeader: {
-    display: 'flex',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    marginBottom: '32px',
-  } as React.CSSProperties,
-  drawerTitle: {
-    fontSize: '11px',
-    fontWeight: 600,
-    letterSpacing: '0.25em',
-  } as React.CSSProperties,
-  closeBtn: {
-    background: 'none',
-    border: 'none',
-    color: 'var(--fg-muted)',
-    fontSize: '18px',
-    cursor: 'pointer',
-    lineHeight: 1,
-  } as React.CSSProperties,
-  cartItemRow: {
-    display: 'flex',
-    justifyContent: 'space-between',
-    alignItems: 'flex-start',
-    paddingBottom: '20px',
-    marginBottom: '20px',
-    borderBottom: '1px solid var(--border)',
-  } as React.CSSProperties,
-  cartItemLeft: {
-    flex: 1,
-  } as React.CSSProperties,
-  cartItemName: {
-    fontSize: '11px',
-    letterSpacing: '0.1em',
-    marginBottom: '4px',
-    textTransform: 'uppercase',
-  } as React.CSSProperties,
-  cartItemMeta: {
-    fontSize: '10px',
-    color: 'var(--fg-muted)',
-    letterSpacing: '0.08em',
-  } as React.CSSProperties,
-  cartItemRight: {
-    textAlign: 'right',
-    minWidth: '80px',
-  } as React.CSSProperties,
-  cartItemPrice: {
-    fontSize: '11px',
-    marginBottom: '8px',
-  } as React.CSSProperties,
-  removeBtn: {
-    background: 'none',
-    border: 'none',
-    color: 'var(--fg-muted)',
-    fontSize: '10px',
-    cursor: 'pointer',
-    letterSpacing: '0.08em',
-    textDecoration: 'underline',
-  } as React.CSSProperties,
-  totalRow: {
-    display: 'flex',
-    justifyContent: 'space-between',
-    paddingTop: '20px',
-    marginTop: 'auto',
-    fontSize: '12px',
-    letterSpacing: '0.12em',
-    fontWeight: 600,
-  } as React.CSSProperties,
-  checkoutBtn: {
-    width: '100%',
-    padding: '15px 0',
-    backgroundColor: 'var(--fg)',
-    color: 'var(--bg)',
-    border: 'none',
-    fontSize: '10px',
-    fontWeight: 700,
-    letterSpacing: '0.25em',
-    cursor: 'pointer',
-    marginTop: '16px',
-  } as React.CSSProperties,
-  emptyCart: {
-    color: 'var(--fg-muted)',
-    fontSize: '11px',
-    letterSpacing: '0.15em',
-    marginTop: '48px',
-    textAlign: 'center',
-  } as React.CSSProperties,
 }
 
 export default function HomePage() {
   const [products, setProducts] = useState<Product[]>([])
-  const [cart, setCart] = useState<CartItem[]>([])
   const [selectedSizes, setSelectedSizes] = useState<Record<string, string>>({})
-  const [cartOpen, setCartOpen] = useState(false)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
+  const { addItem } = useCart()
 
   useEffect(() => {
     get<Product[]>('/products')
@@ -235,42 +103,11 @@ export default function HomePage() {
   const addToCart = (product: Product) => {
     const size = selectedSizes[product.id]
     if (!size) return
-    setCart(prev => {
-      const existing = prev.find(i => i.product.id === product.id && i.size === size)
-      if (existing) {
-        return prev.map(i =>
-          i.product.id === product.id && i.size === size
-            ? { ...i, quantity: i.quantity + 1 }
-            : i
-        )
-      }
-      return [...prev, { product, size, quantity: 1 }]
-    })
-    setCartOpen(true)
-  }
-
-  const removeFromCart = (productId: string, size: string) => {
-    setCart(prev => prev.filter(i => !(i.product.id === productId && i.size === size)))
-  }
-
-  const itemCount = cart.reduce((sum, i) => sum + i.quantity, 0)
-  const total = cart.reduce((sum, i) => sum + i.product.price * i.quantity, 0)
-  const router = useRouter()
-
-  const handleCheckout = () => {
-    sessionStorage.setItem('karisma_cart', JSON.stringify(cart))
-    router.push('/checkout/summary')
+    addItem({ product, size, quantity: 1 })
   }
 
   return (
     <div style={s.page}>
-      <header style={s.header}>
-        <span style={s.logo}>KARISMA</span>
-        <button style={s.cartBtn} onClick={() => setCartOpen(true)}>
-          CART&nbsp;({itemCount})
-        </button>
-      </header>
-
       <main style={s.main}>
         <p style={s.dropLabel}>SS26 DROP</p>
         <h1 style={s.dropTitle}>NEW ARRIVALS</h1>
@@ -335,55 +172,6 @@ export default function HomePage() {
           </div>
         )}
       </main>
-
-      {cartOpen && (
-        <>
-          <div style={s.overlay} onClick={() => setCartOpen(false)} />
-          <div style={s.drawer}>
-            <div style={s.drawerHeader}>
-              <span style={s.drawerTitle}>CART</span>
-              <button style={s.closeBtn} onClick={() => setCartOpen(false)}>
-                ×
-              </button>
-            </div>
-
-            {cart.length === 0 ? (
-              <p style={s.emptyCart}>YOUR CART IS EMPTY</p>
-            ) : (
-              <>
-                {cart.map(item => (
-                  <div key={`${item.product.id}-${item.size}`} style={s.cartItemRow}>
-                    <div style={s.cartItemLeft}>
-                      <p style={s.cartItemName}>{item.product.name}</p>
-                      <p style={s.cartItemMeta}>
-                        {item.size}&nbsp;·&nbsp;QTY {item.quantity}
-                      </p>
-                    </div>
-                    <div style={s.cartItemRight}>
-                      <p style={s.cartItemPrice}>
-                        ${(item.product.price * item.quantity).toFixed(2)}
-                      </p>
-                      <button
-                        style={s.removeBtn}
-                        onClick={() => removeFromCart(item.product.id, item.size)}
-                      >
-                        REMOVE
-                      </button>
-                    </div>
-                  </div>
-                ))}
-                <div style={s.totalRow}>
-                  <span>TOTAL</span>
-                  <span>${total.toFixed(2)}</span>
-                </div>
-                <button style={s.checkoutBtn} onClick={handleCheckout}>
-                  CHECKOUT
-                </button>
-              </>
-            )}
-          </div>
-        </>
-      )}
     </div>
   )
 }

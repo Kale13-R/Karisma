@@ -108,7 +108,11 @@ def seed():
 
     db.add_all(products)
 
-    if db.query(models.SiteConfig).count() == 0:
+    # Always upsert SiteConfig so gate_password tracks settings (important for test isolation)
+    existing_config = db.query(models.SiteConfig).filter_by(id=1).first()
+    if existing_config:
+        existing_config.gate_password = settings.GATE_PASSWORD
+    else:
         db.add(
             models.SiteConfig(
                 id=1,

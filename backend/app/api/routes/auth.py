@@ -1,21 +1,25 @@
 import time
 import uuid
 
-from fastapi import APIRouter, Response
+from fastapi import APIRouter, HTTPException, Response
+
 from jose import jwt
 
 from app.core.config import settings
 from app.core.security import verify_password
 from app.models.schemas import GateAuthResponse, GatePasswordPayload, UserSession
+from app.services.config_service import get_site_config
 
 router = APIRouter()
 
 
 @router.post("/auth/gate")
 async def gate_auth(payload: GatePasswordPayload, response: Response):
-    if not verify_password(payload.password, settings.GATE_PASSWORD):
-        response.status_code = 401
-        return GateAuthResponse(success=False, error="Invalid password")
+    config = get_site_config()
+    stored_password = config.get("password", "")
+
+    if not verify_password(payload.password, stored_password):
+        raise HTTPException(status_code=401, detail="Invalid password")
 
     now = int(time.time())
     expire = now + (settings.SESSION_EXPIRE_HOURS * 3600)

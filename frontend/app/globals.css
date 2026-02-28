@@ -50,6 +50,10 @@ button {
   font-family: inherit;
 }
 
+main {
+  padding-top: 56px;
+}
+
 * {
   scrollbar-width: thin;
   scrollbar-color: #222 var(--bg);

@@ -8,6 +8,7 @@ from sqlalchemy.orm import Session
 from app.core.config import settings
 from app.db import models
 from app.db.base import get_db
+from app.services.config_service import invalidate_config_cache
 
 router = APIRouter()
 
@@ -44,6 +45,7 @@ def update_config(
     if payload.gate_password is not None:
         config.gate_password = payload.gate_password
     db.commit()
+    invalidate_config_cache()  # force immediate refresh on next request
     return {"status": "updated"}
 
 

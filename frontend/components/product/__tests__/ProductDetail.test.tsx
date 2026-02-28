@@ -1,5 +1,6 @@
 import { render, screen, fireEvent } from '@testing-library/react'
 import ProductDetail from '../ProductDetail'
+import { CartProvider } from '@/context/CartContext'
 import type { Product } from '@/types'
 
 jest.mock('next/navigation', () => ({
@@ -27,12 +28,12 @@ const mockProduct: Product = {
 
 describe('ProductDetail', () => {
   it('renders the product name', () => {
-    render(<ProductDetail product={mockProduct} />)
+    render(<CartProvider><ProductDetail product={mockProduct} /></CartProvider>)
     expect(screen.getByRole('heading', { name: /Karisma Void Hoodie 001/i })).toBeInTheDocument()
   })
 
   it('renders all 4 size buttons', () => {
-    render(<ProductDetail product={mockProduct} />)
+    render(<CartProvider><ProductDetail product={mockProduct} /></CartProvider>)
     expect(screen.getByRole('button', { name: 'S' })).toBeInTheDocument()
     expect(screen.getByRole('button', { name: 'M' })).toBeInTheDocument()
     expect(screen.getByRole('button', { name: 'L' })).toBeInTheDocument()
@@ -40,13 +41,13 @@ describe('ProductDetail', () => {
   })
 
   it('ADD TO YOUR COLLECTION button is disabled when no size selected', () => {
-    render(<ProductDetail product={mockProduct} />)
+    render(<CartProvider><ProductDetail product={mockProduct} /></CartProvider>)
     const addBtn = screen.getByRole('button', { name: /ADD TO YOUR COLLECTION/i })
     expect(addBtn).toBeDisabled()
   })
 
   it('ADD TO YOUR COLLECTION button enables after size selection', () => {
-    render(<ProductDetail product={mockProduct} />)
+    render(<CartProvider><ProductDetail product={mockProduct} /></CartProvider>)
     fireEvent.click(screen.getByRole('button', { name: 'M' }))
     const addBtn = screen.getByRole('button', { name: /ADD TO YOUR COLLECTION/i })
     expect(addBtn).not.toBeDisabled()
