@@ -7,7 +7,7 @@ export default function Header() {
   const { itemCount, openDrawer } = useCart()
 
   return (
-    <header style={{
+    <header className="test-tw" style={{
       position: 'fixed',
       top: 0,
       left: 0,

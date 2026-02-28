@@ -1,3 +1,7 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
 *,
 *::before,
 *::after {
@@ -58,3 +62,6 @@ main {
   scrollbar-width: thin;
   scrollbar-color: #222 var(--bg);
 }
+
+/* TEMPORARY — Tailwind PostCSS verification. Remove after confirming red outline on header. */
+.test-tw { outline: 2px solid red; }
