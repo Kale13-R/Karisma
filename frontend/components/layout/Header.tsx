@@ -1,10 +1,14 @@
 'use client'
 
 import Link from 'next/link'
+import { usePathname } from 'next/navigation'
 import { useCart } from '@/context/CartContext'
 
 export default function Header() {
+  const pathname = usePathname()
   const { itemCount, openDrawer } = useCart()
+
+  if (pathname === '/gate') return null
 
   return (
     <header style={{
