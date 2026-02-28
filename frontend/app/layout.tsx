@@ -4,6 +4,7 @@ import AnimateWrapper from '@/components/AnimateWrapper'
 import { CartProvider } from '@/context/CartContext'
 import Header from '@/components/layout/Header'
 import CartDrawer from '@/components/layout/CartDrawer'
+import Footer from '@/components/layout/Footer'
 
 export const metadata: Metadata = {
   title: 'KARISMA',
@@ -17,11 +18,14 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <body suppressHydrationWarning>
+      <body suppressHydrationWarning className="flex flex-col min-h-screen">
         <CartProvider>
           <Header />
           <CartDrawer />
-          <AnimateWrapper>{children}</AnimateWrapper>
+          <div className="flex-1">
+            <AnimateWrapper>{children}</AnimateWrapper>
+          </div>
+          <Footer />
         </CartProvider>
       </body>
     </html>

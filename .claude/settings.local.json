@@ -13,7 +13,8 @@
       "Bash(npm install framer-motion)",
       "Bash(node -e \"const p=require\\(''./package.json''\\); console.log\\(p.dependencies[''framer-motion'']\\)\")",
       "Bash(npm install framer-motion@^11.0.0)",
-      "Bash(python -m app.db.seed)"
+      "Bash(python -m app.db.seed)",
+      "Bash(ls frontend/tailwind.config* frontend/postcss.config*)"
     ]
   }
 }

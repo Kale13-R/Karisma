@@ -124,7 +124,7 @@ export default function HomePage() {
                   layoutId={`product-image-${product.id}`}
                   whileHover={{ scale: 1.05 }}
                   transition={{ duration: 0.2 }}
-                  style={{ position: 'relative', aspectRatio: '4/5', overflow: 'hidden', border: '1px solid var(--border)' }}
+                  style={{ position: 'relative', aspectRatio: '4/5', overflow: 'hidden' }}
                 >
                   <Image
                     src={product.imageUrl}
