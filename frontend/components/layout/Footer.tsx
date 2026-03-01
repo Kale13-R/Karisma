@@ -3,10 +3,15 @@
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 
-const FOOTER_LINKS = [
-  { href: '/about', label: 'ABOUT' },
-  { href: '/contact', label: 'CONTACT' },
-  { href: '/archive', label: 'ARCHIVE' },
+const links = [
+  { label: 'ABOUT', href: '/about' },
+  { label: 'CONTACT', href: '/contact' },
+  { label: 'ARCHIVE', href: '/archive' },
+  {
+    label: 'INSTAGRAM',
+    href: 'https://www.instagram.com/karismaworldwide/',
+    external: true,
+  },
 ]
 
 export default function Footer() {
@@ -21,13 +26,15 @@ export default function Footer() {
           KARISMA &copy; 2019
         </p>
         <nav className="flex gap-8">
-          {FOOTER_LINKS.map(({ href, label }) => (
+          {links.map((link) => (
             <Link
-              key={href}
-              href={href}
+              key={link.href}
+              href={link.href}
+              target={link.external ? '_blank' : undefined}
+              rel={link.external ? 'noopener noreferrer' : undefined}
               className="text-[10px] tracking-[0.3em] text-[var(--fg-muted)] hover:text-[var(--fg)] uppercase transition-colors duration-150"
             >
-              {label}
+              {link.label}
             </Link>
           ))}
         </nav>

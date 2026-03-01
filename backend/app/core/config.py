@@ -8,6 +8,7 @@ class Settings(BaseSettings):
     SESSION_SECRET: str = "changeme-use-a-long-random-string-in-production"
     SESSION_EXPIRE_HOURS: int = 24
     ALLOWED_ORIGINS: str = "http://localhost:3000"
+    VERCEL_URL: str = ""  # injected by Vercel as env var; set in Railway to match production domain
     STRIPE_SECRET_KEY: str = ""
     STRIPE_WEBHOOK_SECRET: str = ""
     STRIPE_CURRENCY: str = "usd"

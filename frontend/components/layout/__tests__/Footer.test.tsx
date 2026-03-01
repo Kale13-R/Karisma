@@ -34,4 +34,18 @@ describe('Footer', () => {
     render(<Footer />)
     expect(screen.getByRole('link', { name: 'ABOUT' })).toBeInTheDocument()
   })
+
+  it('Instagram link has target="_blank"', () => {
+    mockUsePathname.mockReturnValue('/')
+    render(<Footer />)
+    const link = screen.getByRole('link', { name: 'INSTAGRAM' })
+    expect(link).toHaveAttribute('target', '_blank')
+  })
+
+  it('Instagram link href is exactly https://www.instagram.com/karismaworldwide/', () => {
+    mockUsePathname.mockReturnValue('/')
+    render(<Footer />)
+    const link = screen.getByRole('link', { name: 'INSTAGRAM' })
+    expect(link).toHaveAttribute('href', 'https://www.instagram.com/karismaworldwide/')
+  })
 })
