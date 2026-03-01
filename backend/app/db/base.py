@@ -3,11 +3,24 @@ from sqlalchemy.orm import DeclarativeBase, sessionmaker
 
 from app.core.config import settings
 
-engine = create_engine(
-    settings.DATABASE_URL,
-    connect_args={"check_same_thread": False},
-)
 
+def build_engine():
+    url = settings.DATABASE_URL
+
+    if url.startswith("postgresql") or url.startswith("postgres"):
+        # Railway injects postgres:// but SQLAlchemy requires postgresql://
+        if url.startswith("postgres://"):
+            url = url.replace("postgres://", "postgresql://", 1)
+        return create_engine(url, pool_pre_ping=True)
+    else:
+        # SQLite — local dev only
+        return create_engine(
+            url,
+            connect_args={"check_same_thread": False},
+        )
+
+
+engine = build_engine()
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 
 
