@@ -21,14 +21,19 @@ Drop-based streetwear e-commerce. Exclusive releases. Limited access.
 ```bash
 # 1. Configure environment
 cp backend/.env.example backend/.env
-# Edit backend/.env — set GATE_PASSWORD and SESSION_SECRET
+# Edit backend/.env — set at minimum: GATE_PASSWORD, SESSION_SECRET, ADMIN_SECRET
 
-# 2. Start everything
-docker-compose up --build
+# 2. Start everything (from repo root)
+docker compose up --build
 ```
 
-- Frontend: http://localhost:3000
-- Backend API: http://localhost:8000
+| Service | URL |
+|---|---|
+| Frontend | http://localhost:3000 |
+| Backend API | http://localhost:8000 |
+| API docs | http://localhost:8000/docs |
+
+> **Note:** `NEXT_PUBLIC_API_URL` is set to `http://backend:8000` inside Docker. This resolves for server-side requests but browser-side fetch calls will fail. Override to `http://localhost:8000` for local Docker dev if you hit API errors.
 
 ## Local Development
 
