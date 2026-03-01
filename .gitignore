@@ -16,6 +16,8 @@ dist/
 
 # misc
 .DS_Store
+Thumbs.db
+desktop.ini
 *.pem
 
 # lockfiles — not committed in this repo
