@@ -15,6 +15,7 @@ class Settings(BaseSettings):
     RESEND_FROM_EMAIL: str = "orders@karisma.com"
     ADMIN_SECRET: str = ""
     DATABASE_URL: str = "sqlite:///./karisma.db"
+    ENVIRONMENT: str = "development"
 
 
 settings = Settings()
