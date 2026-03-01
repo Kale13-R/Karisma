@@ -82,3 +82,8 @@ cd frontend && npm test -- --watchAll=false
 | SESSION_SECRET | Secret key for signing JWTs |
 | SESSION_EXPIRE_HOURS | Session duration in hours (default: 24) |
 | ALLOWED_ORIGINS | CORS allowed origins (default: http://localhost:3000) |
+| ADMIN_SECRET | Key for X-Admin-Key header — must be set or admin routes return 403 |
+| STRIPE_SECRET_KEY | Stripe secret key (required for checkout) |
+| STRIPE_WEBHOOK_SECRET | Stripe webhook signing secret |
+| RESEND_API_KEY | Resend API key (required for order confirmation emails) |
+| ENVIRONMENT | `development` or `production` — controls secure cookie flag (default: development) |
