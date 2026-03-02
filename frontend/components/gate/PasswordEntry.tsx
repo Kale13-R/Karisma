@@ -70,6 +70,8 @@ export default function PasswordEntry() {
         }}
       >
         <input
+          id="gate-password"
+          name="password"
           type="password"
           value={password}
           onChange={e => setPassword(e.target.value)}
