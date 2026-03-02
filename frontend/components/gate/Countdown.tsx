@@ -19,7 +19,6 @@ export default function Countdown({ timeRemaining }: CountdownProps) {
         flexDirection: 'column',
         justifyContent: 'center',
         alignItems: 'center',
-        fontFamily: "'Inter', 'Helvetica Neue', Arial, sans-serif",
         gap: '24px',
       }}
     >
@@ -36,6 +35,7 @@ export default function Countdown({ timeRemaining }: CountdownProps) {
       </div>
       <p
         style={{
+          fontFamily: "'Courier New', Courier, monospace",
           fontSize: '11px',
           letterSpacing: '0.45em',
           color: 'rgba(255,255,255,0.6)',
