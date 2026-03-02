@@ -2,8 +2,7 @@
 
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
-import { post } from '@/lib/api'
-import type { GateAuthResponse, GatePasswordPayload } from '@/types'
+import type { GateAuthResponse } from '@/types'
 
 export default function PasswordEntry() {
   const [password, setPassword] = useState('')
@@ -17,15 +16,21 @@ export default function PasswordEntry() {
     setLoading(true)
 
     try {
-      const response = await post<GateAuthResponse>('/auth/gate', {
-        password,
-      } as GatePasswordPayload)
+      const response = await fetch('/api/auth/gate', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ password }),
+        credentials: 'include',
+      })
 
-      if (response.success) {
-        router.push('/')
-      } else {
-        setError(response.error || 'Access denied.')
+      const data: GateAuthResponse = await response.json()
+
+      if (!response.ok || !data.success) {
+        setError(data.error || 'Invalid password')
+        return
       }
+
+      router.push('/')
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Access denied.')
     } finally {
