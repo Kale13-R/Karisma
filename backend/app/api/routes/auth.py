@@ -43,8 +43,9 @@ async def gate_auth(payload: GatePasswordPayload, response: Response):
         value=token,
         httponly=True,
         max_age=settings.SESSION_EXPIRE_HOURS * 3600,
-        samesite="lax",
-        secure=settings.ENVIRONMENT == "production",
+        samesite="none",
+        secure=True,
+        path="/",
     )
 
     return GateAuthResponse(success=True, session=session)
