@@ -61,6 +61,7 @@ export default function OrganizedKhaosPage() {
           src="/images/heroes/organized-khaos-hero.png"
           alt="Organized Khaos"
           fill
+          quality={100}
           style={{ objectFit: 'cover', objectPosition: 'center top' }}
           priority
         />

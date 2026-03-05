@@ -23,6 +23,7 @@ export default function HomePage() {
           src="/images/heroes/new-releases-hero.png"
           alt="Karisma"
           fill
+          quality={100}
           style={{ objectFit: 'cover', objectPosition: 'center' }}
           priority
         />

@@ -53,6 +53,7 @@ export default function NewReleasesPage() {
           src="/images/heroes/new-releases-hero.png"
           alt="New Releases"
           fill
+          quality={100}
           style={{ objectFit: 'cover', objectPosition: 'center' }}
           priority
         />
@@ -123,13 +124,13 @@ export default function NewReleasesPage() {
             gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))',
             gap: '48px',
           }}>
-            {/* New release products — shown regardless of API for now */}
-            {[
+            {/* Use API products if available, otherwise fall back to hardcoded */}
+            {(products.length > 0 ? products : [
               {
                 id: 'new-red-tee',
                 name: 'KARISMA — Red',
                 price: 148.00,
-                imageUrl: '/images/new/new-release-red-tee.png',
+                imageUrl: '/images/new/new-release-red-tee.jpg',
                 sizes: ['S', 'M', 'L', 'XL'],
                 inStock: true,
                 description: 'Limited SS26 release.',
@@ -139,14 +140,13 @@ export default function NewReleasesPage() {
                 id: 'new-black-tee',
                 name: 'KARISMA — Black',
                 price: 148.00,
-                imageUrl: '/images/new/new-release-black-tee.png',
+                imageUrl: '/images/new/new-release-black-tee.jpg',
                 sizes: ['S', 'M', 'L', 'XL'],
                 inStock: true,
                 description: 'Limited SS26 release.',
                 dropId: 'ss26-new',
               },
-              ...products,
-            ].map((product) => (
+            ] as Product[]).map((product) => (
               <Link key={product.id} href={`/products/${product.id}`} style={{ textDecoration: 'none', color: 'inherit' }}>
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}>
                   <motion.div

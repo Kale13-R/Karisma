@@ -12,8 +12,6 @@ export default function Header() {
   const [menuOpen, setMenuOpen] = useState(false)
   const menuRef = useRef<HTMLDivElement>(null)
 
-  if (pathname === '/gate') return null
-
   // Close menu on route change
   useEffect(() => {
     setMenuOpen(false)
@@ -31,6 +29,8 @@ export default function Header() {
       return () => document.removeEventListener('mousedown', handleClickOutside)
     }
   }, [menuOpen])
+
+  if (pathname === '/gate') return null
 
   return (
     <div ref={menuRef}>
@@ -64,11 +64,11 @@ export default function Header() {
           aria-label="Toggle navigation menu"
         >
           <Image
-            src="/images/bunny-mascot.png"
+            src="/images/Bunny-mascot.png"
             alt="Karisma"
             width={36}
             height={36}
-            style={{ objectFit: 'contain', filter: 'brightness(1.2)' }}
+            style={{ objectFit: 'contain', filter: 'brightness(1.2)', width: '36px', height: '36px' }}
           />
         </button>
 
