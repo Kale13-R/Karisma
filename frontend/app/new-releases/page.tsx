@@ -53,8 +53,8 @@ export default function NewReleasesPage() {
           src="/images/heroes/new-releases-hero.png"
           alt="New Releases"
           fill
-          quality={100}
-          style={{ objectFit: 'cover', objectPosition: 'center' }}
+          unoptimized
+          style={{ objectFit: 'contain', objectPosition: 'center' }}
           priority
         />
         <div style={{
