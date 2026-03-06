@@ -74,17 +74,36 @@ export default function HomePage() {
             textTransform: 'uppercase',
             marginBottom: '20px',
           }}>SS26</p>
-          <h1 style={{
-            fontWeight: 900,
-            fontSize: 'clamp(48px, 10vw, 96px)',
-            letterSpacing: '0.06em',
-            textTransform: 'uppercase',
-            color: '#fff',
-            marginBottom: '52px',
-            lineHeight: 1,
-          }}>
-            NEW RELEASES
-          </h1>
+          <div style={{ position: 'relative', marginBottom: '52px' }}>
+            <span style={{
+              position: 'absolute',
+              top: '50%',
+              left: '50%',
+              transform: 'translate(-50%, -50%)',
+              fontWeight: 900,
+              fontSize: 'clamp(72px, 16vw, 160px)',
+              letterSpacing: '0.08em',
+              textTransform: 'uppercase',
+              color: 'rgba(255,255,255,0.08)',
+              lineHeight: 1,
+              whiteSpace: 'nowrap',
+              pointerEvents: 'none',
+              userSelect: 'none',
+            }}>
+              NEW RELEASES
+            </span>
+            <h1 style={{
+              position: 'relative',
+              fontWeight: 900,
+              fontSize: 'clamp(48px, 10vw, 96px)',
+              letterSpacing: '0.06em',
+              textTransform: 'uppercase',
+              color: '#fff',
+              lineHeight: 1,
+            }}>
+              NEW RELEASES
+            </h1>
+          </div>
           <button
             onClick={scrollToShop}
             style={{

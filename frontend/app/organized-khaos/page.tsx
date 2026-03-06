@@ -29,7 +29,6 @@ const ARCHIVE_PRODUCTS = [
   { id: 'krsm-black-hoodie', name: 'BlackMars Long Sleeve', price: 65.00, imageUrl: '/images/archive/black-banned-shirt.png', sizes: ['S','M','L','XL'], inStock: false, dropId: 'spring24', description: 'BlackMars long sleeve tee.' },
   { id: 'krsm-blue-hoodie', name: 'Blue KOLOSSAL Hoodie', price: 60.00, imageUrl: '/images/archive/blue-colossal-hoodie.png', sizes: ['S','M','L','XL'], inStock: false, dropId: 'spring24', description: 'Blue KOLOSSAL heavyweight hoodie.' },
   { id: 'krsm-marisma', name: 'Marisma :)', price: 50.00, imageUrl: '/images/archive/marisma.png', sizes: ['S','M','L','XL'], inStock: true, dropId: 'spring24', description: 'Marisma graphic tee.' },
-  { id: 'krsm-sage-beanie', name: 'Baby Sage Beanie', price: 30.00, imageUrl: '/images/archive/baby-sage-beanie.png', sizes: ['ONE SIZE'], inStock: true, dropId: 'spring24', description: 'Hand-painted sage beanie.' },
 ]
 
 export default function OrganizedKhaosPage() {

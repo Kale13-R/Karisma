@@ -44,7 +44,7 @@ export default function Header() {
         alignItems: 'center',
         justifyContent: 'space-between',
         padding: '0 32px',
-        height: '56px',
+        height: '64px',
         backdropFilter: 'blur(12px)',
         WebkitBackdropFilter: 'blur(12px)',
         backgroundColor: 'color-mix(in srgb, var(--bg) 80%, transparent)',
@@ -72,10 +72,10 @@ export default function Header() {
           />
         </button>
 
-        {/* Center — Wordmark */}
+        {/* Center — Wordmark (fills full header height) */}
         <Link href="/" style={{
           fontWeight: 900,
-          fontSize: '18px',
+          fontSize: '22px',
           letterSpacing: '0.15em',
           textDecoration: 'none',
           color: 'var(--fg)',
@@ -83,6 +83,10 @@ export default function Header() {
           position: 'absolute',
           left: '50%',
           transform: 'translateX(-50%)',
+          height: '100%',
+          display: 'flex',
+          alignItems: 'center',
+          padding: '0 16px',
         }}>
           KARISMA
         </Link>
@@ -91,7 +95,7 @@ export default function Header() {
         <nav style={{ display: 'flex', gap: '24px', alignItems: 'center' }}>
           <Link href="/account" style={{
             fontFamily: 'monospace',
-            fontSize: '11px',
+            fontSize: '13px',
             letterSpacing: '0.1em',
             color: 'var(--fg-muted)',
             textDecoration: 'none',
@@ -104,7 +108,7 @@ export default function Header() {
             onClick={openDrawer}
             style={{
               fontFamily: 'monospace',
-              fontSize: '11px',
+              fontSize: '13px',
               letterSpacing: '0.1em',
               color: 'var(--fg)',
               background: 'transparent',
@@ -123,7 +127,7 @@ export default function Header() {
       <div
         style={{
           position: 'fixed',
-          top: '56px',
+          top: '64px',
           left: 0,
           right: 0,
           zIndex: 99,

@@ -28,18 +28,17 @@ export default function ProductDetail({ product, relatedProducts = [] }: Props) 
     <main style={{
       display: 'grid',
       gridTemplateColumns: '1fr 1fr',
-      height: 'calc(100vh - 56px)',
       background: 'var(--bg)',
       color: 'var(--fg)',
-      overflow: 'hidden',
+      alignItems: 'start',
     }}>
-      {/* LEFT — Image Panel */}
+      {/* LEFT — Sticky image panel */}
       <motion.div
         layoutId={`product-image-${product.id}`}
         style={{
-          position: 'relative',
-          width: '100%',
-          height: '100%',
+          position: 'sticky',
+          top: '64px',
+          height: 'calc(100vh - 64px)',
           overflow: 'hidden',
         }}
       >
@@ -56,7 +55,7 @@ export default function ProductDetail({ product, relatedProducts = [] }: Props) 
         />
       </motion.div>
 
-      {/* RIGHT — Content Panel */}
+      {/* RIGHT — Scrollable content panel */}
       <motion.div
         initial={{ opacity: 0, x: 40 }}
         animate={{ opacity: 1, x: 0 }}
@@ -65,87 +64,86 @@ export default function ProductDetail({ product, relatedProducts = [] }: Props) 
           padding: 'clamp(24px, 3vw, 48px)',
           display: 'flex',
           flexDirection: 'column',
-          height: '100%',
-          overflow: 'hidden',
+          minHeight: 'calc(100vh - 64px)',
         }}
       >
         {/* Product Info */}
-        <div style={{ flex: '0 0 auto' }}>
-          <h1 style={{
-            fontSize: 'clamp(28px, 4vw, 56px)',
-            fontWeight: 900,
-            textTransform: 'uppercase',
-            letterSpacing: '0.05em',
-            lineHeight: 1.05,
-            color: 'var(--fg)',
-            margin: 0,
-          }}>
-            {product.name}
-          </h1>
+        <h1 style={{
+          fontSize: 'clamp(28px, 4vw, 56px)',
+          fontWeight: 900,
+          textTransform: 'uppercase',
+          letterSpacing: '0.05em',
+          lineHeight: 1.05,
+          color: 'var(--fg)',
+          margin: 0,
+        }}>
+          {product.name}
+        </h1>
 
-          <p style={{ fontFamily: 'monospace', fontSize: '14px', color: 'var(--fg-muted)', marginTop: '12px' }}>
-            ${product.price.toFixed(2)}
-          </p>
+        <p style={{ fontFamily: 'monospace', fontSize: '16px', color: 'var(--fg-muted)', marginTop: '12px' }}>
+          ${product.price.toFixed(2)}
+        </p>
 
-          <p style={{ fontSize: '14px', lineHeight: 1.7, color: 'var(--fg-muted)', marginTop: '20px' }}>
-            {product.description}
-          </p>
+        <p style={{ fontSize: '18px', lineHeight: 1.8, color: 'var(--fg-muted)', marginTop: '20px' }}>
+          {product.description}
+        </p>
 
-          {/* Size Selection — centered */}
-          <div style={{ display: 'flex', gap: '8px', marginTop: '24px', justifyContent: 'center' }}>
-            {product.sizes.map((size) => (
-              <button
-                key={size}
-                onClick={() => setSelectedSize(size)}
-                style={{
-                  width: '48px',
-                  height: '48px',
-                  border: selectedSize === size ? '3px solid var(--fg)' : '1px solid var(--border)',
-                  background: selectedSize === size ? 'var(--fg)' : 'transparent',
-                  color: selectedSize === size ? 'var(--bg)' : 'var(--fg-muted)',
-                  fontFamily: 'monospace',
-                  fontSize: '12px',
-                  cursor: 'pointer',
-                  letterSpacing: '0.05em',
-                }}
-              >
-                {size}
-              </button>
-            ))}
-          </div>
+        {/* Size Selection */}
+        <div style={{ display: 'flex', gap: '10px', marginTop: '28px', justifyContent: 'center' }}>
+          {product.sizes.map((size) => (
+            <button
+              key={size}
+              onClick={() => setSelectedSize(prev => prev === size ? null : size)}
+              style={{
+                width: '64px',
+                height: '64px',
+                border: selectedSize === size ? '3px solid var(--fg)' : '1px solid var(--border)',
+                background: selectedSize === size ? 'var(--fg)' : 'transparent',
+                color: selectedSize === size ? 'var(--bg)' : 'var(--fg-muted)',
+                fontFamily: 'monospace',
+                fontSize: '14px',
+                cursor: 'pointer',
+                letterSpacing: '0.05em',
+              }}
+            >
+              {size}
+            </button>
+          ))}
         </div>
+
+        {/* Spacer — pushes button + related to bottom of viewport */}
+        <div style={{ flex: '1 1 auto' }} />
 
         {/* Add to Cart */}
         <button
           onClick={handleAddToCart}
           disabled={!selectedSize}
           style={{
-            flex: '0 0 auto',
-            marginTop: '24px',
             width: '100%',
-            height: '48px',
-            background: selectedSize ? 'var(--fg)' : 'var(--border)',
-            color: 'var(--bg)',
+            height: '56px',
+            background: selectedSize ? 'var(--fg)' : 'transparent',
+            color: selectedSize ? 'var(--bg)' : 'var(--fg-muted)',
+            border: selectedSize ? 'none' : '1px solid var(--border)',
             fontFamily: 'monospace',
             letterSpacing: '0.15em',
             fontSize: '12px',
-            border: 'none',
             cursor: selectedSize ? 'pointer' : 'not-allowed',
-            transition: 'background 0.2s',
+            transition: 'background 0.2s, color 0.2s, border 0.2s',
           }}
         >
           {added ? 'ADDED TO COLLECTION' : 'ADD TO YOUR COLLECTION'}
         </button>
 
-        {/* Related Products */}
+        {/* Related Products — visible at bottom of viewport on load */}
         {relatedProducts.length > 0 && (
-          <div style={{ flex: '0 0 auto', marginTop: 'auto', paddingTop: '24px' }}>
+          <div style={{ marginTop: '36px' }}>
             <p style={{
-              fontSize: '10px',
-              letterSpacing: '0.25em',
+              fontSize: '14px',
+              fontWeight: 700,
+              letterSpacing: '0.2em',
               color: 'var(--fg-muted)',
               textTransform: 'uppercase',
-              marginBottom: '12px',
+              marginBottom: '16px',
             }}>
               RELATED PRODUCTS
             </p>
@@ -153,6 +151,7 @@ export default function ProductDetail({ product, relatedProducts = [] }: Props) 
               display: 'grid',
               gridTemplateColumns: 'repeat(4, 1fr)',
               gap: '12px',
+              paddingBottom: '40px',
             }}>
               {relatedProducts.map((related) => (
                 <Link
@@ -160,12 +159,16 @@ export default function ProductDetail({ product, relatedProducts = [] }: Props) 
                   href={`/products/${related.id}`}
                   style={{ textDecoration: 'none', color: 'inherit' }}
                 >
-                  <div style={{
-                    position: 'relative',
-                    aspectRatio: '3/4',
-                    overflow: 'hidden',
-                    border: '1px solid var(--border)',
-                  }}>
+                  <motion.div
+                    whileHover={{ scale: 1.05 }}
+                    transition={{ duration: 0.2 }}
+                    style={{
+                      position: 'relative',
+                      aspectRatio: '3/4',
+                      overflow: 'hidden',
+                      border: '1px solid var(--border)',
+                    }}
+                  >
                     <Image
                       src={related.imageUrl}
                       alt={related.name}
@@ -173,7 +176,7 @@ export default function ProductDetail({ product, relatedProducts = [] }: Props) 
                       style={{ objectFit: 'cover' }}
                       sizes="12vw"
                     />
-                  </div>
+                  </motion.div>
                   <p style={{
                     fontSize: '9px',
                     letterSpacing: '0.1em',
