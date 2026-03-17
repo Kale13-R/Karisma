@@ -2,10 +2,12 @@
 
 import { useRouter } from 'next/navigation'
 import { useCart } from '@/context/CartContext'
+import { useIsMobile } from '@/lib/useIsMobile'
 
 export default function CartDrawer() {
   const { items, removeItem, itemCount, isDrawerOpen, closeDrawer } = useCart()
   const router = useRouter()
+  const isMobile = useIsMobile()
 
   const total = items.reduce((sum, i) => sum + i.product.price * i.quantity, 0)
 
@@ -32,7 +34,7 @@ export default function CartDrawer() {
         top: 0,
         right: 0,
         height: '100vh',
-        width: '380px',
+        width: isMobile ? '100%' : '380px',
         backgroundColor: 'var(--bg)',
         borderLeft: '1px solid var(--border)',
         zIndex: 201,

@@ -5,6 +5,7 @@ import Image from 'next/image'
 import Link from 'next/link'
 import { motion } from 'framer-motion'
 import { useCart } from '@/context/CartContext'
+import { useIsMobile } from '@/lib/useIsMobile'
 import type { Product } from '@/types'
 
 interface Props {
@@ -16,6 +17,7 @@ export default function ProductDetail({ product, relatedProducts = [] }: Props) 
   const [selectedSize, setSelectedSize] = useState<string | null>(null)
   const [added, setAdded] = useState(false)
   const { addItem } = useCart()
+  const isMobile = useIsMobile()
 
   const handleAddToCart = () => {
     if (!selectedSize) return
@@ -26,19 +28,21 @@ export default function ProductDetail({ product, relatedProducts = [] }: Props) 
 
   return (
     <main style={{
-      display: 'grid',
-      gridTemplateColumns: '1fr 1fr',
+      display: isMobile ? 'flex' : 'grid',
+      flexDirection: isMobile ? 'column' : undefined,
+      gridTemplateColumns: isMobile ? undefined : '1fr 1fr',
       background: 'var(--bg)',
       color: 'var(--fg)',
       alignItems: 'start',
     }}>
-      {/* LEFT — Sticky image panel */}
+      {/* LEFT / TOP — Image panel (sticky on desktop, 75vh block on mobile) */}
       <motion.div
         layoutId={`product-image-${product.id}`}
         style={{
-          position: 'sticky',
-          top: '64px',
-          height: 'calc(100vh - 64px)',
+          position: isMobile ? 'relative' : 'sticky',
+          top: isMobile ? undefined : '56px',
+          height: isMobile ? '75vh' : 'calc(100vh - 56px)',
+          width: '100%',
           overflow: 'hidden',
         }}
       >
@@ -46,7 +50,7 @@ export default function ProductDetail({ product, relatedProducts = [] }: Props) 
           src={product.imageUrl}
           alt={product.name}
           fill
-          sizes="50vw"
+          sizes={isMobile ? '100vw' : '50vw'}
           style={{
             objectFit: 'contain',
             objectPosition: 'center',
@@ -57,14 +61,14 @@ export default function ProductDetail({ product, relatedProducts = [] }: Props) 
 
       {/* RIGHT — Scrollable content panel */}
       <motion.div
-        initial={{ opacity: 0, x: 40 }}
-        animate={{ opacity: 1, x: 0 }}
+        initial={{ opacity: 0, x: isMobile ? 0 : 40, y: isMobile ? 20 : 0 }}
+        animate={{ opacity: 1, x: 0, y: 0 }}
         transition={{ duration: 0.5, ease: [0.25, 0.46, 0.45, 0.94] }}
         style={{
-          padding: 'clamp(24px, 3vw, 48px)',
+          padding: isMobile ? '24px 16px 40px' : 'clamp(24px, 3vw, 48px)',
           display: 'flex',
           flexDirection: 'column',
-          minHeight: 'calc(100vh - 64px)',
+          minHeight: isMobile ? 'auto' : 'calc(100vh - 56px)',
         }}
       >
         {/* Product Info */}
@@ -89,14 +93,14 @@ export default function ProductDetail({ product, relatedProducts = [] }: Props) 
         </p>
 
         {/* Size Selection */}
-        <div style={{ display: 'flex', gap: '10px', marginTop: '28px', justifyContent: 'center' }}>
+        <div style={{ display: 'flex', gap: isMobile ? '8px' : '10px', marginTop: '28px', justifyContent: 'center', flexWrap: 'wrap' }}>
           {product.sizes.map((size) => (
             <button
               key={size}
               onClick={() => setSelectedSize(prev => prev === size ? null : size)}
               style={{
-                width: '64px',
-                height: '64px',
+                width: isMobile ? '52px' : '64px',
+                height: isMobile ? '52px' : '64px',
                 border: selectedSize === size ? '3px solid var(--fg)' : '1px solid var(--border)',
                 background: selectedSize === size ? 'var(--fg)' : 'transparent',
                 color: selectedSize === size ? 'var(--bg)' : 'var(--fg-muted)',
@@ -111,8 +115,8 @@ export default function ProductDetail({ product, relatedProducts = [] }: Props) 
           ))}
         </div>
 
-        {/* Spacer — pushes button + related to bottom of viewport */}
-        <div style={{ flex: '1 1 auto' }} />
+        {/* Spacer — pushes button + related to bottom of viewport (desktop only) */}
+        {!isMobile && <div style={{ flex: '1 1 auto' }} />}
 
         {/* Add to Cart */}
         <button
@@ -121,6 +125,7 @@ export default function ProductDetail({ product, relatedProducts = [] }: Props) 
           style={{
             width: '100%',
             height: '56px',
+            marginTop: isMobile ? '20px' : undefined,
             background: selectedSize ? 'var(--fg)' : 'transparent',
             color: selectedSize ? 'var(--bg)' : 'var(--fg-muted)',
             border: selectedSize ? 'none' : '1px solid var(--border)',
@@ -149,8 +154,8 @@ export default function ProductDetail({ product, relatedProducts = [] }: Props) 
             </p>
             <div style={{
               display: 'grid',
-              gridTemplateColumns: 'repeat(4, 1fr)',
-              gap: '12px',
+              gridTemplateColumns: isMobile ? 'repeat(2, 1fr)' : 'repeat(4, 1fr)',
+              gap: isMobile ? '10px' : '12px',
               paddingBottom: '40px',
             }}>
               {relatedProducts.map((related) => (
