@@ -46,7 +46,7 @@ export default function ProductDetail({ product, relatedProducts = [] }: Props) 
           src={product.imageUrl}
           alt={product.name}
           fill
-          unoptimized
+          sizes="50vw"
           style={{
             objectFit: 'contain',
             objectPosition: 'center',

@@ -17,11 +17,11 @@ export default function ProductPage() {
     get<Product>(`/products/${id}`)
       .then((p) => {
         setProduct(p)
-        // Fetch related products from the same drop
-        return get<Product[]>(`/products?drop=${p.dropId}`)
-      })
-      .then((all) => {
-        setRelatedProducts(all.filter(p => p.id !== id).slice(0, 4))
+        get<Product[]>(`/products?drop=${p.dropId}`)
+          .then((all) => {
+            setRelatedProducts(all.filter((r) => r.id !== id).slice(0, 4))
+          })
+          .catch(() => {})
       })
       .catch(() => setNotFound(true))
   }, [id])
