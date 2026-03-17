@@ -6,7 +6,6 @@ import Image from 'next/image'
 import { motion } from 'framer-motion'
 import { get } from '@/lib/api'
 import { useCart } from '@/context/CartContext'
-import { useIsMobile } from '@/lib/useIsMobile'
 import type { Product } from '@/types'
 
 // All SPRING 24 / Organized Khaos archive products
@@ -36,7 +35,6 @@ export default function OrganizedKhaosPage() {
   const [selectedSizes, setSelectedSizes] = useState<Record<string, string>>({})
   const shopRef = useRef<HTMLDivElement>(null)
   const { addItem } = useCart()
-  const isMobile = useIsMobile()
 
   const scrollToShop = () => {
     shopRef.current?.scrollIntoView({ behavior: 'smooth' })
@@ -120,7 +118,7 @@ export default function OrganizedKhaosPage() {
       <div style={{
         borderTop: '1px solid var(--border)',
         borderBottom: '1px solid var(--border)',
-        padding: isMobile ? '14px 16px' : '14px 48px',
+        padding: '14px var(--ok-label-px)',
         display: 'flex',
         alignItems: 'center',
         gap: '16px',
@@ -131,12 +129,8 @@ export default function OrganizedKhaosPage() {
       </div>
 
       {/* PRODUCT GRID */}
-      <div ref={shopRef} style={{ padding: isMobile ? '32px 16px' : '64px 48px', maxWidth: '1400px', margin: '0 auto' }}>
-        <div style={{
-          display: 'grid',
-          gridTemplateColumns: isMobile ? '1fr 1fr' : 'repeat(auto-fill, minmax(280px, 1fr))',
-          gap: isMobile ? '16px' : '48px',
-        }}>
+      <div ref={shopRef} style={{ padding: 'var(--ok-section-pad)', maxWidth: '1400px', margin: '0 auto' }}>
+        <div className="ok-grid">
           {ARCHIVE_PRODUCTS.map(product => (
             <Link key={product.id} href={`/products/${product.id}`} style={{ textDecoration: 'none', color: 'inherit' }}>
               <div style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}>
