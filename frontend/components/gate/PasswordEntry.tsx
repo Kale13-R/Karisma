@@ -88,7 +88,7 @@ export default function PasswordEntry() {
             border: 'none',
             borderBottom: '1px solid rgba(255,255,255,0.4)',
             color: '#fff',
-            fontSize: '14px',
+            fontSize: '16px',
             letterSpacing: '0.1em',
             padding: '10px 0',
             outline: 'none',
