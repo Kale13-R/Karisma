@@ -53,7 +53,7 @@ export default function NewReleasesPage() {
           src="/images/heroes/new-releases-hero.png"
           alt="New Releases"
           fill
-          unoptimized
+          sizes="100vw"
           style={{ objectFit: 'contain', objectPosition: 'center' }}
           priority
         />
@@ -149,7 +149,7 @@ export default function NewReleasesPage() {
                 id: 'new-red-tee',
                 name: 'KARISMA — Red',
                 price: 148.00,
-                imageUrl: '/images/new/new-release-red-tee.png',
+                imageUrl: '/images/new/new-release-red-tee.jpg',
                 sizes: ['S', 'M', 'L', 'XL'],
                 inStock: true,
                 description: 'Limited SS26 release.',
@@ -159,7 +159,7 @@ export default function NewReleasesPage() {
                 id: 'new-black-tee',
                 name: 'KARISMA — Black',
                 price: 148.00,
-                imageUrl: '/images/new/new-release-black-tee.png',
+                imageUrl: '/images/new/new-release-black-tee.jpg',
                 sizes: ['S', 'M', 'L', 'XL'],
                 inStock: true,
                 description: 'Limited SS26 release.',
