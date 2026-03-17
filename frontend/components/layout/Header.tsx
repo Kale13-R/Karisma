@@ -5,12 +5,14 @@ import Link from 'next/link'
 import Image from 'next/image'
 import { usePathname } from 'next/navigation'
 import { useCart } from '@/context/CartContext'
+import { useIsMobile } from '@/lib/useIsMobile'
 
 export default function Header() {
   const pathname = usePathname()
   const { itemCount, openDrawer } = useCart()
   const [menuOpen, setMenuOpen] = useState(false)
   const menuRef = useRef<HTMLDivElement>(null)
+  const isMobile = useIsMobile()
 
   // Close menu on route change
   useEffect(() => {
@@ -43,8 +45,8 @@ export default function Header() {
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'space-between',
-        padding: '0 32px',
-        height: '64px',
+        padding: isMobile ? '0 14px' : '0 32px',
+        height: '56px',
         backdropFilter: 'blur(12px)',
         WebkitBackdropFilter: 'blur(12px)',
         backgroundColor: 'color-mix(in srgb, var(--bg) 80%, transparent)',
@@ -75,7 +77,7 @@ export default function Header() {
         {/* Center — Wordmark (fills full header height) */}
         <Link href="/" style={{
           fontWeight: 900,
-          fontSize: '22px',
+          fontSize: isMobile ? '16px' : '22px',
           letterSpacing: '0.15em',
           textDecoration: 'none',
           color: 'var(--fg)',
@@ -92,17 +94,19 @@ export default function Header() {
         </Link>
 
         {/* Right — Actions */}
-        <nav style={{ display: 'flex', gap: '24px', alignItems: 'center' }}>
-          <Link href="/account" style={{
-            fontFamily: 'monospace',
-            fontSize: '13px',
-            letterSpacing: '0.1em',
-            color: 'var(--fg-muted)',
-            textDecoration: 'none',
-            textTransform: 'uppercase',
-          }}>
-            ACCOUNT
-          </Link>
+        <nav style={{ display: 'flex', gap: isMobile ? '14px' : '24px', alignItems: 'center' }}>
+          {!isMobile && (
+            <Link href="/account" style={{
+              fontFamily: 'monospace',
+              fontSize: '13px',
+              letterSpacing: '0.1em',
+              color: 'var(--fg-muted)',
+              textDecoration: 'none',
+              textTransform: 'uppercase',
+            }}>
+              ACCOUNT
+            </Link>
+          )}
 
           <button
             onClick={openDrawer}
@@ -127,18 +131,18 @@ export default function Header() {
       <div
         style={{
           position: 'fixed',
-          top: '64px',
+          top: '56px',
           left: 0,
           right: 0,
           zIndex: 99,
           backgroundColor: '#f5f5f0',
-          padding: menuOpen ? '32px 48px 40px' : '0 48px',
+          padding: menuOpen ? (isMobile ? '24px 20px 32px' : '32px 48px 40px') : (isMobile ? '0 20px' : '0 48px'),
           maxHeight: menuOpen ? '300px' : '0',
           overflow: 'hidden',
           transition: 'max-height 0.35s ease, padding 0.35s ease',
         }}
       >
-        <div style={{ display: 'flex', gap: '120px' }}>
+        <div style={{ display: 'flex', flexDirection: isMobile ? 'column' : 'row', gap: isMobile ? '20px' : '120px' }}>
           {/* NEW RELEASES column */}
           <div>
             <Link
@@ -190,6 +194,26 @@ export default function Header() {
               Organized Khaos
             </Link>
           </div>
+
+          {/* ACCOUNT — mobile only (hidden from header nav) */}
+          {isMobile && (
+            <div>
+              <Link
+                href="/account"
+                style={{
+                  fontWeight: 900,
+                  fontSize: '14px',
+                  letterSpacing: '0.08em',
+                  textTransform: 'uppercase',
+                  color: '#0a0a0a',
+                  textDecoration: 'none',
+                  display: 'block',
+                }}
+              >
+                ACCOUNT
+              </Link>
+            </div>
+          )}
         </div>
       </div>
 
