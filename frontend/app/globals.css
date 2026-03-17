@@ -192,6 +192,8 @@ main {
     grid-template-columns: repeat(auto-fit, minmax(0, 1fr));
     gap: 8px;
     width: 100%;
+    padding: 0 4px;
+    box-sizing: border-box;
   }
 }
 
