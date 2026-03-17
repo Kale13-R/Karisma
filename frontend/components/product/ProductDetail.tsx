@@ -84,7 +84,16 @@ export default function ProductDetail({ product, relatedProducts = [] }: Props) 
         </p>
 
         {/* Size Selection — fills horizontally on mobile */}
-        <div className="pdp-sizes">
+        <div
+          className="pdp-sizes"
+          style={isMobile ? {
+            display: 'grid',
+            gridTemplateColumns: `repeat(${product.sizes.length}, 1fr)`,
+            gap: '8px',
+            width: '100vw',
+            marginLeft: '-16px',
+          } : undefined}
+        >
           {product.sizes.map((size) => (
             <button
               key={size}

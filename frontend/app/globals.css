@@ -191,8 +191,7 @@ main {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(0, 1fr));
     gap: 8px;
-    width: calc(100% + 32px);
-    margin-left: -16px;
+    width: 100%;
   }
 }
 
