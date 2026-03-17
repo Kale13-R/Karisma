@@ -6,7 +6,6 @@ import Image from 'next/image'
 import { motion } from 'framer-motion'
 import { get } from '@/lib/api'
 import { useCart } from '@/context/CartContext'
-import { useIsMobile } from '@/lib/useIsMobile'
 import type { Product } from '@/types'
 
 export default function HomePage() {
@@ -16,7 +15,6 @@ export default function HomePage() {
   const shopRef = useRef<HTMLDivElement>(null)
 
   const { addItem } = useCart()
-  const isMobile = useIsMobile()
 
   useEffect(() => {
     get<Product[]>('/products?drop=ss26-new')
@@ -134,7 +132,7 @@ export default function HomePage() {
       </div>
 
       {/* PRODUCT GRID */}
-      <div ref={shopRef} style={{ padding: isMobile ? '40px 16px' : '80px 48px', maxWidth: '1400px', margin: '0 auto' }}>
+      <div ref={shopRef} style={{ padding: 'var(--section-pad)', maxWidth: '1400px', margin: '0 auto' }}>
         <p style={{ fontSize: '10px', letterSpacing: '0.3em', color: 'var(--fg-muted)', marginBottom: '8px', textTransform: 'uppercase' }}>SS26 DROP</p>
         <h2 style={{ fontSize: '28px', fontWeight: 700, letterSpacing: '0.06em', marginBottom: '48px' }}>NEW ARRIVALS</h2>
 
@@ -145,11 +143,7 @@ export default function HomePage() {
         )}
 
         {!loading && (
-          <div style={{
-            display: 'grid',
-            gridTemplateColumns: isMobile ? '1fr' : 'repeat(auto-fill, minmax(300px, 1fr))',
-            gap: isMobile ? '32px' : '48px',
-          }}>
+          <div className="home-grid">
             {(products.length > 0 ? products : [
               {
                 id: 'new-red-tee',
@@ -158,7 +152,7 @@ export default function HomePage() {
                 imageUrl: '/images/new/new-release-red-tee.jpg',
                 sizes: ['S', 'M', 'L', 'XL'],
                 inStock: true,
-                description: 'Karisma.',
+                description: 'Limited SS26 release.',
                 dropId: 'ss26-new',
               },
               {
@@ -168,7 +162,7 @@ export default function HomePage() {
                 imageUrl: '/images/new/new-release-black-tee.jpg',
                 sizes: ['S', 'M', 'L', 'XL'],
                 inStock: true,
-                description: 'Karisma.',
+                description: 'Limited SS26 release.',
                 dropId: 'ss26-new',
               },
             ] as Product[]).map((product) => (

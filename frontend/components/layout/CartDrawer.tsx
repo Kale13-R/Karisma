@@ -1,13 +1,12 @@
 'use client'
 
 import { useRouter } from 'next/navigation'
+import Image from 'next/image'
 import { useCart } from '@/context/CartContext'
-import { useIsMobile } from '@/lib/useIsMobile'
 
 export default function CartDrawer() {
   const { items, removeItem, itemCount, isDrawerOpen, closeDrawer } = useCart()
   const router = useRouter()
-  const isMobile = useIsMobile()
 
   const total = items.reduce((sum, i) => sum + i.product.price * i.quantity, 0)
 
@@ -34,7 +33,7 @@ export default function CartDrawer() {
         top: 0,
         right: 0,
         height: '100vh',
-        width: isMobile ? '100%' : '380px',
+        width: 'var(--cart-width)',
         backgroundColor: 'var(--bg)',
         borderLeft: '1px solid var(--border)',
         zIndex: 201,
@@ -84,14 +83,34 @@ export default function CartDrawer() {
                 key={`${item.product.id}-${item.size}-${index}`}
                 style={{
                   display: 'flex',
-                  justifyContent: 'space-between',
+                  gap: '12px',
                   alignItems: 'flex-start',
                   paddingBottom: '20px',
                   marginBottom: '20px',
                   borderBottom: '1px solid var(--border)',
                 }}
               >
-                <div style={{ flex: 1 }}>
+                {/* Product thumbnail */}
+                <div style={{
+                  position: 'relative',
+                  width: '68px',
+                  height: '68px',
+                  flexShrink: 0,
+                  overflow: 'hidden',
+                  backgroundColor: 'var(--card-bg)',
+                }}>
+                  <Image
+                    src={item.product.imageUrl}
+                    alt={item.product.name}
+                    fill
+                    unoptimized
+                    style={{ objectFit: 'cover' }}
+                    sizes="68px"
+                  />
+                </div>
+
+                {/* Item info */}
+                <div style={{ flex: 1, minWidth: 0 }}>
                   <p style={{ fontSize: '11px', letterSpacing: '0.1em', marginBottom: '4px', textTransform: 'uppercase' }}>
                     {item.product.name}
                   </p>
@@ -99,7 +118,9 @@ export default function CartDrawer() {
                     {item.size}&nbsp;·&nbsp;QTY {item.quantity}
                   </p>
                 </div>
-                <div style={{ textAlign: 'right', minWidth: '80px' }}>
+
+                {/* Price + remove */}
+                <div style={{ textAlign: 'right', flexShrink: 0 }}>
                   <p style={{ fontSize: '11px', marginBottom: '8px' }}>
                     ${(item.product.price * item.quantity).toFixed(2)}
                   </p>

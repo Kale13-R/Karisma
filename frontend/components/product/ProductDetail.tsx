@@ -5,7 +5,7 @@ import Image from 'next/image'
 import Link from 'next/link'
 import { motion } from 'framer-motion'
 import { useCart } from '@/context/CartContext'
-import { useIsMobile } from '@/lib/useIsMobile'
+import { useMediaQuery } from '@/lib/useMediaQuery'
 import type { Product } from '@/types'
 
 interface Props {
@@ -17,7 +17,8 @@ export default function ProductDetail({ product, relatedProducts = [] }: Props) 
   const [selectedSize, setSelectedSize] = useState<string | null>(null)
   const [added, setAdded] = useState(false)
   const { addItem } = useCart()
-  const isMobile = useIsMobile()
+  // Only used for animation direction — layout handled by CSS
+  const isMobile = useMediaQuery('(max-width: 767px)')
 
   const handleAddToCart = () => {
     if (!selectedSize) return
@@ -27,30 +28,20 @@ export default function ProductDetail({ product, relatedProducts = [] }: Props) 
   }
 
   return (
-    <main style={{
-      display: isMobile ? 'flex' : 'grid',
-      flexDirection: isMobile ? 'column' : undefined,
-      gridTemplateColumns: isMobile ? undefined : '1fr 1fr',
+    <main className="pdp-layout" style={{
       background: 'var(--bg)',
       color: 'var(--fg)',
-      alignItems: 'start',
     }}>
       {/* LEFT / TOP — Image panel (sticky on desktop, 75vh block on mobile) */}
       <motion.div
         layoutId={`product-image-${product.id}`}
-        style={{
-          position: isMobile ? 'relative' : 'sticky',
-          top: isMobile ? undefined : '56px',
-          height: isMobile ? '75vh' : 'calc(100vh - 56px)',
-          width: '100%',
-          overflow: 'hidden',
-        }}
+        className="pdp-image"
       >
         <Image
           src={product.imageUrl}
           alt={product.name}
           fill
-          sizes={isMobile ? '100vw' : '50vw'}
+          sizes="(max-width: 767px) 100vw, 50vw"
           style={{
             objectFit: 'contain',
             objectPosition: 'center',
@@ -59,16 +50,16 @@ export default function ProductDetail({ product, relatedProducts = [] }: Props) 
         />
       </motion.div>
 
-      {/* RIGHT — Scrollable content panel */}
+      {/* RIGHT / BOTTOM — Scrollable content panel */}
       <motion.div
         initial={{ opacity: 0, x: isMobile ? 0 : 40, y: isMobile ? 20 : 0 }}
         animate={{ opacity: 1, x: 0, y: 0 }}
         transition={{ duration: 0.5, ease: [0.25, 0.46, 0.45, 0.94] }}
+        className="pdp-content"
         style={{
-          padding: isMobile ? '24px 16px 40px' : 'clamp(24px, 3vw, 48px)',
+          padding: 'var(--pdp-content-pad)',
           display: 'flex',
           flexDirection: 'column',
-          minHeight: isMobile ? 'auto' : 'calc(100vh - 56px)',
         }}
       >
         {/* Product Info */}
@@ -92,15 +83,13 @@ export default function ProductDetail({ product, relatedProducts = [] }: Props) 
           {product.description}
         </p>
 
-        {/* Size Selection */}
-        <div style={{ display: 'flex', gap: isMobile ? '8px' : '10px', marginTop: '28px', justifyContent: 'center', flexWrap: 'wrap' }}>
+        {/* Size Selection — fills horizontally on mobile */}
+        <div className="pdp-sizes">
           {product.sizes.map((size) => (
             <button
               key={size}
               onClick={() => setSelectedSize(prev => prev === size ? null : size)}
               style={{
-                width: isMobile ? '52px' : '64px',
-                height: isMobile ? '52px' : '64px',
                 border: selectedSize === size ? '3px solid var(--fg)' : '1px solid var(--border)',
                 background: selectedSize === size ? 'var(--fg)' : 'transparent',
                 color: selectedSize === size ? 'var(--bg)' : 'var(--fg-muted)',
@@ -115,17 +104,15 @@ export default function ProductDetail({ product, relatedProducts = [] }: Props) 
           ))}
         </div>
 
-        {/* Spacer — pushes button + related to bottom of viewport (desktop only) */}
-        {!isMobile && <div style={{ flex: '1 1 auto' }} />}
+        {/* Spacer — pushes button + related to bottom of viewport (hidden on mobile via CSS) */}
+        <div className="pdp-spacer" />
 
-        {/* Add to Cart */}
+        {/* Add to Cart — full width on both, margin-top on mobile via CSS */}
         <button
+          className="pdp-add-btn"
           onClick={handleAddToCart}
           disabled={!selectedSize}
           style={{
-            width: '100%',
-            height: '56px',
-            marginTop: isMobile ? '20px' : undefined,
             background: selectedSize ? 'var(--fg)' : 'transparent',
             color: selectedSize ? 'var(--bg)' : 'var(--fg-muted)',
             border: selectedSize ? 'none' : '1px solid var(--border)',
@@ -152,12 +139,7 @@ export default function ProductDetail({ product, relatedProducts = [] }: Props) 
             }}>
               RELATED PRODUCTS
             </p>
-            <div style={{
-              display: 'grid',
-              gridTemplateColumns: isMobile ? 'repeat(2, 1fr)' : 'repeat(4, 1fr)',
-              gap: isMobile ? '10px' : '12px',
-              paddingBottom: '40px',
-            }}>
+            <div className="pdp-related-grid">
               {relatedProducts.map((related) => (
                 <Link
                   key={related.id}
@@ -179,7 +161,7 @@ export default function ProductDetail({ product, relatedProducts = [] }: Props) 
                       alt={related.name}
                       fill
                       style={{ objectFit: 'cover' }}
-                      sizes="12vw"
+                      sizes="(max-width: 767px) 50vw, 12vw"
                     />
                   </motion.div>
                   <p style={{
