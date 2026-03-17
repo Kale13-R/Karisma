@@ -1,4 +1,4 @@
-from sqlalchemy import Boolean, Column, DateTime, Float, Integer, String, Text
+from sqlalchemy import Boolean, Column, Date, DateTime, Float, Integer, String, Text
 from sqlalchemy.sql import func
 
 from app.db.base import Base
@@ -27,6 +27,15 @@ class Product(Base):
     sizes = Column(Text)  # JSON string e.g. '["S","M","L","XL"]'
     in_stock = Column(Boolean, default=True)
     drop_id = Column(String(100), default="ss26")
+
+
+class User(Base):
+    __tablename__ = "users"
+
+    id = Column(Integer, primary_key=True)
+    email = Column(Text, unique=True)
+    password_hash = Column(Text, nullable=False)
+    created_at = Column(Date, nullable=False, server_default=func.current_date())
 
 
 class SiteConfig(Base):

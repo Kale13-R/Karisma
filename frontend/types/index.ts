@@ -20,6 +20,18 @@ export interface GateAuthResponse {
   error?: string
 }
 
+export interface User {
+  id: number
+  email: string
+  created_at: string
+}
+
+export interface AccountAuthResponse {
+  success: boolean
+  user?: User
+  error?: string
+}
+
 export interface Product {
   id: string
   name: string

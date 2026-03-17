@@ -24,7 +24,7 @@ export async function POST(request: NextRequest) {
 
   response.cookies.set('karisma_session', data.session?.sessionId || '', {
     httpOnly: true,
-    secure: true,
+    secure: process.env.NODE_ENV === 'production',
     sameSite: 'lax',
     maxAge: 60 * 60 * 24,
     path: '/',
