@@ -1,6 +1,8 @@
 import json
 
-from fastapi import APIRouter, Depends, HTTPException
+from typing import Optional
+
+from fastapi import APIRouter, Depends, HTTPException, Query
 from sqlalchemy.orm import Session
 
 from app.db import models
@@ -10,8 +12,14 @@ router = APIRouter()
 
 
 @router.get("/products")
-def get_products(db: Session = Depends(get_db)):
-    products = db.query(models.Product).filter_by(in_stock=True).all()
+def get_products(
+    drop: Optional[str] = Query(None, description="Filter by drop_id"),
+    db: Session = Depends(get_db),
+):
+    query = db.query(models.Product).filter_by(in_stock=True)
+    if drop:
+        query = query.filter(models.Product.drop_id == drop)
+    products = query.all()
     return [
         {
             "id": p.id,

@@ -14,6 +14,29 @@ def seed():
     db.commit()
 
     products = [
+        # ─── SS26 NEW RELEASES ───────────────────────────────────────────
+        models.Product(
+            id="new-red-tee",
+            name="KARISMA — Red",
+            price=148.00,
+            description="SS26 new release. Limited run. The red speaks for itself.",
+            image_url="/images/new/new-release-red-tee.jpg",
+            sizes=json.dumps(["S", "M", "L", "XL"]),
+            in_stock=True,
+            drop_id="ss26-new",
+        ),
+        models.Product(
+            id="new-black-tee",
+            name="KARISMA — Black",
+            price=148.00,
+            description="SS26 new release. Limited run. Same energy, different darkness.",
+            image_url="/images/new/new-release-black-tee.jpg",
+            sizes=json.dumps(["S", "M", "L", "XL"]),
+            in_stock=True,
+            drop_id="ss26-new",
+        ),
+
+        # ─── SPRING 24 — ORGANIZED KHAOS (existing archive) ─────────────
         models.Product(
             id="karisma-archive-001",
             name="Karisma Archive 001",
@@ -22,7 +45,7 @@ def seed():
             image_url="/images/IMG_8709.png",
             sizes=json.dumps(["S", "M", "L", "XL"]),
             in_stock=True,
-            drop_id="ss26",
+            drop_id="spring24",
         ),
         models.Product(
             id="karisma-archive-002",
@@ -32,7 +55,7 @@ def seed():
             image_url="/images/IMG_8711.png",
             sizes=json.dumps(["S", "M", "L", "XL"]),
             in_stock=True,
-            drop_id="ss26",
+            drop_id="spring24",
         ),
         models.Product(
             id="karisma-archive-003",
@@ -42,7 +65,7 @@ def seed():
             image_url="/images/IMG_8712.png",
             sizes=json.dumps(["S", "M", "L", "XL"]),
             in_stock=True,
-            drop_id="ss26",
+            drop_id="spring24",
         ),
         models.Product(
             id="karisma-archive-004",
@@ -52,7 +75,7 @@ def seed():
             image_url="/images/IMG_8713.png",
             sizes=json.dumps(["S", "M", "L", "XL"]),
             in_stock=True,
-            drop_id="ss26",
+            drop_id="spring24",
         ),
         models.Product(
             id="karisma-archive-005",
@@ -62,7 +85,7 @@ def seed():
             image_url="/images/IMG_8715.png",
             sizes=json.dumps(["S", "M", "L", "XL"]),
             in_stock=True,
-            drop_id="ss26",
+            drop_id="spring24",
         ),
         models.Product(
             id="karisma-archive-006",
@@ -72,7 +95,7 @@ def seed():
             image_url="/images/IMG_8726.png",
             sizes=json.dumps(["S", "M", "L", "XL"]),
             in_stock=True,
-            drop_id="ss26",
+            drop_id="spring24",
         ),
         models.Product(
             id="karisma-archive-007",
@@ -82,7 +105,7 @@ def seed():
             image_url="/images/IMG_8728.png",
             sizes=json.dumps(["S", "M", "L", "XL"]),
             in_stock=True,
-            drop_id="ss26",
+            drop_id="spring24",
         ),
         models.Product(
             id="karisma-archive-008",
@@ -92,7 +115,7 @@ def seed():
             image_url="/images/IMG_8736.png",
             sizes=json.dumps(["S", "M", "L", "XL"]),
             in_stock=True,
-            drop_id="ss26",
+            drop_id="spring24",
         ),
         models.Product(
             id="karisma-archive-009",
@@ -102,13 +125,103 @@ def seed():
             image_url="/images/IMG_8742.png",
             sizes=json.dumps(["S", "M", "L", "XL"]),
             in_stock=True,
-            drop_id="ss26",
+            drop_id="spring24",
+        ),
+        # karisma.live archive items
+        models.Product(
+            id="krsm-snapback-green",
+            name="RismaSnapBack — Green",
+            price=35.00,
+            description="Hand-painted trucker snapback. One of a kind.",
+            image_url="/images/archive/risma-snapback-green.png",
+            sizes=json.dumps(["ONE SIZE"]),
+            in_stock=True,
+            drop_id="spring24",
+        ),
+        models.Product(
+            id="krsm-logo-hoodie",
+            name="Logo Hoodie",
+            price=40.00,
+            description="Classic Karisma logo hoodie.",
+            image_url="/images/archive/logo-hoodie.png",
+            sizes=json.dumps(["S", "M", "L", "XL"]),
+            in_stock=True,
+            drop_id="spring24",
+        ),
+        models.Product(
+            id="krsm-trenches-tee",
+            name="Made in The Trenches Tee",
+            price=50.00,
+            description="Made in The Trenches.",
+            image_url="/images/archive/made-in-trenches-tee.png",
+            sizes=json.dumps(["S", "M", "L", "XL"]),
+            in_stock=False,
+            drop_id="spring24",
+        ),
+        models.Product(
+            id="krsm-lavender-zip",
+            name="Baby Lavender Crop Zip Up",
+            price=70.00,
+            description="Baby lavender crop zip up hoodie.",
+            image_url="/images/archive/baby-lavender-crop-zip.png",
+            sizes=json.dumps(["XS", "S", "M"]),
+            in_stock=False,
+            drop_id="spring24",
+        ),
+        models.Product(
+            id="krsm-white-hoodie",
+            name="WhiteMARS Long Sleeve",
+            price=65.00,
+            description="WhiteMARS long sleeve graphic tee.",
+            image_url="/images/archive/white-banned-hoodie.png",
+            sizes=json.dumps(["S", "M", "L", "XL"]),
+            in_stock=False,
+            drop_id="spring24",
+        ),
+        models.Product(
+            id="krsm-black-hoodie",
+            name="BlackMars Long Sleeve",
+            price=65.00,
+            description="BlackMars long sleeve tee.",
+            image_url="/images/archive/black-banned-shirt.png",
+            sizes=json.dumps(["S", "M", "L", "XL"]),
+            in_stock=False,
+            drop_id="spring24",
+        ),
+        models.Product(
+            id="krsm-blue-hoodie",
+            name="Blue KOLOSSAL Hoodie",
+            price=60.00,
+            description="Blue KOLOSSAL heavyweight hoodie.",
+            image_url="/images/archive/blue-colossal-hoodie.png",
+            sizes=json.dumps(["S", "M", "L", "XL"]),
+            in_stock=False,
+            drop_id="spring24",
+        ),
+        models.Product(
+            id="krsm-marisma",
+            name="Marisma :)",
+            price=50.00,
+            description="Marisma graphic tee.",
+            image_url="/images/archive/marisma.png",
+            sizes=json.dumps(["S", "M", "L", "XL"]),
+            in_stock=True,
+            drop_id="spring24",
+        ),
+        models.Product(
+            id="krsm-sage-beanie",
+            name="Baby Sage Beanie",
+            price=30.00,
+            description="Hand-painted sage beanie.",
+            image_url="/images/archive/baby-sage-beanie.png",
+            sizes=json.dumps(["ONE SIZE"]),
+            in_stock=True,
+            drop_id="spring24",
         ),
     ]
 
     db.add_all(products)
 
-    # Always upsert SiteConfig so gate_password tracks settings (important for test isolation)
     existing_config = db.query(models.SiteConfig).filter_by(id=1).first()
     if existing_config:
         existing_config.gate_password = settings.GATE_PASSWORD
