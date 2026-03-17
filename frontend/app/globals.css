@@ -52,11 +52,11 @@
     --header-px: 14px;
     --header-wordmark: 16px;
     --nav-gap: 14px;
-    --section-pad: 40px 16px;
+    --section-pad: 40px 20px;
     --section-gap: 32px;
-    --ok-label-px: 16px;
-    --ok-section-pad: 32px 16px;
-    --ok-grid-gap: 16px;
+    --ok-label-px: 20px;
+    --ok-section-pad: 32px 20px;
+    --ok-grid-gap: 14px;
     --pdp-content-pad: 24px 16px 40px;
     --cart-width: 100%;
   }
@@ -251,5 +251,10 @@ main {
 @media (max-width: 767px) {
   .ok-grid {
     grid-template-columns: 1fr 1fr;
+  }
+}
+@media (max-width: 480px) {
+  .ok-grid {
+    grid-template-columns: 1fr;
   }
 }
