@@ -2,6 +2,7 @@ import type { Metadata } from 'next'
 import './globals.css'
 import AnimateWrapper from '@/components/AnimateWrapper'
 import { CartProvider } from '@/context/CartContext'
+import { UserProvider } from '@/context/UserContext'
 import Header from '@/components/layout/Header'
 import CartDrawer from '@/components/layout/CartDrawer'
 import Footer from '@/components/layout/Footer'
@@ -19,14 +20,16 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body suppressHydrationWarning className="flex flex-col min-h-screen">
-        <CartProvider>
-          <Header />
-          <CartDrawer />
-          <div className="flex-1">
-            <AnimateWrapper>{children}</AnimateWrapper>
-          </div>
-          <Footer />
-        </CartProvider>
+        <UserProvider>
+          <CartProvider>
+            <Header />
+            <CartDrawer />
+            <div className="flex-1">
+              <AnimateWrapper>{children}</AnimateWrapper>
+            </div>
+            <Footer />
+          </CartProvider>
+        </UserProvider>
       </body>
     </html>
   )
