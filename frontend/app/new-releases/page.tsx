@@ -152,7 +152,7 @@ export default function NewReleasesPage() {
                 imageUrl: '/images/new/new-release-red-tee.jpg',
                 sizes: ['S', 'M', 'L', 'XL'],
                 inStock: true,
-                description: 'Limited SS26 release.',
+                description: 'Karisma.',
                 dropId: 'ss26-new',
               },
               {
@@ -162,7 +162,7 @@ export default function NewReleasesPage() {
                 imageUrl: '/images/new/new-release-black-tee.jpg',
                 sizes: ['S', 'M', 'L', 'XL'],
                 inStock: true,
-                description: 'Limited SS26 release.',
+                description: 'Karisma.',
                 dropId: 'ss26-new',
               },
             ] as Product[]).map((product) => (
