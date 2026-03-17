@@ -1,10 +1,9 @@
 'use client'
 
-import { useEffect, useState, useRef } from 'react'
+import { useState, useRef } from 'react'
 import Link from 'next/link'
 import Image from 'next/image'
 import { motion } from 'framer-motion'
-import { get } from '@/lib/api'
 import { useCart } from '@/context/CartContext'
 import type { Product } from '@/types'
 

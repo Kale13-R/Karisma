@@ -24,6 +24,10 @@ Thumbs.db
 desktop.ini
 *.pem
 
+# dev reference screenshots — never commit to repo
+screenshots/
+**/screenshots/
+
 # lockfiles — not committed in this repo
 package-lock.json
 yarn.lock
