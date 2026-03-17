@@ -1,4 +1,4 @@
-import type { Metadata } from 'next'
+import type { Metadata, Viewport } from 'next'
 import './globals.css'
 import AnimateWrapper from '@/components/AnimateWrapper'
 import { CartProvider } from '@/context/CartContext'
@@ -10,6 +10,12 @@ import Footer from '@/components/layout/Footer'
 export const metadata: Metadata = {
   title: 'KARISMA',
   description: 'Exclusive streetwear drops.',
+}
+
+export const viewport: Viewport = {
+  width: 'device-width',
+  initialScale: 1,
+  maximumScale: 1,
 }
 
 export default function RootLayout({
