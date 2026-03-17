@@ -28,8 +28,8 @@ export default function AccountPage() {
       } else {
         router.push('/')
       }
-    } catch {
-      setError('Something went wrong')
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Request failed. Please try again.')
     } finally {
       setSubmitting(false)
     }

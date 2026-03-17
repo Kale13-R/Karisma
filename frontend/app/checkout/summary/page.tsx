@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
+import Image from 'next/image'
 import { createCheckoutSession } from '@/lib/api'
 import type { CartItem } from '@/types'
 
@@ -267,15 +268,34 @@ export default function CheckoutSummaryPage() {
                     key={`${item.product.id}-${item.size}`}
                     style={{
                       display: 'flex',
-                      justifyContent: 'space-between',
                       alignItems: 'flex-start',
+                      gap: '24px',
                       paddingTop: i === 0 ? 0 : '28px',
                       paddingBottom: '28px',
                       borderBottom: '4px solid #f0f0f0',
                     }}
                   >
-                    {/* Left: name + meta */}
-                    <div>
+                    {/* Thumbnail */}
+                    <div style={{
+                      position: 'relative',
+                      width: '96px',
+                      height: '120px',
+                      flexShrink: 0,
+                      overflow: 'hidden',
+                      backgroundColor: '#111',
+                    }}>
+                      <Image
+                        src={item.product.imageUrl}
+                        alt={item.product.name}
+                        fill
+                        unoptimized
+                        style={{ objectFit: 'cover' }}
+                        sizes="96px"
+                      />
+                    </div>
+
+                    {/* Name + meta */}
+                    <div style={{ flex: 1, minWidth: 0 }}>
                       <p
                         style={{
                           fontSize: '20px',
@@ -299,7 +319,7 @@ export default function CheckoutSummaryPage() {
                       </p>
                     </div>
 
-                    {/* Right: price */}
+                    {/* Price */}
                     <p
                       style={{
                         fontSize: '18px',
@@ -307,6 +327,7 @@ export default function CheckoutSummaryPage() {
                         letterSpacing: '0.05em',
                         fontFamily: "'Courier New', Courier, monospace",
                         whiteSpace: 'nowrap',
+                        flexShrink: 0,
                       }}
                     >
                       ${(item.product.price * item.quantity).toFixed(2)}

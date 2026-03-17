@@ -30,6 +30,7 @@ export interface AccountAuthResponse {
   success: boolean
   user?: User
   error?: string
+  detail?: string
 }
 
 export interface Product {

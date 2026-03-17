@@ -36,6 +36,9 @@ export function UserProvider({ children }: { children: React.ReactNode }) {
     })
     const data: AccountAuthResponse = await res.json()
     if (data.success && data.user) setUser(data.user)
+    if (!res.ok && !data.error && data.detail) {
+      return { success: false, error: data.detail }
+    }
     return data
   }
 
@@ -48,6 +51,9 @@ export function UserProvider({ children }: { children: React.ReactNode }) {
     })
     const data: AccountAuthResponse = await res.json()
     if (data.success && data.user) setUser(data.user)
+    if (!res.ok && !data.error && data.detail) {
+      return { success: false, error: data.detail }
+    }
     return data
   }
 

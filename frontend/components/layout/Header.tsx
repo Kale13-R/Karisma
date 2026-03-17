@@ -64,7 +64,7 @@ export default function Header() {
           aria-label="Toggle navigation menu"
         >
           <Image
-            src="/images/Bunny-mascot.png"
+            src="/images/bunny-mascot.png"
             alt="Karisma"
             width={36}
             height={36}
