@@ -1,74 +1,214 @@
 'use client'
 
+import { useState, useEffect, useRef } from 'react'
 import Link from 'next/link'
+import Image from 'next/image'
 import { usePathname } from 'next/navigation'
 import { useCart } from '@/context/CartContext'
 
 export default function Header() {
   const pathname = usePathname()
   const { itemCount, openDrawer } = useCart()
+  const [menuOpen, setMenuOpen] = useState(false)
+  const menuRef = useRef<HTMLDivElement>(null)
+
+  // Close menu on route change
+  useEffect(() => {
+    setMenuOpen(false)
+  }, [pathname])
+
+  // Close menu when clicking outside
+  useEffect(() => {
+    function handleClickOutside(e: MouseEvent) {
+      if (menuRef.current && !menuRef.current.contains(e.target as Node)) {
+        setMenuOpen(false)
+      }
+    }
+    if (menuOpen) {
+      document.addEventListener('mousedown', handleClickOutside)
+      return () => document.removeEventListener('mousedown', handleClickOutside)
+    }
+  }, [menuOpen])
 
   if (pathname === '/gate') return null
 
   return (
-    <header style={{
-      position: 'fixed',
-      top: 0,
-      left: 0,
-      right: 0,
-      zIndex: 100,
-      display: 'flex',
-      alignItems: 'center',
-      justifyContent: 'space-between',
-      padding: '0 32px',
-      height: '56px',
-      backdropFilter: 'blur(12px)',
-      WebkitBackdropFilter: 'blur(12px)',
-      backgroundColor: 'color-mix(in srgb, var(--bg) 80%, transparent)',
-      borderBottom: 'none',
-    }}>
-      {/* Left — Wordmark */}
-      <Link href="/" style={{
-        fontWeight: 900,
-        fontSize: '18px',
-        letterSpacing: '0.15em',
-        textDecoration: 'none',
-        color: 'var(--fg)',
-        textTransform: 'uppercase',
+    <div ref={menuRef}>
+      <header style={{
+        position: 'fixed',
+        top: 0,
+        left: 0,
+        right: 0,
+        zIndex: 100,
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'space-between',
+        padding: '0 32px',
+        height: '64px',
+        backdropFilter: 'blur(12px)',
+        WebkitBackdropFilter: 'blur(12px)',
+        backgroundColor: 'color-mix(in srgb, var(--bg) 80%, transparent)',
       }}>
-        KARISMA
-      </Link>
-
-      {/* Right — Actions */}
-      <nav style={{ display: 'flex', gap: '24px', alignItems: 'center' }}>
-        <Link href="/account" style={{
-          fontFamily: 'monospace',
-          fontSize: '11px',
-          letterSpacing: '0.1em',
-          color: 'var(--fg-muted)',
-          textDecoration: 'none',
-          textTransform: 'uppercase',
-        }}>
-          ACCOUNT
-        </Link>
-
+        {/* Left — Bunny mascot toggle */}
         <button
-          onClick={openDrawer}
+          onClick={() => setMenuOpen(!menuOpen)}
           style={{
-            fontFamily: 'monospace',
-            fontSize: '11px',
-            letterSpacing: '0.1em',
-            color: 'var(--fg)',
             background: 'transparent',
             border: 'none',
             cursor: 'pointer',
-            textTransform: 'uppercase',
-            padding: 0,
+            padding: '4px',
+            display: 'flex',
+            alignItems: 'center',
+            gap: '10px',
           }}
+          aria-label="Toggle navigation menu"
         >
-          CART {itemCount > 0 ? `(${itemCount})` : ''}
+          <Image
+            src="/images/Bunny-mascot.png"
+            alt="Karisma"
+            width={36}
+            height={36}
+            style={{ objectFit: 'contain', filter: 'brightness(1.2)', width: '36px', height: '36px' }}
+          />
         </button>
-      </nav>
-    </header>
+
+        {/* Center — Wordmark (fills full header height) */}
+        <Link href="/" style={{
+          fontWeight: 900,
+          fontSize: '22px',
+          letterSpacing: '0.15em',
+          textDecoration: 'none',
+          color: 'var(--fg)',
+          textTransform: 'uppercase',
+          position: 'absolute',
+          left: '50%',
+          transform: 'translateX(-50%)',
+          height: '100%',
+          display: 'flex',
+          alignItems: 'center',
+          padding: '0 16px',
+        }}>
+          KARISMA
+        </Link>
+
+        {/* Right — Actions */}
+        <nav style={{ display: 'flex', gap: '24px', alignItems: 'center' }}>
+          <Link href="/account" style={{
+            fontFamily: 'monospace',
+            fontSize: '13px',
+            letterSpacing: '0.1em',
+            color: 'var(--fg-muted)',
+            textDecoration: 'none',
+            textTransform: 'uppercase',
+          }}>
+            ACCOUNT
+          </Link>
+
+          <button
+            onClick={openDrawer}
+            style={{
+              fontFamily: 'monospace',
+              fontSize: '13px',
+              letterSpacing: '0.1em',
+              color: 'var(--fg)',
+              background: 'transparent',
+              border: 'none',
+              cursor: 'pointer',
+              textTransform: 'uppercase',
+              padding: 0,
+            }}
+          >
+            CART {itemCount > 0 ? `(${itemCount})` : ''}
+          </button>
+        </nav>
+      </header>
+
+      {/* Dropdown Menu Panel */}
+      <div
+        style={{
+          position: 'fixed',
+          top: '64px',
+          left: 0,
+          right: 0,
+          zIndex: 99,
+          backgroundColor: '#f5f5f0',
+          padding: menuOpen ? '32px 48px 40px' : '0 48px',
+          maxHeight: menuOpen ? '300px' : '0',
+          overflow: 'hidden',
+          transition: 'max-height 0.35s ease, padding 0.35s ease',
+        }}
+      >
+        <div style={{ display: 'flex', gap: '120px' }}>
+          {/* NEW RELEASES column */}
+          <div>
+            <Link
+              href="/new-releases"
+              style={{
+                fontWeight: 900,
+                fontSize: '14px',
+                letterSpacing: '0.08em',
+                textTransform: 'uppercase',
+                color: '#0a0a0a',
+                textDecoration: 'none',
+                display: 'block',
+                marginBottom: '12px',
+              }}
+            >
+              NEW RELEASES
+            </Link>
+          </div>
+
+          {/* SHOP ALL column */}
+          <div>
+            <span
+              style={{
+                fontWeight: 900,
+                fontSize: '14px',
+                letterSpacing: '0.08em',
+                textTransform: 'uppercase',
+                color: '#0a0a0a',
+                display: 'block',
+                marginBottom: '12px',
+                cursor: 'default',
+              }}
+            >
+              SHOP ALL
+            </span>
+            <Link
+              href="/organized-khaos"
+              style={{
+                fontSize: '12px',
+                letterSpacing: '0.06em',
+                color: '#666',
+                textDecoration: 'none',
+                display: 'block',
+                transition: 'color 0.15s',
+              }}
+              onMouseEnter={(e) => (e.currentTarget.style.color = '#0a0a0a')}
+              onMouseLeave={(e) => (e.currentTarget.style.color = '#666')}
+            >
+              Organized Khaos
+            </Link>
+          </div>
+        </div>
+      </div>
+
+      {/* Backdrop */}
+      {menuOpen && (
+        <div
+          style={{
+            position: 'fixed',
+            top: 0,
+            left: 0,
+            right: 0,
+            bottom: 0,
+            zIndex: 98,
+            backgroundColor: 'rgba(0,0,0,0.4)',
+            transition: 'opacity 0.3s',
+          }}
+          onClick={() => setMenuOpen(false)}
+        />
+      )}
+    </div>
   )
 }
