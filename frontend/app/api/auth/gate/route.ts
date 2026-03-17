@@ -3,7 +3,7 @@ import { NextRequest, NextResponse } from 'next/server'
 export async function POST(request: NextRequest) {
   const body = await request.json()
 
-  const backendUrl = process.env.API_URL || process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000'
+  const backendUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000'
 
   const backendResponse = await fetch(`${backendUrl}/auth/gate`, {
     method: 'POST',
