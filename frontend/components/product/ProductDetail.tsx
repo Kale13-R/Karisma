@@ -13,6 +13,51 @@ interface Props {
   relatedProducts?: Product[]
 }
 
+function RelatedCard({ related }: { related: Product }) {
+  const [hovered, setHovered] = useState(false)
+  return (
+    <Link href={`/products/${related.id}`} style={{ textDecoration: 'none', color: 'inherit' }}>
+      <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
+        <motion.div
+          onHoverStart={() => setHovered(true)}
+          onHoverEnd={() => setHovered(false)}
+          style={{ position: 'relative', aspectRatio: '3/4', overflow: 'hidden', border: '1px solid var(--border)' }}
+        >
+          <motion.div
+            animate={{ scale: hovered ? 1.05 : 1 }}
+            transition={{ duration: 0.2 }}
+            style={{ position: 'relative', width: '100%', height: '100%' }}
+          >
+            <Image
+              src={related.imageUrl}
+              alt={related.name}
+              fill
+              style={{ objectFit: 'cover' }}
+              sizes="(max-width: 767px) 50vw, 12vw"
+            />
+          </motion.div>
+        </motion.div>
+        <motion.p
+          initial={{ opacity: 0 }}
+          animate={{ opacity: hovered ? 1 : 0, y: hovered ? 0 : 4 }}
+          transition={{ duration: 0.2, ease: 'easeOut' }}
+          style={{ fontSize: '9px', letterSpacing: '0.1em', textTransform: 'uppercase', color: 'var(--fg-muted)', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', margin: 0 }}
+        >
+          {related.name}
+        </motion.p>
+        <motion.p
+          initial={{ opacity: 0 }}
+          animate={{ opacity: hovered ? 1 : 0, y: hovered ? 0 : 4 }}
+          transition={{ duration: 0.2, ease: 'easeOut', delay: 0.03 }}
+          style={{ fontSize: '9px', color: 'var(--fg-muted)', margin: 0 }}
+        >
+          ${related.price.toFixed(2)}
+        </motion.p>
+      </div>
+    </Link>
+  )
+}
+
 export default function ProductDetail({ product, relatedProducts = [] }: Props) {
   const [selectedSize, setSelectedSize] = useState<string | null>(null)
   const [added, setAdded] = useState(false)
@@ -153,49 +198,7 @@ export default function ProductDetail({ product, relatedProducts = [] }: Props) 
             </p>
             <div className="pdp-related-grid">
               {relatedProducts.map((related) => (
-                <Link
-                  key={related.id}
-                  href={`/products/${related.id}`}
-                  style={{ textDecoration: 'none', color: 'inherit' }}
-                >
-                  <motion.div
-                    whileHover={{ scale: 1.05 }}
-                    transition={{ duration: 0.2 }}
-                    style={{
-                      position: 'relative',
-                      aspectRatio: '3/4',
-                      overflow: 'hidden',
-                      border: '1px solid var(--border)',
-                    }}
-                  >
-                    <Image
-                      src={related.imageUrl}
-                      alt={related.name}
-                      fill
-                      style={{ objectFit: 'cover' }}
-                      sizes="(max-width: 767px) 50vw, 12vw"
-                    />
-                  </motion.div>
-                  <p style={{
-                    fontSize: '9px',
-                    letterSpacing: '0.1em',
-                    textTransform: 'uppercase',
-                    marginTop: '6px',
-                    color: 'var(--fg-muted)',
-                    whiteSpace: 'nowrap',
-                    overflow: 'hidden',
-                    textOverflow: 'ellipsis',
-                  }}>
-                    {related.name}
-                  </p>
-                  <p style={{
-                    fontSize: '9px',
-                    color: 'var(--fg-muted)',
-                    opacity: 0.6,
-                  }}>
-                    ${related.price.toFixed(2)}
-                  </p>
-                </Link>
+                <RelatedCard key={related.id} related={related} />
               ))}
             </div>
           </div>
