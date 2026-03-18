@@ -17,7 +17,10 @@ async function safeJson(res: Response): Promise<AccountAuthResponse> {
   try {
     return await res.json() as AccountAuthResponse
   } catch {
-    return { success: false, error: 'Request failed' }
+    return {
+      success: false,
+      error: res.ok ? 'Unexpected server response' : `Server error (${res.status})`,
+    }
   }
 }
 
