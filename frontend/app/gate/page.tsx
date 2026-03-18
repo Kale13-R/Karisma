@@ -1,23 +1,23 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import Countdown from '@/components/gate/Countdown'
 import PasswordEntry from '@/components/gate/PasswordEntry'
 import type { DropState } from '@/types'
 
 export default function GatePage() {
+  // Default 'open' so content renders on first paint — useEffect corrects to
+  // 'countdown' on next tick if NEXT_PUBLIC_DROP_TIMESTAMP is set
   const [dropState, setDropState] = useState<DropState>({
-    status: 'loading',
+    status: 'open',
     timeRemaining: null,
   })
+  const videoRef = useRef<HTMLVideoElement>(null)
 
+  // Drop-time check
   useEffect(() => {
     const dropTimestamp = process.env.NEXT_PUBLIC_DROP_TIMESTAMP
-
-    if (!dropTimestamp) {
-      setDropState({ status: 'open', timeRemaining: null })
-      return
-    }
+    if (!dropTimestamp) return
 
     const checkTime = () => {
       const now = Date.now()
@@ -34,15 +34,36 @@ export default function GatePage() {
     return () => clearInterval(interval)
   }, [])
 
+  // Manual loop: seek to 0 when the video is ~0.15 s from its end so the
+  // browser never hits the native loop-seek frame which causes the flash
+  useEffect(() => {
+    const video = videoRef.current
+    if (!video) return
+
+    const handleTimeUpdate = () => {
+      if (video.duration && video.currentTime >= video.duration - 0.15) {
+        video.currentTime = 0
+      }
+    }
+
+    video.addEventListener('timeupdate', handleTimeUpdate)
+    return () => video.removeEventListener('timeupdate', handleTimeUpdate)
+  }, [])
+
   return (
-    <div className="relative min-h-screen overflow-hidden">
-      {/* Video background */}
+    <div
+      className="relative min-h-screen overflow-hidden"
+      style={{ backgroundColor: '#000' }}
+    >
+      {/* Video — no `loop` attr; manual seek handles it to avoid frame flash */}
       <video
+        ref={videoRef}
         autoPlay
         muted
-        loop
         playsInline
+        preload="auto"
         className="absolute inset-0 w-full h-full object-cover"
+        style={{ backgroundColor: '#000' }}
       >
         <source src="/videos/RPReplay_Final1730345188.mp4" type="video/mp4" />
       </video>
