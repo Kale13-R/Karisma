@@ -6,18 +6,16 @@ import PasswordEntry from '@/components/gate/PasswordEntry'
 import type { DropState } from '@/types'
 
 export default function GatePage() {
+  // Default to 'open' so content renders immediately on first paint —
+  // useEffect will switch to 'countdown' on next tick if a timestamp exists
   const [dropState, setDropState] = useState<DropState>({
-    status: 'loading',
+    status: 'open',
     timeRemaining: null,
   })
 
   useEffect(() => {
     const dropTimestamp = process.env.NEXT_PUBLIC_DROP_TIMESTAMP
-
-    if (!dropTimestamp) {
-      setDropState({ status: 'open', timeRemaining: null })
-      return
-    }
+    if (!dropTimestamp) return
 
     const checkTime = () => {
       const now = Date.now()
@@ -35,14 +33,19 @@ export default function GatePage() {
   }, [])
 
   return (
-    <div className="relative min-h-screen overflow-hidden">
-      {/* Video background */}
+    <div
+      className="relative min-h-screen overflow-hidden"
+      style={{ backgroundColor: '#000' }}
+    >
+      {/* Video background — black bg prevents flash on loop seek */}
       <video
         autoPlay
         muted
         loop
         playsInline
+        preload="auto"
         className="absolute inset-0 w-full h-full object-cover"
+        style={{ backgroundColor: '#000' }}
       >
         <source src="/videos/RPReplay_Final1730345188.mp4" type="video/mp4" />
       </video>
