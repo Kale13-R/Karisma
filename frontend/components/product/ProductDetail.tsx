@@ -14,46 +14,56 @@ interface Props {
 }
 
 function RelatedCard({ related }: { related: Product }) {
-  const [hovered, setHovered] = useState(false)
   return (
     <Link href={`/products/${related.id}`} style={{ textDecoration: 'none', color: 'inherit' }}>
-      <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
+      <motion.div
+        whileHover="hover"
+        initial="rest"
+        style={{
+          position: 'relative',
+          aspectRatio: '3/4',
+          overflow: 'hidden',
+          border: '1px solid var(--border)',
+        }}
+      >
         <motion.div
-          onHoverStart={() => setHovered(true)}
-          onHoverEnd={() => setHovered(false)}
-          style={{ position: 'relative', aspectRatio: '3/4', overflow: 'hidden', border: '1px solid var(--border)' }}
+          variants={{ rest: { scale: 1 }, hover: { scale: 1.05 } }}
+          transition={{ duration: 0.2 }}
+          style={{ position: 'relative', width: '100%', height: '100%' }}
         >
-          <motion.div
-            animate={{ scale: hovered ? 1.05 : 1 }}
-            transition={{ duration: 0.2 }}
-            style={{ position: 'relative', width: '100%', height: '100%' }}
-          >
-            <Image
-              src={related.imageUrl}
-              alt={related.name}
-              fill
-              style={{ objectFit: 'cover' }}
-              sizes="(max-width: 767px) 50vw, 12vw"
-            />
-          </motion.div>
+          <Image
+            src={related.imageUrl}
+            alt={related.name}
+            fill
+            style={{ objectFit: 'cover' }}
+            sizes="(max-width: 767px) 50vw, 12vw"
+          />
         </motion.div>
-        <motion.p
-          initial={{ opacity: 0 }}
-          animate={{ opacity: hovered ? 1 : 0, y: hovered ? 0 : 4 }}
+        <motion.div
+          variants={{ rest: { opacity: 0, y: 8 }, hover: { opacity: 1, y: 0 } }}
           transition={{ duration: 0.2, ease: 'easeOut' }}
-          style={{ fontSize: '9px', letterSpacing: '0.1em', textTransform: 'uppercase', color: 'var(--fg-muted)', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', margin: 0 }}
+          style={{
+            position: 'absolute',
+            bottom: 0, left: 0, right: 0,
+            background: 'linear-gradient(to top, rgba(0,0,0,0.85) 0%, transparent 100%)',
+            padding: '16px 10px 10px',
+            display: 'flex',
+            justifyContent: 'space-between',
+            alignItems: 'flex-end',
+          }}
         >
-          {related.name}
-        </motion.p>
-        <motion.p
-          initial={{ opacity: 0 }}
-          animate={{ opacity: hovered ? 1 : 0, y: hovered ? 0 : 4 }}
-          transition={{ duration: 0.2, ease: 'easeOut', delay: 0.03 }}
-          style={{ fontSize: '9px', color: 'var(--fg-muted)', margin: 0 }}
-        >
-          ${related.price.toFixed(2)}
-        </motion.p>
-      </div>
+          <p style={{
+            fontSize: '9px', fontWeight: 700, letterSpacing: '0.1em', color: '#fff',
+            textTransform: 'uppercase', whiteSpace: 'nowrap', overflow: 'hidden',
+            textOverflow: 'ellipsis', margin: 0, maxWidth: '70%',
+          }}>
+            {related.name}
+          </p>
+          <p style={{ fontSize: '9px', color: 'rgba(255,255,255,0.7)', margin: 0 }}>
+            ${related.price.toFixed(2)}
+          </p>
+        </motion.div>
+      </motion.div>
     </Link>
   )
 }
