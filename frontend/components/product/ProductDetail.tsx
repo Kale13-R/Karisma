@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import Image from 'next/image'
 import Link from 'next/link'
 import { motion } from 'framer-motion'
@@ -15,27 +15,21 @@ interface Props {
 
 function RelatedCard({ related }: { related: Product }) {
   const [loaded, setLoaded] = useState(false)
-  const [hovered, setHovered] = useState(false)
   return (
-    <Link key={related.id} href={`/products/${related.id}`} style={{ textDecoration: 'none', color: 'inherit' }}>
+    <Link href={`/products/${related.id}`} style={{ textDecoration: 'none', color: 'inherit' }}>
       <motion.div
-        onHoverStart={() => setHovered(true)}
-        onHoverEnd={() => setHovered(false)}
-        transition={{ duration: 0.2 }}
-        style={{ position: 'relative', aspectRatio: '3/4', overflow: 'hidden', border: '1px solid var(--border)' }}
+        initial={{ opacity: 0 }}
+        animate={{ opacity: loaded ? 1 : 0 }}
+        transition={{ duration: 0.3 }}
+        whileHover={{ scale: 1.05 }}
+        style={{
+          position: 'relative',
+          aspectRatio: '3/4',
+          overflow: 'hidden',
+          border: '1px solid var(--border)',
+        }}
       >
-        <motion.div
-          animate={{ scale: hovered ? 1.05 : 1 }}
-          transition={{ duration: 0.2 }}
-          style={{
-            position: 'relative',
-            width: '100%',
-            height: '100%',
-            opacity: loaded ? 1 : 0,
-            transitionProperty: 'opacity',
-            transitionDuration: '0.3s',
-          }}
-        >
+        <div style={{ position: 'relative', width: '100%', height: '100%' }}>
           <Image
             src={related.imageUrl}
             alt={related.name}
@@ -44,7 +38,7 @@ function RelatedCard({ related }: { related: Product }) {
             sizes="(max-width: 767px) 50vw, 12vw"
             onLoad={() => setLoaded(true)}
           />
-        </motion.div>
+        </div>
       </motion.div>
     </Link>
   )
@@ -55,6 +49,10 @@ export default function ProductDetail({ product, relatedProducts = [] }: Props) 
   const [added, setAdded] = useState(false)
   const [mainImageLoaded, setMainImageLoaded] = useState(false)
   const { addItem } = useCart()
+
+  useEffect(() => {
+    setMainImageLoaded(false)
+  }, [product.id])
   // Only used for animation direction — layout handled by CSS
   const isMobile = useMediaQuery('(max-width: 767px)')
 

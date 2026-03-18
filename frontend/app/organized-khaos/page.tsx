@@ -48,7 +48,11 @@ function ArchiveCard({ product, selectedSize, onSelectSize }: {
   const [imageLoaded, setImageLoaded] = useState(false)
 
   return (
-    <motion.div variants={cardVariants}>
+    <motion.div
+      initial={{ opacity: 0, y: 32 }}
+      animate={imageLoaded ? { opacity: 1, y: 0 } : { opacity: 0, y: 32 }}
+      transition={{ duration: 0.5, ease: [0.25, 0.46, 0.45, 0.94] }}
+    >
       <Link href={`/products/${product.id}`} style={{ textDecoration: 'none', color: 'inherit' }}>
         <div style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}>
           <motion.div
@@ -59,14 +63,7 @@ function ArchiveCard({ product, selectedSize, onSelectSize }: {
             <motion.div
               variants={{ rest: { scale: 1 }, hover: { scale: 1.04 } }}
               transition={{ duration: 0.4, ease: [0.25, 0.46, 0.45, 0.94] }}
-              style={{
-                position: 'relative',
-                width: '100%',
-                height: '100%',
-                opacity: imageLoaded ? 1 : 0,
-                transitionProperty: 'opacity',
-                transitionDuration: '0.3s',
-              }}
+              style={{ position: 'relative', width: '100%', height: '100%' }}
             >
               <Image
                 src={product.imageUrl}
