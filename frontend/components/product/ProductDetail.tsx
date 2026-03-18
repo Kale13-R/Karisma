@@ -13,9 +13,47 @@ interface Props {
   relatedProducts?: Product[]
 }
 
+function RelatedCard({ related }: { related: Product }) {
+  const [loaded, setLoaded] = useState(false)
+  const [hovered, setHovered] = useState(false)
+  return (
+    <Link key={related.id} href={`/products/${related.id}`} style={{ textDecoration: 'none', color: 'inherit' }}>
+      <motion.div
+        onHoverStart={() => setHovered(true)}
+        onHoverEnd={() => setHovered(false)}
+        transition={{ duration: 0.2 }}
+        style={{ position: 'relative', aspectRatio: '3/4', overflow: 'hidden', border: '1px solid var(--border)' }}
+      >
+        <motion.div
+          animate={{ scale: hovered ? 1.05 : 1 }}
+          transition={{ duration: 0.2 }}
+          style={{
+            position: 'relative',
+            width: '100%',
+            height: '100%',
+            opacity: loaded ? 1 : 0,
+            transitionProperty: 'opacity',
+            transitionDuration: '0.3s',
+          }}
+        >
+          <Image
+            src={related.imageUrl}
+            alt={related.name}
+            fill
+            style={{ objectFit: 'cover' }}
+            sizes="(max-width: 767px) 50vw, 12vw"
+            onLoad={() => setLoaded(true)}
+          />
+        </motion.div>
+      </motion.div>
+    </Link>
+  )
+}
+
 export default function ProductDetail({ product, relatedProducts = [] }: Props) {
   const [selectedSize, setSelectedSize] = useState<string | null>(null)
   const [added, setAdded] = useState(false)
+  const [mainImageLoaded, setMainImageLoaded] = useState(false)
   const { addItem } = useCart()
   // Only used for animation direction — layout handled by CSS
   const isMobile = useMediaQuery('(max-width: 767px)')
@@ -36,7 +74,7 @@ export default function ProductDetail({ product, relatedProducts = [] }: Props) 
       <motion.div
         key={product.id}
         initial={{ opacity: 0, scale: 0.97 }}
-        animate={{ opacity: 1, scale: 1 }}
+        animate={{ opacity: mainImageLoaded ? 1 : 0, scale: mainImageLoaded ? 1 : 0.97 }}
         transition={{ duration: 0.4, ease: [0.25, 0.46, 0.45, 0.94] }}
         className="pdp-image"
       >
@@ -50,6 +88,7 @@ export default function ProductDetail({ product, relatedProducts = [] }: Props) 
             objectPosition: 'center',
           }}
           priority
+          onLoad={() => setMainImageLoaded(true)}
         />
       </motion.div>
 
@@ -153,49 +192,7 @@ export default function ProductDetail({ product, relatedProducts = [] }: Props) 
             </p>
             <div className="pdp-related-grid">
               {relatedProducts.map((related) => (
-                <Link
-                  key={related.id}
-                  href={`/products/${related.id}`}
-                  style={{ textDecoration: 'none', color: 'inherit' }}
-                >
-                  <motion.div
-                    whileHover={{ scale: 1.05 }}
-                    transition={{ duration: 0.2 }}
-                    style={{
-                      position: 'relative',
-                      aspectRatio: '3/4',
-                      overflow: 'hidden',
-                      border: '1px solid var(--border)',
-                    }}
-                  >
-                    <Image
-                      src={related.imageUrl}
-                      alt={related.name}
-                      fill
-                      style={{ objectFit: 'cover' }}
-                      sizes="(max-width: 767px) 50vw, 12vw"
-                    />
-                  </motion.div>
-                  <p style={{
-                    fontSize: '9px',
-                    letterSpacing: '0.1em',
-                    textTransform: 'uppercase',
-                    marginTop: '6px',
-                    color: 'var(--fg-muted)',
-                    whiteSpace: 'nowrap',
-                    overflow: 'hidden',
-                    textOverflow: 'ellipsis',
-                  }}>
-                    {related.name}
-                  </p>
-                  <p style={{
-                    fontSize: '9px',
-                    color: 'var(--fg-muted)',
-                    opacity: 0.6,
-                  }}>
-                    ${related.price.toFixed(2)}
-                  </p>
-                </Link>
+                <RelatedCard key={related.id} related={related} />
               ))}
             </div>
           </div>
