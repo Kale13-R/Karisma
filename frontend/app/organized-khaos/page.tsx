@@ -207,8 +207,6 @@ export default function OrganizedKhaosPage() {
                     )}
                   </motion.div>
 
-                  <p style={{ fontSize: '12px', fontWeight: 600, letterSpacing: '0.12em', textTransform: 'uppercase' }}>{product.name}</p>
-                  <p style={{ fontSize: '12px', color: 'var(--fg-muted)', letterSpacing: '0.05em' }}>${product.price.toFixed(2)}</p>
                   {product.inStock && (
                     <div style={{ display: 'flex', gap: '6px', flexWrap: 'wrap' }}>
                       {product.sizes.map(size => (
