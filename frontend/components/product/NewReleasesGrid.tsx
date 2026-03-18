@@ -5,8 +5,6 @@ import Link from 'next/link'
 import Image from 'next/image'
 import { motion } from 'framer-motion'
 import { get } from '@/lib/api'
-import { useCart } from '@/context/CartContext'
-import { useScrollReveal } from '@/lib/useScrollReveal'
 import type { Product } from '@/types'
 
 const FALLBACK_PRODUCTS: Product[] = [
@@ -45,8 +43,6 @@ const cardVariants = {
 export default function NewReleasesGrid() {
   const [products, setProducts] = useState<Product[]>([])
   const [loading, setLoading] = useState(true)
-  const { addItem } = useCart()
-  const { ref, isInView } = useScrollReveal()
 
   useEffect(() => {
     get<Product[]>('/products?drop=ss26-new')
@@ -67,11 +63,11 @@ export default function NewReleasesGrid() {
 
   return (
     <motion.div
-      ref={ref}
       className="home-grid"
       variants={gridVariants}
       initial="hidden"
-      animate={isInView ? 'visible' : 'hidden'}
+      whileInView="visible"
+      viewport={{ once: true, amount: 0.1 }}
     >
       {displayed.map((product) => (
         <motion.div key={product.id} variants={cardVariants}>
@@ -85,7 +81,7 @@ export default function NewReleasesGrid() {
                 <motion.div
                   variants={{ rest: { scale: 1 }, hover: { scale: 1.04 } }}
                   transition={{ duration: 0.4, ease: [0.25, 0.46, 0.45, 0.94] }}
-                  style={{ position: 'absolute', inset: 0 }}
+                  style={{ position: 'relative', width: '100%', height: '100%' }}
                 >
                   <Image
                     src={product.imageUrl}

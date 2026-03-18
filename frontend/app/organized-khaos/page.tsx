@@ -4,8 +4,6 @@ import { useState, useRef } from 'react'
 import Link from 'next/link'
 import Image from 'next/image'
 import { motion } from 'framer-motion'
-import { useCart } from '@/context/CartContext'
-import { useScrollReveal } from '@/lib/useScrollReveal'
 import Marquee from '@/components/ui/Marquee'
 import type { Product } from '@/types'
 
@@ -45,8 +43,7 @@ const cardVariants = {
 export default function OrganizedKhaosPage() {
   const [selectedSizes, setSelectedSizes] = useState<Record<string, string>>({})
   const shopRef = useRef<HTMLDivElement>(null)
-  const { addItem } = useCart()
-  const { ref: gridRef, isInView } = useScrollReveal()
+
 
   const scrollToShop = () => {
     shopRef.current?.scrollIntoView({ behavior: 'smooth' })
@@ -146,11 +143,11 @@ export default function OrganizedKhaosPage() {
       {/* PRODUCT GRID */}
       <div ref={shopRef} style={{ padding: 'var(--ok-section-pad)', maxWidth: '1400px', margin: '0 auto' }}>
         <motion.div
-          ref={gridRef}
           className="ok-grid"
           variants={gridVariants}
           initial="hidden"
-          animate={isInView ? 'visible' : 'hidden'}
+          whileInView="visible"
+          viewport={{ once: true, amount: 0.1 }}
         >
           {ARCHIVE_PRODUCTS.map(product => (
             <motion.div key={product.id} variants={cardVariants}>
@@ -164,7 +161,7 @@ export default function OrganizedKhaosPage() {
                     <motion.div
                       variants={{ rest: { scale: 1 }, hover: { scale: 1.04 } }}
                       transition={{ duration: 0.4, ease: [0.25, 0.46, 0.45, 0.94] }}
-                      style={{ position: 'absolute', inset: 0 }}
+                      style={{ position: 'relative', width: '100%', height: '100%' }}
                     >
                       <Image
                         src={product.imageUrl}
