@@ -34,7 +34,10 @@ export default function ProductDetail({ product, relatedProducts = [] }: Props) 
     }}>
       {/* LEFT / TOP — Image panel (sticky on desktop, 75vh block on mobile) */}
       <motion.div
-        layoutId={`product-image-${product.id}`}
+        key={product.id}
+        initial={{ opacity: 0, scale: 0.97 }}
+        animate={{ opacity: 1, scale: 1 }}
+        transition={{ duration: 0.4, ease: [0.25, 0.46, 0.45, 0.94] }}
         className="pdp-image"
       >
         <Image
