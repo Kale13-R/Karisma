@@ -13,6 +13,16 @@ interface UserContextValue {
 
 const UserContext = createContext<UserContextValue | null>(null)
 
+async function safeJson(res: Response): Promise<AccountAuthResponse> {
+  const text = await res.text()
+  if (!text) return { success: false, error: 'Empty response from server' }
+  try {
+    return JSON.parse(text) as AccountAuthResponse
+  } catch {
+    return { success: false, error: 'Invalid response from server' }
+  }
+}
+
 export function UserProvider({ children }: { children: React.ReactNode }) {
   const [user, setUser] = useState<User | null>(null)
   const [loading, setLoading] = useState(true)
@@ -34,7 +44,7 @@ export function UserProvider({ children }: { children: React.ReactNode }) {
       credentials: 'include',
       body: JSON.stringify({ email, password }),
     })
-    const data: AccountAuthResponse = await res.json()
+    const data = await safeJson(res)
     if (data.success && data.user) setUser(data.user)
     if (!res.ok && !data.error && data.detail) {
       return { success: false, error: data.detail }
@@ -49,7 +59,7 @@ export function UserProvider({ children }: { children: React.ReactNode }) {
       credentials: 'include',
       body: JSON.stringify({ email, password }),
     })
-    const data: AccountAuthResponse = await res.json()
+    const data = await safeJson(res)
     if (data.success && data.user) setUser(data.user)
     if (!res.ok && !data.error && data.detail) {
       return { success: false, error: data.detail }
