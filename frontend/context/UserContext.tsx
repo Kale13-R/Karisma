@@ -14,12 +14,10 @@ interface UserContextValue {
 const UserContext = createContext<UserContextValue | null>(null)
 
 async function safeJson(res: Response): Promise<AccountAuthResponse> {
-  const text = await res.text()
-  if (!text) return { success: false, error: 'Empty response from server' }
   try {
-    return JSON.parse(text) as AccountAuthResponse
+    return await res.json() as AccountAuthResponse
   } catch {
-    return { success: false, error: 'Invalid response from server' }
+    return { success: false, error: 'Empty response from server' }
   }
 }
 
