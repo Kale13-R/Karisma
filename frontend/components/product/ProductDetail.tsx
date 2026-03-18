@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState } from 'react'
 import Image from 'next/image'
 import Link from 'next/link'
 import { motion } from 'framer-motion'
@@ -18,10 +18,8 @@ function RelatedCard({ related }: { related: Product }) {
   return (
     <Link href={`/products/${related.id}`} style={{ textDecoration: 'none', color: 'inherit' }}>
       <motion.div
-        initial={{ opacity: 0 }}
-        animate={{ opacity: loaded ? 1 : 0 }}
-        transition={{ duration: 0.3 }}
         whileHover={{ scale: 1.05 }}
+        transition={{ duration: 0.2 }}
         style={{
           position: 'relative',
           aspectRatio: '3/4',
@@ -29,7 +27,7 @@ function RelatedCard({ related }: { related: Product }) {
           border: '1px solid var(--border)',
         }}
       >
-        <div style={{ position: 'relative', width: '100%', height: '100%' }}>
+        <div style={{ position: 'relative', width: '100%', height: '100%', opacity: loaded ? 1 : 0, transition: 'opacity 0.3s ease' }}>
           <Image
             src={related.imageUrl}
             alt={related.name}
@@ -47,12 +45,8 @@ function RelatedCard({ related }: { related: Product }) {
 export default function ProductDetail({ product, relatedProducts = [] }: Props) {
   const [selectedSize, setSelectedSize] = useState<string | null>(null)
   const [added, setAdded] = useState(false)
-  const [mainImageLoaded, setMainImageLoaded] = useState(false)
   const { addItem } = useCart()
 
-  useEffect(() => {
-    setMainImageLoaded(false)
-  }, [product.id])
   // Only used for animation direction — layout handled by CSS
   const isMobile = useMediaQuery('(max-width: 767px)')
 
@@ -72,7 +66,7 @@ export default function ProductDetail({ product, relatedProducts = [] }: Props) 
       <motion.div
         key={product.id}
         initial={{ opacity: 0, scale: 0.97 }}
-        animate={{ opacity: mainImageLoaded ? 1 : 0, scale: mainImageLoaded ? 1 : 0.97 }}
+        animate={{ opacity: 1, scale: 1 }}
         transition={{ duration: 0.4, ease: [0.25, 0.46, 0.45, 0.94] }}
         className="pdp-image"
       >
@@ -86,7 +80,6 @@ export default function ProductDetail({ product, relatedProducts = [] }: Props) 
             objectPosition: 'center',
           }}
           priority
-          onLoad={() => setMainImageLoaded(true)}
         />
       </motion.div>
 
