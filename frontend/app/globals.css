@@ -242,6 +242,18 @@ main {
   }
 }
 
+/* ===== Marquee ticker ===== */
+@keyframes marquee {
+  from { transform: translateX(0); }
+  to   { transform: translateX(-50%); }
+}
+
+/* ===== Reduced motion ===== */
+@media (prefers-reduced-motion: reduce) {
+  * { animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; }
+  @keyframes marquee { from { transform: none; } to { transform: none; } }
+}
+
 /* ===== Organized Khaos grid ===== */
 .ok-grid {
   display: grid;
