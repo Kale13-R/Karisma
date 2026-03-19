@@ -34,10 +34,10 @@ describe('ProductDetail', () => {
 
   it('renders all 4 size buttons', () => {
     render(<CartProvider><ProductDetail product={mockProduct} /></CartProvider>)
-    expect(screen.getByRole('button', { name: 'S' })).toBeInTheDocument()
-    expect(screen.getByRole('button', { name: 'M' })).toBeInTheDocument()
-    expect(screen.getByRole('button', { name: 'L' })).toBeInTheDocument()
-    expect(screen.getByRole('button', { name: 'XL' })).toBeInTheDocument()
+    expect(screen.getByRole('button', { name: 'Small' })).toBeInTheDocument()
+    expect(screen.getByRole('button', { name: 'Medium' })).toBeInTheDocument()
+    expect(screen.getByRole('button', { name: 'Large' })).toBeInTheDocument()
+    expect(screen.getByRole('button', { name: 'Extra Large' })).toBeInTheDocument()
   })
 
   it('ADD TO YOUR COLLECTION button is disabled when no size selected', () => {
@@ -48,7 +48,7 @@ describe('ProductDetail', () => {
 
   it('ADD TO YOUR COLLECTION button enables after size selection', () => {
     render(<CartProvider><ProductDetail product={mockProduct} /></CartProvider>)
-    fireEvent.click(screen.getByRole('button', { name: 'M' }))
+    fireEvent.click(screen.getByRole('button', { name: 'Medium' }))
     const addBtn = screen.getByRole('button', { name: /ADD TO YOUR COLLECTION/i })
     expect(addBtn).not.toBeDisabled()
   })

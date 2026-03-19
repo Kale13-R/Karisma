@@ -54,10 +54,37 @@ function RelatedCard({ related }: { related: Product }) {
 export default function ProductDetail({ product, relatedProducts = [] }: Props) {
   const [selectedSize, setSelectedSize] = useState<string | null>(null)
   const [added, setAdded] = useState(false)
+  const [shippingOpen, setShippingOpen] = useState(false)
+  const [careOpen, setCareOpen] = useState(false)
+  const [sizeFitOpen, setSizeFitOpen] = useState(false)
   const { addItem } = useCart()
 
   // Only used for animation direction — layout handled by CSS
   const isMobile = useMediaQuery('(max-width: 767px)')
+
+  const dropdownBtnStyle: React.CSSProperties = {
+    width: '100%',
+    display: 'flex',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    padding: '16px 0',
+    background: 'none',
+    border: 'none',
+    cursor: 'pointer',
+    color: 'var(--fg)',
+    fontFamily: 'monospace',
+    fontSize: '13px',
+    letterSpacing: '0.15em',
+    textTransform: 'uppercase',
+  }
+
+  const dropdownBodyStyle: React.CSSProperties = {
+    fontSize: '14px',
+    lineHeight: 1.7,
+    color: 'var(--fg-muted)',
+    paddingBottom: '16px',
+    margin: 0,
+  }
 
   const handleAddToCart = () => {
     if (!selectedSize) return
@@ -155,6 +182,57 @@ export default function ProductDetail({ product, relatedProducts = [] }: Props) 
               {SIZE_LABELS[size] || size}
             </button>
           ))}
+        </div>
+
+        {/* Size & Fit Dropdown */}
+        <div style={{ borderTop: '1px solid var(--border)', marginTop: '24px' }}>
+          <button onClick={() => setSizeFitOpen(prev => !prev)} style={dropdownBtnStyle}>
+            SIZE & FIT
+            <span style={{
+              transition: 'transform 0.2s ease',
+              transform: sizeFitOpen ? 'rotate(180deg)' : 'rotate(0deg)',
+              fontSize: '12px',
+            }}>
+              ▼
+            </span>
+          </button>
+          {sizeFitOpen && (
+            <p style={dropdownBodyStyle}>Your text here</p>
+          )}
+        </div>
+
+        {/* Shipping & Returns Dropdown */}
+        <div style={{ borderTop: '1px solid var(--border)' }}>
+          <button onClick={() => setShippingOpen(prev => !prev)} style={dropdownBtnStyle}>
+            SHIPPING & RETURNS
+            <span style={{
+              transition: 'transform 0.2s ease',
+              transform: shippingOpen ? 'rotate(180deg)' : 'rotate(0deg)',
+              fontSize: '12px',
+            }}>
+              ▼
+            </span>
+          </button>
+          {shippingOpen && (
+            <p style={dropdownBodyStyle}>Your text here</p>
+          )}
+        </div>
+
+        {/* Product Care Dropdown */}
+        <div style={{ borderTop: '1px solid var(--border)', borderBottom: '1px solid var(--border)' }}>
+          <button onClick={() => setCareOpen(prev => !prev)} style={dropdownBtnStyle}>
+            PRODUCT CARE
+            <span style={{
+              transition: 'transform 0.2s ease',
+              transform: careOpen ? 'rotate(180deg)' : 'rotate(0deg)',
+              fontSize: '12px',
+            }}>
+              ▼
+            </span>
+          </button>
+          {careOpen && (
+            <p style={dropdownBodyStyle}>Your text here</p>
+          )}
         </div>
 
         {/* Spacer — pushes button + related to bottom of viewport (hidden on mobile via CSS) */}
