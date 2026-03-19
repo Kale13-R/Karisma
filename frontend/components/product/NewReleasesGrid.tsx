@@ -95,7 +95,7 @@ function ProductCard({ product }: { product: Product }) {
   return (
     <motion.div variants={cardVariants}>
       <Link href={`/products/${product.id}`} style={{ textDecoration: 'none', color: 'inherit' }}>
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}>
+        <div>
           <motion.div
             style={{ position: 'relative', aspectRatio: '4/5', overflow: 'hidden', cursor: 'pointer' }}
             whileHover="hover"
@@ -137,9 +137,6 @@ function ProductCard({ product }: { product: Product }) {
               </p>
             </motion.div>
           </motion.div>
-
-          <p style={{ fontSize: '12px', fontWeight: 600, letterSpacing: '0.12em', textTransform: 'uppercase' }}>{product.name}</p>
-          <p style={{ fontSize: '12px', color: 'var(--fg-muted)', letterSpacing: '0.05em' }}>${product.price.toFixed(2)}</p>
         </div>
       </Link>
     </motion.div>
