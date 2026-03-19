@@ -89,7 +89,7 @@ video {
 }
 
 main {
-  padding-top: 56px;
+  padding-top: 84px; /* header 56px + marquee 28px */
 }
 
 * {
@@ -108,7 +108,7 @@ main {
 /* ===== Header dropdown ===== */
 .header-dropdown {
   position: fixed;
-  top: 56px;
+  top: 84px; /* below header + marquee */
   left: 0;
   right: 0;
   z-index: 99;
@@ -154,8 +154,8 @@ main {
 
 .pdp-image {
   position: sticky;
-  top: 56px;
-  height: calc(100vh - 56px);
+  top: 84px;
+  height: calc(100vh - 84px);
   overflow: hidden;
   width: 100%;
 }
@@ -168,7 +168,12 @@ main {
 }
 
 .pdp-content {
-  min-height: calc(100vh - 56px);
+  min-height: calc(100vh - 84px);
+}
+
+/* ===== Film grain flicker ===== */
+@media (prefers-reduced-motion: reduce) {
+  /* Disable grain animation for users who prefer reduced motion */
 }
 @media (max-width: 767px) {
   .pdp-content {

@@ -4,7 +4,6 @@ import { useRef } from 'react'
 import Image from 'next/image'
 import { motion } from 'framer-motion'
 import NewReleasesGrid from '@/components/product/NewReleasesGrid'
-import Marquee from '@/components/ui/Marquee'
 
 export default function HomePage() {
   const shopRef = useRef<HTMLDivElement>(null)
@@ -106,9 +105,6 @@ export default function HomePage() {
           </button>
         </motion.div>
       </div>
-
-      {/* MARQUEE */}
-      <Marquee />
 
       {/* PRODUCT GRID */}
       <div ref={shopRef} style={{ padding: 'var(--section-pad)', maxWidth: '1400px', margin: '0 auto' }}>
