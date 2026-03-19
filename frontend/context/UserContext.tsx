@@ -13,7 +13,9 @@ interface UserContextValue {
 
 const UserContext = createContext<UserContextValue | null>(null)
 
-const BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000'
+// Use relative Next.js proxy routes so the browser never needs to reach
+// the backend directly — this works whether the backend is on localhost or a VM.
+const PROXY_BASE = '/api/accounts'
 
 async function safeJson(res: Response): Promise<AccountAuthResponse> {
   try {
@@ -31,7 +33,7 @@ export function UserProvider({ children }: { children: React.ReactNode }) {
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
-    fetch(`${BASE_URL}/api/accounts/me`, { credentials: 'include' })
+    fetch(`${PROXY_BASE}/me`, { credentials: 'include' })
       .then(r => r.ok ? r.json() : null)
       .then((data: AccountAuthResponse | null) => {
         if (data?.success && data.user) setUser(data.user)
@@ -41,7 +43,7 @@ export function UserProvider({ children }: { children: React.ReactNode }) {
   }, [])
 
   const register = async (email: string, password: string): Promise<AccountAuthResponse> => {
-    const res = await fetch(`${BASE_URL}/api/accounts/register`, {
+    const res = await fetch(`${PROXY_BASE}/register`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       credentials: 'include',
@@ -56,7 +58,7 @@ export function UserProvider({ children }: { children: React.ReactNode }) {
   }
 
   const login = async (email: string, password: string): Promise<AccountAuthResponse> => {
-    const res = await fetch(`${BASE_URL}/api/accounts/login`, {
+    const res = await fetch(`${PROXY_BASE}/login`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       credentials: 'include',
@@ -71,7 +73,7 @@ export function UserProvider({ children }: { children: React.ReactNode }) {
   }
 
   const logout = async () => {
-    await fetch(`${BASE_URL}/api/accounts/logout`, { method: 'POST', credentials: 'include' })
+    await fetch(`${PROXY_BASE}/logout`, { method: 'POST', credentials: 'include' })
     setUser(null)
   }
 
