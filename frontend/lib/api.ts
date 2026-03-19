@@ -45,3 +45,11 @@ export async function createCheckoutSession(
     base_url: baseUrl,
   })
 }
+
+export async function createPaymentIntent(
+  cartItems: CartItem[]
+): Promise<{ client_secret: string }> {
+  return post<{ client_secret: string }>('/api/checkout/payment-intent', {
+    cart_items: cartItems,
+  })
+}

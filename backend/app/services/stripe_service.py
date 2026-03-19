@@ -32,3 +32,21 @@ def create_checkout_session(cart_items: list[CartItem], base_url: str) -> str:
         cancel_url=f"{base_url}/shop",
     )
     return session.url
+
+
+def create_payment_intent(cart_items: list[CartItem]) -> str:
+    """Create a Stripe PaymentIntent and return its client_secret."""
+    total = sum(int(item.product.price * 100) * item.quantity for item in cart_items)
+
+    metadata = {}
+    for i, item in enumerate(cart_items):
+        metadata[f"item_{i}_id"] = item.product.id
+        metadata[f"item_{i}_size"] = item.size
+        metadata[f"item_{i}_qty"] = str(item.quantity)
+
+    intent = stripe.PaymentIntent.create(
+        amount=total,
+        currency=settings.STRIPE_CURRENCY,
+        metadata=metadata,
+    )
+    return intent.client_secret

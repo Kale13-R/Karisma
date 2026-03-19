@@ -1,23 +1,13 @@
 'use client'
 
-import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import Image from 'next/image'
-import type { CartItem } from '@/types'
+import { useCart } from '@/context/CartContext'
 
 
 export default function CheckoutSummaryPage() {
-  const [cart, setCart] = useState<CartItem[]>([])
+  const { items: cart } = useCart()
   const router = useRouter()
-
-  useEffect(() => {
-    try {
-      const stored = sessionStorage.getItem('karisma_cart')
-      if (stored) setCart(JSON.parse(stored))
-    } catch {
-      // sessionStorage unavailable
-    }
-  }, [])
 
   const total = cart.reduce((sum, item) => sum + item.product.price * item.quantity, 0)
 
@@ -43,7 +33,7 @@ export default function CheckoutSummaryPage() {
             justifyContent: 'space-between',
             alignItems: 'center',
             padding: '24px 48px',
-            borderBottom: '1px solid #1a1a1a',
+            borderBottom: '3px solid #f0f0f0',
           }}
         >
           <button
@@ -130,7 +120,7 @@ export default function CheckoutSummaryPage() {
             </p>
           ) : (
             <>
-              {/* Item list — King Spider style: thick dividers, no box borders */}
+              {/* Item list — thick dividers, no box borders */}
               <div>
                 {cart.map((item, i) => (
                   <div
@@ -141,7 +131,7 @@ export default function CheckoutSummaryPage() {
                       gap: '24px',
                       paddingTop: i === 0 ? 0 : '28px',
                       paddingBottom: '28px',
-                      borderBottom: '4px solid #f0f0f0',
+                      borderBottom: '3px solid #f0f0f0',
                     }}
                   >
                     {/* Thumbnail */}
@@ -237,7 +227,7 @@ export default function CheckoutSummaryPage() {
                 </p>
               </div>
 
-              {/* Checkout button — full-width, white block with dark monospace text */}
+              {/* Checkout button */}
               <button
                 onClick={handleProceed}
                 style={{
@@ -247,6 +237,7 @@ export default function CheckoutSummaryPage() {
                   backgroundColor: '#f0f0f0',
                   color: '#0a0a0a',
                   border: 'none',
+                  borderRadius: 0,
                   fontFamily: "'Courier New', Courier, monospace",
                   fontSize: '12px',
                   fontWeight: 700,
@@ -255,7 +246,7 @@ export default function CheckoutSummaryPage() {
                   cursor: 'pointer',
                 }}
               >
-                CHECKOUT
+                PROCEED TO CHECKOUT
               </button>
 
               <p

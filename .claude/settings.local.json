@@ -17,7 +17,13 @@
       "Bash(ls frontend/tailwind.config* frontend/postcss.config*)",
       "Bash(python -c \":*)",
       "Bash(timeout 8 python -m uvicorn app.main:app)",
-      "WebFetch(domain:vertabraeclothing.com)"
+      "WebFetch(domain:vertabraeclothing.com)",
+      "Bash(git branch:*)",
+      "Read(//c/Users/plk_l/Karisma-1-json-fix/frontend/context/**)",
+      "Bash(git checkout:*)",
+      "Bash(git log:*)",
+      "Bash(git add:*)",
+      "Bash(git commit:*)"
     ],
     "additionalDirectories": [
       "C:\\Users\\plk_l\\Karisma-1\\.git"
