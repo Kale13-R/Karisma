@@ -158,6 +158,27 @@ function ArchiveCard({ product, selectedSize, onSelectSize }: {
               ))}
             </div>
           )}
+          {product.inStock && selectedSize && (
+            <button
+              onClick={handleAddToCart}
+              style={{
+                width: '100%',
+                height: '44px',
+                marginTop: '0px',
+                background: added ? 'transparent' : 'var(--fg)',
+                color: added ? 'var(--fg)' : 'var(--bg)',
+                border: added ? '1px solid var(--border)' : 'none',
+                fontSize: '10px',
+                letterSpacing: '0.15em',
+                textTransform: 'uppercase',
+                fontFamily: 'monospace',
+                cursor: 'pointer',
+                transition: 'background 0.2s, color 0.2s, border 0.2s',
+              }}
+            >
+              {added ? 'ADDED TO COLLECTION' : 'ADD TO YOUR COLLECTION'}
+            </button>
+          )}
         </div>
       </Link>
     </motion.div>
