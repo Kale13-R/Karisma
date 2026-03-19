@@ -164,7 +164,7 @@ function ArchiveCard({ product, selectedSize, onSelectSize }: {
               style={{
                 width: '100%',
                 height: '44px',
-                marginTop: '0px',
+                marginTop: '8px',
                 background: added ? 'transparent' : 'var(--fg)',
                 color: added ? 'var(--fg)' : 'var(--bg)',
                 border: added ? '1px solid var(--border)' : 'none',
