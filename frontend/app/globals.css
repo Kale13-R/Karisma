@@ -267,15 +267,15 @@ main {
 /* ===== Organized Khaos grid ===== */
 .ok-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  grid-template-columns: repeat(3, 1fr);
   gap: var(--ok-grid-gap);
 }
-@media (max-width: 767px) {
+@media (max-width: 900px) {
   .ok-grid {
-    grid-template-columns: 1fr 1fr;
+    grid-template-columns: repeat(2, 1fr);
   }
 }
-@media (max-width: 480px) {
+@media (max-width: 600px) {
   .ok-grid {
     grid-template-columns: 1fr;
   }

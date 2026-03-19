@@ -40,6 +40,15 @@ const cardVariants = {
   visible: { opacity: 1, y: 0, transition: { duration: 0.5, ease: [0.25, 0.46, 0.45, 0.94] } },
 }
 
+const SIZE_LABELS: Record<string, string> = {
+  S: 'Small',
+  M: 'Medium',
+  L: 'Large',
+  XL: 'Extra Large',
+  XS: 'Extra Small',
+  'ONE SIZE': 'One Size',
+}
+
 function ArchiveCard({ product, selectedSize, onSelectSize }: {
   product: typeof ARCHIVE_PRODUCTS[number]
   selectedSize?: string
@@ -50,7 +59,7 @@ function ArchiveCard({ product, selectedSize, onSelectSize }: {
   return (
     <motion.div variants={cardVariants}>
       <Link href={`/products/${product.id}`} style={{ textDecoration: 'none', color: 'inherit' }}>
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}>
+        <div>
           <motion.div
             style={{ position: 'relative', aspectRatio: '4/5', overflow: 'hidden', cursor: 'pointer' }}
             whileHover="hover"
@@ -104,10 +113,8 @@ function ArchiveCard({ product, selectedSize, onSelectSize }: {
             )}
           </motion.div>
 
-          <p style={{ fontSize: '12px', fontWeight: 600, letterSpacing: '0.12em', textTransform: 'uppercase' }}>{product.name}</p>
-          <p style={{ fontSize: '12px', color: 'var(--fg-muted)', letterSpacing: '0.05em' }}>${product.price.toFixed(2)}</p>
           {product.inStock && (
-            <div style={{ display: 'flex', gap: '6px', flexWrap: 'wrap' }}>
+            <div style={{ display: 'grid', gridTemplateColumns: `repeat(${product.sizes.length}, 1fr)`, gap: '0px', marginTop: '8px' }}>
               {product.sizes.map(size => (
                 <button
                   key={size}
@@ -116,14 +123,14 @@ function ArchiveCard({ product, selectedSize, onSelectSize }: {
                     background: selectedSize === size ? 'var(--fg)' : 'none',
                     color: selectedSize === size ? 'var(--bg)' : 'var(--fg)',
                     border: '1px solid var(--border)',
-                    padding: '5px 10px',
+                    padding: '8px 0',
                     fontSize: '10px',
                     letterSpacing: '0.1em',
                     cursor: 'pointer',
-                    minWidth: '36px',
+                    textTransform: 'uppercase',
                   }}
                 >
-                  {size}
+                  {selectedSize === size ? (SIZE_LABELS[size] || size) : size}
                 </button>
               ))}
             </div>
