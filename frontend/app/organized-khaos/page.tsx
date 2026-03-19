@@ -4,6 +4,7 @@ import { useState, useRef } from 'react'
 import Link from 'next/link'
 import Image from 'next/image'
 import { motion } from 'framer-motion'
+import { useCart } from '@/context/CartContext'
 import Marquee from '@/components/ui/Marquee'
 import type { Product } from '@/types'
 
@@ -55,6 +56,17 @@ function ArchiveCard({ product, selectedSize, onSelectSize }: {
   onSelectSize: (size: string) => void
 }) {
   const [imageLoaded, setImageLoaded] = useState(false)
+  const [added, setAdded] = useState(false)
+  const { addItem } = useCart()
+
+  const handleAddToCart = (e: React.MouseEvent) => {
+    e.preventDefault()
+    e.stopPropagation()
+    if (!selectedSize) return
+    addItem({ product: product as Product, size: selectedSize, quantity: 1 })
+    setAdded(true)
+    setTimeout(() => setAdded(false), 2000)
+  }
 
   return (
     <motion.div variants={cardVariants}>

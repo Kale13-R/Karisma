@@ -125,17 +125,8 @@ export default function ProductDetail({ product, relatedProducts = [] }: Props) 
           {product.description}
         </p>
 
-        {/* Size Selection — fills horizontally on mobile */}
-        <div
-          className="pdp-sizes"
-          style={isMobile ? {
-            display: 'grid',
-            gridTemplateColumns: `repeat(${product.sizes.length}, 1fr)`,
-            gap: '8px',
-            width: '100vw',
-            marginLeft: '-16px',
-          } : undefined}
-        >
+        {/* Size Selection — full width grid */}
+        <div className="pdp-sizes">
           {product.sizes.map((size) => (
             <button
               key={size}
