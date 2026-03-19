@@ -13,12 +13,25 @@ interface UserContextValue {
 
 const UserContext = createContext<UserContextValue | null>(null)
 
+const BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000'
+
+async function safeJson(res: Response): Promise<AccountAuthResponse> {
+  try {
+    return await res.json() as AccountAuthResponse
+  } catch {
+    return {
+      success: false,
+      error: res.ok ? 'Unexpected server response' : `Server error (${res.status})`,
+    }
+  }
+}
+
 export function UserProvider({ children }: { children: React.ReactNode }) {
   const [user, setUser] = useState<User | null>(null)
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
-    fetch('/api/accounts/me', { credentials: 'include' })
+    fetch(`${BASE_URL}/api/accounts/me`, { credentials: 'include' })
       .then(r => r.ok ? r.json() : null)
       .then((data: AccountAuthResponse | null) => {
         if (data?.success && data.user) setUser(data.user)
@@ -28,13 +41,13 @@ export function UserProvider({ children }: { children: React.ReactNode }) {
   }, [])
 
   const register = async (email: string, password: string): Promise<AccountAuthResponse> => {
-    const res = await fetch('/api/accounts/register', {
+    const res = await fetch(`${BASE_URL}/api/accounts/register`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       credentials: 'include',
       body: JSON.stringify({ email, password }),
     })
-    const data: AccountAuthResponse = await res.json()
+    const data = await safeJson(res)
     if (data.success && data.user) setUser(data.user)
     if (!res.ok && !data.error && data.detail) {
       return { success: false, error: data.detail }
@@ -43,13 +56,13 @@ export function UserProvider({ children }: { children: React.ReactNode }) {
   }
 
   const login = async (email: string, password: string): Promise<AccountAuthResponse> => {
-    const res = await fetch('/api/accounts/login', {
+    const res = await fetch(`${BASE_URL}/api/accounts/login`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       credentials: 'include',
       body: JSON.stringify({ email, password }),
     })
-    const data: AccountAuthResponse = await res.json()
+    const data = await safeJson(res)
     if (data.success && data.user) setUser(data.user)
     if (!res.ok && !data.error && data.detail) {
       return { success: false, error: data.detail }
@@ -58,7 +71,7 @@ export function UserProvider({ children }: { children: React.ReactNode }) {
   }
 
   const logout = async () => {
-    await fetch('/api/accounts/logout', { method: 'POST', credentials: 'include' })
+    await fetch(`${BASE_URL}/api/accounts/logout`, { method: 'POST', credentials: 'include' })
     setUser(null)
   }
 
