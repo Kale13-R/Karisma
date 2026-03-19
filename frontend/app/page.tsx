@@ -4,6 +4,7 @@ import { useRef } from 'react'
 import Image from 'next/image'
 import { motion } from 'framer-motion'
 import NewReleasesGrid from '@/components/product/NewReleasesGrid'
+import Marquee from '@/components/ui/Marquee'
 
 export default function HomePage() {
   const shopRef = useRef<HTMLDivElement>(null)
@@ -106,9 +107,13 @@ export default function HomePage() {
         </motion.div>
       </div>
 
+      {/* Scrolling marquee — covers the fixed top marquee when scrolled into its position */}
+      <div style={{ position: 'relative', zIndex: 100 }}>
+        <Marquee text="KARISMA · SUMMER 2026 · NEW RELEASE · DROP NOW · KARISMA WORLDWIDE ·" />
+      </div>
+
       {/* PRODUCT GRID */}
-      <div ref={shopRef} style={{ padding: 'var(--section-pad)', maxWidth: '1400px', margin: '0 auto' }}>
-        <p style={{ fontSize: '10px', letterSpacing: '0.3em', color: 'var(--fg-muted)', marginBottom: '8px', textTransform: 'uppercase' }}>SUMMER 2026 DROP</p>
+      <div ref={shopRef} style={{ padding: '32px 48px 80px', maxWidth: '1400px', margin: '0 auto' }}>
         <h2 style={{ fontSize: '28px', fontWeight: 700, letterSpacing: '0.06em', marginBottom: '48px' }}>NEW ARRIVALS</h2>
         <NewReleasesGrid />
       </div>

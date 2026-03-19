@@ -5,6 +5,7 @@ import Link from 'next/link'
 import Image from 'next/image'
 import { motion } from 'framer-motion'
 import { useCart } from '@/context/CartContext'
+import Marquee from '@/components/ui/Marquee'
 import type { Product } from '@/types'
 
 // All SPRING 24 / Organized Khaos archive products
@@ -265,6 +266,9 @@ export default function OrganizedKhaosPage() {
           </button>
         </div>
       </div>
+
+      {/* MARQUEE */}
+      <Marquee text="KARISMA · SPRING 24 · ORGANIZED KHAOS · ARCHIVE · KARISMA WORLDWIDE · " />
 
       {/* DROP LABEL BAR */}
       <div style={{

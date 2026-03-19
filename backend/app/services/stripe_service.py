@@ -3,9 +3,13 @@ import stripe
 from app.core.config import settings
 from app.models.schemas import CartItem
 
-# stripe.api_key is set at module load. If STRIPE_SECRET_KEY is empty (template default),
-# this does NOT cause an import error — Stripe calls will fail at runtime only.
-stripe.api_key = settings.STRIPE_SECRET_KEY
+
+def _stripe_key() -> str:
+    """Read Stripe key at call time, not import time, to avoid stale module cache."""
+    key = settings.STRIPE_SECRET_KEY
+    if not key:
+        raise ValueError("STRIPE_SECRET_KEY is not set in backend .env")
+    return key
 
 
 def create_checkout_session(cart_items: list[CartItem], base_url: str) -> str:
@@ -24,6 +28,7 @@ def create_checkout_session(cart_items: list[CartItem], base_url: str) -> str:
         for item in cart_items
     ]
 
+    stripe.api_key = _stripe_key()
     session = stripe.checkout.Session.create(
         payment_method_types=["card"],
         line_items=line_items,
@@ -44,6 +49,7 @@ def create_payment_intent(cart_items: list[CartItem]) -> str:
         metadata[f"item_{i}_size"] = item.size
         metadata[f"item_{i}_qty"] = str(item.quantity)
 
+    stripe.api_key = _stripe_key()
     intent = stripe.PaymentIntent.create(
         amount=total,
         currency=settings.STRIPE_CURRENCY,
