@@ -82,6 +82,10 @@ button {
   font-family: inherit;
 }
 
+video {
+  background-color: #000;
+}
+
 main {
   padding-top: 56px;
 }
