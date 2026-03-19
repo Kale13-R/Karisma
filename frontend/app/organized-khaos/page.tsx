@@ -40,10 +40,103 @@ const cardVariants = {
   visible: { opacity: 1, y: 0, transition: { duration: 0.5, ease: [0.25, 0.46, 0.45, 0.94] } },
 }
 
+function ArchiveCard({ product, selectedSize, onSelectSize }: {
+  product: typeof ARCHIVE_PRODUCTS[number]
+  selectedSize?: string
+  onSelectSize: (size: string) => void
+}) {
+  const [imageLoaded, setImageLoaded] = useState(false)
+
+  return (
+    <motion.div variants={cardVariants}>
+      <Link href={`/products/${product.id}`} style={{ textDecoration: 'none', color: 'inherit' }}>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}>
+          <motion.div
+            style={{ position: 'relative', aspectRatio: '4/5', overflow: 'hidden', cursor: 'pointer' }}
+            whileHover="hover"
+            initial="rest"
+          >
+            <motion.div
+              variants={{ rest: { scale: 1 }, hover: { scale: 1.04 } }}
+              transition={{ duration: 0.4, ease: [0.25, 0.46, 0.45, 0.94] }}
+              style={{ position: 'relative', width: '100%', height: '100%', opacity: imageLoaded ? 1 : 0, transition: 'opacity 0.4s ease' }}
+            >
+              <Image
+                src={product.imageUrl}
+                alt={product.name}
+                fill
+                unoptimized
+                style={{ objectFit: 'cover' }}
+                sizes="(max-width: 640px) 50vw, (max-width: 1024px) 50vw, 33vw"
+                onLoad={() => setImageLoaded(true)}
+              />
+            </motion.div>
+
+            <motion.div
+              variants={{ rest: { opacity: 0, y: 16 }, hover: { opacity: 1, y: 0 } }}
+              transition={{ duration: 0.25, ease: 'easeOut' }}
+              style={{
+                position: 'absolute',
+                bottom: 0, left: 0, right: 0,
+                background: 'linear-gradient(to top, rgba(0,0,0,0.85) 0%, transparent 100%)',
+                padding: '24px 16px 16px',
+                display: 'flex',
+                justifyContent: 'space-between',
+                alignItems: 'flex-end',
+              }}
+            >
+              <p style={{ fontSize: '11px', fontWeight: 700, letterSpacing: '0.15em', color: '#fff', textTransform: 'uppercase' }}>
+                {product.name}
+              </p>
+              <p style={{ fontSize: '11px', color: 'rgba(255,255,255,0.7)', letterSpacing: '0.05em', fontFamily: 'monospace' }}>
+                ${product.price.toFixed(2)}
+              </p>
+            </motion.div>
+
+            {!product.inStock && (
+              <div style={{
+                position: 'absolute', inset: 0,
+                background: 'rgba(0,0,0,0.5)',
+                display: 'flex', alignItems: 'center', justifyContent: 'center',
+              }}>
+                <span style={{ fontSize: '10px', letterSpacing: '0.2em', color: '#aaa', textTransform: 'uppercase' }}>SOLD OUT</span>
+              </div>
+            )}
+          </motion.div>
+
+          <p style={{ fontSize: '12px', fontWeight: 600, letterSpacing: '0.12em', textTransform: 'uppercase' }}>{product.name}</p>
+          <p style={{ fontSize: '12px', color: 'var(--fg-muted)', letterSpacing: '0.05em' }}>${product.price.toFixed(2)}</p>
+          {product.inStock && (
+            <div style={{ display: 'flex', gap: '6px', flexWrap: 'wrap' }}>
+              {product.sizes.map(size => (
+                <button
+                  key={size}
+                  onClick={e => { e.preventDefault(); onSelectSize(size) }}
+                  style={{
+                    background: selectedSize === size ? 'var(--fg)' : 'none',
+                    color: selectedSize === size ? 'var(--bg)' : 'var(--fg)',
+                    border: '1px solid var(--border)',
+                    padding: '5px 10px',
+                    fontSize: '10px',
+                    letterSpacing: '0.1em',
+                    cursor: 'pointer',
+                    minWidth: '36px',
+                  }}
+                >
+                  {size}
+                </button>
+              ))}
+            </div>
+          )}
+        </div>
+      </Link>
+    </motion.div>
+  )
+}
+
 export default function OrganizedKhaosPage() {
   const [selectedSizes, setSelectedSizes] = useState<Record<string, string>>({})
   const shopRef = useRef<HTMLDivElement>(null)
-
 
   const scrollToShop = () => {
     shopRef.current?.scrollIntoView({ behavior: 'smooth' })
@@ -150,88 +243,12 @@ export default function OrganizedKhaosPage() {
           viewport={{ once: true, amount: 0.1 }}
         >
           {ARCHIVE_PRODUCTS.map(product => (
-            <motion.div key={product.id} variants={cardVariants}>
-              <Link href={`/products/${product.id}`} style={{ textDecoration: 'none', color: 'inherit' }}>
-                <div style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}>
-                  <motion.div
-                    style={{ position: 'relative', aspectRatio: '4/5', overflow: 'hidden', cursor: 'pointer' }}
-                    whileHover="hover"
-                    initial="rest"
-                  >
-                    <motion.div
-                      variants={{ rest: { scale: 1 }, hover: { scale: 1.04 } }}
-                      transition={{ duration: 0.4, ease: [0.25, 0.46, 0.45, 0.94] }}
-                      style={{ position: 'relative', width: '100%', height: '100%' }}
-                    >
-                      <Image
-                        src={product.imageUrl}
-                        alt={product.name}
-                        fill
-                        unoptimized
-                        style={{ objectFit: 'cover' }}
-                        sizes="(max-width: 640px) 50vw, (max-width: 1024px) 50vw, 33vw"
-                      />
-                    </motion.div>
-
-                    {/* Hover overlay — slides up from bottom */}
-                    <motion.div
-                      variants={{ rest: { opacity: 0, y: 16 }, hover: { opacity: 1, y: 0 } }}
-                      transition={{ duration: 0.25, ease: 'easeOut' }}
-                      style={{
-                        position: 'absolute',
-                        bottom: 0, left: 0, right: 0,
-                        background: 'linear-gradient(to top, rgba(0,0,0,0.85) 0%, transparent 100%)',
-                        padding: '24px 16px 16px',
-                        display: 'flex',
-                        justifyContent: 'space-between',
-                        alignItems: 'flex-end',
-                      }}
-                    >
-                      <p style={{ fontSize: '11px', fontWeight: 700, letterSpacing: '0.15em', color: '#fff', textTransform: 'uppercase' }}>
-                        {product.name}
-                      </p>
-                      <p style={{ fontSize: '11px', color: 'rgba(255,255,255,0.7)', letterSpacing: '0.05em', fontFamily: 'monospace' }}>
-                        ${product.price.toFixed(2)}
-                      </p>
-                    </motion.div>
-
-                    {/* Sold out overlay — always visible */}
-                    {!product.inStock && (
-                      <div style={{
-                        position: 'absolute', inset: 0,
-                        background: 'rgba(0,0,0,0.5)',
-                        display: 'flex', alignItems: 'center', justifyContent: 'center',
-                      }}>
-                        <span style={{ fontSize: '10px', letterSpacing: '0.2em', color: '#aaa', textTransform: 'uppercase' }}>SOLD OUT</span>
-                      </div>
-                    )}
-                  </motion.div>
-
-                  {product.inStock && (
-                    <div style={{ display: 'flex', gap: '6px', flexWrap: 'wrap' }}>
-                      {product.sizes.map(size => (
-                        <button
-                          key={size}
-                          onClick={e => { e.preventDefault(); selectSize(product.id, size) }}
-                          style={{
-                            background: selectedSizes[product.id] === size ? 'var(--fg)' : 'none',
-                            color: selectedSizes[product.id] === size ? 'var(--bg)' : 'var(--fg)',
-                            border: '1px solid var(--border)',
-                            padding: '5px 10px',
-                            fontSize: '10px',
-                            letterSpacing: '0.1em',
-                            cursor: 'pointer',
-                            minWidth: '36px',
-                          }}
-                        >
-                          {size}
-                        </button>
-                      ))}
-                    </div>
-                  )}
-                </div>
-              </Link>
-            </motion.div>
+            <ArchiveCard
+              key={product.id}
+              product={product}
+              selectedSize={selectedSizes[product.id]}
+              onSelectSize={(size) => selectSize(product.id, size)}
+            />
           ))}
         </motion.div>
       </div>

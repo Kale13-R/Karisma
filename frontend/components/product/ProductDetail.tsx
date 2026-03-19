@@ -14,11 +14,12 @@ interface Props {
 }
 
 function RelatedCard({ related }: { related: Product }) {
+  const [loaded, setLoaded] = useState(false)
   return (
     <Link href={`/products/${related.id}`} style={{ textDecoration: 'none', color: 'inherit' }}>
       <motion.div
-        whileHover="hover"
-        initial="rest"
+        whileHover={{ scale: 1.05 }}
+        transition={{ duration: 0.2 }}
         style={{
           position: 'relative',
           aspectRatio: '3/4',
@@ -26,43 +27,16 @@ function RelatedCard({ related }: { related: Product }) {
           border: '1px solid var(--border)',
         }}
       >
-        <motion.div
-          variants={{ rest: { scale: 1 }, hover: { scale: 1.05 } }}
-          transition={{ duration: 0.2 }}
-          style={{ position: 'relative', width: '100%', height: '100%' }}
-        >
+        <div style={{ position: 'relative', width: '100%', height: '100%', opacity: loaded ? 1 : 0, transition: 'opacity 0.3s ease' }}>
           <Image
             src={related.imageUrl}
             alt={related.name}
             fill
             style={{ objectFit: 'cover' }}
             sizes="(max-width: 767px) 50vw, 12vw"
+            onLoad={() => setLoaded(true)}
           />
-        </motion.div>
-        <motion.div
-          variants={{ rest: { opacity: 0, y: 8 }, hover: { opacity: 1, y: 0 } }}
-          transition={{ duration: 0.2, ease: 'easeOut' }}
-          style={{
-            position: 'absolute',
-            bottom: 0, left: 0, right: 0,
-            background: 'linear-gradient(to top, rgba(0,0,0,0.85) 0%, transparent 100%)',
-            padding: '16px 10px 10px',
-            display: 'flex',
-            justifyContent: 'space-between',
-            alignItems: 'flex-end',
-          }}
-        >
-          <p style={{
-            fontSize: '9px', fontWeight: 700, letterSpacing: '0.1em', color: '#fff',
-            textTransform: 'uppercase', whiteSpace: 'nowrap', overflow: 'hidden',
-            textOverflow: 'ellipsis', margin: 0, maxWidth: '70%',
-          }}>
-            {related.name}
-          </p>
-          <p style={{ fontSize: '9px', color: 'rgba(255,255,255,0.7)', margin: 0 }}>
-            ${related.price.toFixed(2)}
-          </p>
-        </motion.div>
+        </div>
       </motion.div>
     </Link>
   )
@@ -72,6 +46,7 @@ export default function ProductDetail({ product, relatedProducts = [] }: Props) 
   const [selectedSize, setSelectedSize] = useState<string | null>(null)
   const [added, setAdded] = useState(false)
   const { addItem } = useCart()
+
   // Only used for animation direction — layout handled by CSS
   const isMobile = useMediaQuery('(max-width: 767px)')
 
