@@ -119,6 +119,16 @@ function ArchiveCard({ product, selectedSize, onSelectSize }: {
                 <button
                   key={size}
                   onClick={e => { e.preventDefault(); onSelectSize(size) }}
+                  onMouseEnter={e => {
+                    if (selectedSize !== size) {
+                      e.currentTarget.style.background = 'var(--hover-grey, #e0e0e0)'
+                    }
+                  }}
+                  onMouseLeave={e => {
+                    if (selectedSize !== size) {
+                      e.currentTarget.style.background = 'none'
+                    }
+                  }}
                   style={{
                     background: selectedSize === size ? 'var(--fg)' : 'none',
                     color: selectedSize === size ? 'var(--bg)' : 'var(--fg)',
@@ -128,9 +138,10 @@ function ArchiveCard({ product, selectedSize, onSelectSize }: {
                     letterSpacing: '0.1em',
                     cursor: 'pointer',
                     textTransform: 'uppercase',
+                    transition: 'background 0.15s ease',
                   }}
                 >
-                  {selectedSize === size ? (SIZE_LABELS[size] || size) : size}
+                  {SIZE_LABELS[size] || size}
                 </button>
               ))}
             </div>

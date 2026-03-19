@@ -8,6 +8,15 @@ import { useCart } from '@/context/CartContext'
 import { useMediaQuery } from '@/lib/useMediaQuery'
 import type { Product } from '@/types'
 
+const SIZE_LABELS: Record<string, string> = {
+  S: 'Small',
+  M: 'Medium',
+  L: 'Large',
+  XL: 'Extra Large',
+  XS: 'Extra Small',
+  'ONE SIZE': 'One Size',
+}
+
 interface Props {
   product: Product
   relatedProducts?: Product[]
@@ -131,6 +140,16 @@ export default function ProductDetail({ product, relatedProducts = [] }: Props) 
             <button
               key={size}
               onClick={() => setSelectedSize(prev => prev === size ? null : size)}
+              onMouseEnter={e => {
+                if (selectedSize !== size) {
+                  e.currentTarget.style.background = 'var(--hover-grey, #e0e0e0)'
+                }
+              }}
+              onMouseLeave={e => {
+                if (selectedSize !== size) {
+                  e.currentTarget.style.background = 'transparent'
+                }
+              }}
               style={{
                 border: selectedSize === size ? '3px solid var(--fg)' : '1px solid var(--border)',
                 background: selectedSize === size ? 'var(--fg)' : 'transparent',
@@ -139,9 +158,10 @@ export default function ProductDetail({ product, relatedProducts = [] }: Props) 
                 fontSize: '14px',
                 cursor: 'pointer',
                 letterSpacing: '0.05em',
+                transition: 'background 0.15s ease',
               }}
             >
-              {size}
+              {SIZE_LABELS[size] || size}
             </button>
           ))}
         </div>
