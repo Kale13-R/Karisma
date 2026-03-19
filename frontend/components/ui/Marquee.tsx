@@ -6,7 +6,7 @@ interface MarqueeProps {
 }
 
 export default function Marquee({
-  text = 'KARISMA · SS26 · NEW RELEASE · DROP NOW · KARISMA WORLDWIDE · ',
+  text = 'KARISMA · SUMMER 2026 · NEW RELEASE · DROP NOW · KARISMA WORLDWIDE ·',
   speed = 18,
 }: MarqueeProps) {
   return (

@@ -49,7 +49,7 @@ export default function HomePage() {
             color: 'rgba(255,255,255,0.55)',
             textTransform: 'uppercase',
             marginBottom: '20px',
-          }}>SS26</p>
+          }}>SUMMER 2026</p>
           <div style={{ position: 'relative', marginBottom: '52px' }}>
             <span style={{
               position: 'absolute',
@@ -112,7 +112,7 @@ export default function HomePage() {
 
       {/* PRODUCT GRID */}
       <div ref={shopRef} style={{ padding: 'var(--section-pad)', maxWidth: '1400px', margin: '0 auto' }}>
-        <p style={{ fontSize: '10px', letterSpacing: '0.3em', color: 'var(--fg-muted)', marginBottom: '8px', textTransform: 'uppercase' }}>SS26 DROP</p>
+        <p style={{ fontSize: '10px', letterSpacing: '0.3em', color: 'var(--fg-muted)', marginBottom: '8px', textTransform: 'uppercase' }}>SUMMER 2026 DROP</p>
         <h2 style={{ fontSize: '28px', fontWeight: 700, letterSpacing: '0.06em', marginBottom: '48px' }}>NEW ARRIVALS</h2>
         <NewReleasesGrid />
       </div>
