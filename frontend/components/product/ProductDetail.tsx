@@ -56,6 +56,7 @@ export default function ProductDetail({ product, relatedProducts = [] }: Props) 
   const [added, setAdded] = useState(false)
   const [shippingOpen, setShippingOpen] = useState(false)
   const [careOpen, setCareOpen] = useState(false)
+  const [sizeFitOpen, setSizeFitOpen] = useState(false)
   const { addItem } = useCart()
 
   // Only used for animation direction — layout handled by CSS
@@ -183,10 +184,27 @@ export default function ProductDetail({ product, relatedProducts = [] }: Props) 
           ))}
         </div>
 
-        {/* Shipping Details Dropdown */}
+        {/* Size & Fit Dropdown */}
         <div style={{ borderTop: '1px solid var(--border)', marginTop: '24px' }}>
+          <button onClick={() => setSizeFitOpen(prev => !prev)} style={dropdownBtnStyle}>
+            SIZE & FIT
+            <span style={{
+              transition: 'transform 0.2s ease',
+              transform: sizeFitOpen ? 'rotate(180deg)' : 'rotate(0deg)',
+              fontSize: '12px',
+            }}>
+              ▼
+            </span>
+          </button>
+          {sizeFitOpen && (
+            <p style={dropdownBodyStyle}>Your text here</p>
+          )}
+        </div>
+
+        {/* Shipping & Returns Dropdown */}
+        <div style={{ borderTop: '1px solid var(--border)' }}>
           <button onClick={() => setShippingOpen(prev => !prev)} style={dropdownBtnStyle}>
-            SHIPPING DETAILS
+            SHIPPING & RETURNS
             <span style={{
               transition: 'transform 0.2s ease',
               transform: shippingOpen ? 'rotate(180deg)' : 'rotate(0deg)',
