@@ -65,3 +65,11 @@ class CheckoutRequest(BaseModel):
 
 class CheckoutResponse(BaseModel):
     checkout_url: str
+
+
+class PaymentIntentRequest(BaseModel):
+    cart_items: List[CartItem]
+
+
+class PaymentIntentResponse(BaseModel):
+    client_secret: str
