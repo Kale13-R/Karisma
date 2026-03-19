@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import Countdown from '@/components/gate/Countdown'
 import PasswordEntry from '@/components/gate/PasswordEntry'
 import type { DropState } from '@/types'
@@ -12,6 +12,8 @@ export default function GatePage() {
     status: 'open',
     timeRemaining: null,
   })
+  const videoRef = useRef<HTMLVideoElement>(null)
+  const [videoReady, setVideoReady] = useState(false)
 
   useEffect(() => {
     const dropTimestamp = process.env.NEXT_PUBLIC_DROP_TIMESTAMP
@@ -37,15 +39,21 @@ export default function GatePage() {
       className="relative min-h-screen overflow-hidden"
       style={{ backgroundColor: '#000' }}
     >
-      {/* Video background — black bg prevents flash on loop seek */}
+      {/* Video background — fades in once ready to hide initial black frame */}
       <video
+        ref={videoRef}
         autoPlay
         muted
         loop
         playsInline
         preload="auto"
         className="absolute inset-0 w-full h-full object-cover"
-        style={{ backgroundColor: '#000' }}
+        style={{
+          backgroundColor: '#000',
+          opacity: videoReady ? 1 : 0,
+          transition: 'opacity 0.4s ease',
+        }}
+        onCanPlay={() => setVideoReady(true)}
       >
         <source src="/videos/RPReplay_Final1730345188.mp4" type="video/mp4" />
       </video>
