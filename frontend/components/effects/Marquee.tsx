@@ -19,7 +19,7 @@ export default function Marquee() {
   const repeated = Array(6).fill(`${CONTENT}${SEPARATOR}`).join('')
 
   return (
-    <div style={{
+    <div className="fixed-marquee" style={{
       position: 'fixed',
       top: 56,
       left: 0,

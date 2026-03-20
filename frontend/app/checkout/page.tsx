@@ -4,7 +4,7 @@ import { useEffect, useState, FormEvent } from 'react'
 import { useRouter } from 'next/navigation'
 import Image from 'next/image'
 import { loadStripe } from '@stripe/stripe-js'
-import { Elements, PaymentElement, useStripe, useElements } from '@stripe/react-stripe-js'
+import { Elements, PaymentElement, ExpressCheckoutElement, useStripe, useElements } from '@stripe/react-stripe-js'
 import { useCart } from '@/context/CartContext'
 import { createPaymentIntent } from '@/lib/api'
 import type { CartItem } from '@/types'
@@ -109,8 +109,51 @@ function PaymentForm({
     }
   }
 
+  const onExpressCheckoutConfirm = async () => {
+    if (!stripe || !elements) return
+    const { error: confirmError } = await stripe.confirmPayment({
+      elements,
+      confirmParams: {
+        return_url: `${window.location.origin}/checkout/success`,
+      },
+    })
+    if (confirmError) {
+      setError(confirmError.message || 'Payment failed')
+    } else {
+      clearCart()
+    }
+  }
+
   return (
     <form onSubmit={handleSubmit}>
+      {/* Express checkout — Shop Pay, Apple Pay, Google Pay */}
+      <h2 style={sectionHeader}>EXPRESS CHECKOUT</h2>
+      <ExpressCheckoutElement
+        onConfirm={onExpressCheckoutConfirm}
+        options={{
+          paymentMethods: {
+            applePay: 'auto',
+            googlePay: 'auto',
+            link: 'auto',
+          },
+        }}
+      />
+      <div style={{
+        display: 'flex',
+        alignItems: 'center',
+        gap: '16px',
+        margin: '32px 0',
+      }}>
+        <div style={{ flex: 1, height: '1px', backgroundColor: '#333' }} />
+        <span style={{
+          fontSize: '10px',
+          letterSpacing: '0.25em',
+          color: '#555',
+          textTransform: 'uppercase',
+        }}>OR PAY WITH CARD</span>
+        <div style={{ flex: 1, height: '1px', backgroundColor: '#333' }} />
+      </div>
+
       <h2 style={sectionHeader}>PAYMENT</h2>
       <PaymentElement
         options={{

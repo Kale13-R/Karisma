@@ -1,6 +1,7 @@
 'use client'
 
-import { useRef } from 'react'
+import { useRef, useEffect, useState } from 'react'
+import { createPortal } from 'react-dom'
 import Image from 'next/image'
 import { motion } from 'framer-motion'
 import NewReleasesGrid from '@/components/product/NewReleasesGrid'
@@ -8,10 +9,32 @@ import Marquee from '@/components/ui/Marquee'
 
 export default function HomePage() {
   const shopRef = useRef<HTMLDivElement>(null)
+  const sentinelRef = useRef<HTMLDivElement>(null)
+  const [stuck, setStuck] = useState(false)
 
   const scrollToShop = () => {
     shopRef.current?.scrollIntoView({ behavior: 'smooth' })
   }
+
+  useEffect(() => {
+    const el = sentinelRef.current
+    if (!el) return
+    // Calculate once while element is in natural flow position
+    const threshold = el.getBoundingClientRect().top + window.scrollY - 56
+    let isStuck = false
+    const onScroll = () => {
+      const shouldStick = window.scrollY >= threshold
+      if (shouldStick === isStuck) return
+      isStuck = shouldStick
+      setStuck(shouldStick)
+      document.body.classList.toggle('hide-fixed-marquee', shouldStick)
+    }
+    window.addEventListener('scroll', onScroll, { passive: true })
+    return () => {
+      window.removeEventListener('scroll', onScroll)
+      document.body.classList.remove('hide-fixed-marquee')
+    }
+  }, [])
 
   return (
     <div style={{ backgroundColor: 'var(--bg)', color: 'var(--fg)', minHeight: '100vh' }}>
@@ -107,10 +130,16 @@ export default function HomePage() {
         </motion.div>
       </div>
 
-      {/* Scrolling marquee — covers the fixed top marquee when scrolled into its position */}
-      <div style={{ position: 'relative', zIndex: 100 }}>
+      <div ref={sentinelRef} style={{ visibility: stuck ? 'hidden' : 'visible' }}>
         <Marquee text="KARISMA · SUMMER 2026 · NEW RELEASE · DROP NOW · KARISMA WORLDWIDE ·" />
       </div>
+
+      {stuck && createPortal(
+        <div style={{ position: 'fixed', top: 56, left: 0, right: 0, zIndex: 100 }}>
+          <Marquee text="KARISMA · SUMMER 2026 · NEW RELEASE · DROP NOW · KARISMA WORLDWIDE ·" />
+        </div>,
+        document.body
+      )}
 
       {/* PRODUCT GRID */}
       <div ref={shopRef} style={{ padding: '32px 48px 80px', maxWidth: '1400px', margin: '0 auto' }}>
