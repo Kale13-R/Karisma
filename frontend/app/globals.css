@@ -263,6 +263,11 @@ main {
   to   { transform: translateX(-50%); }
 }
 
+.hide-fixed-marquee .fixed-marquee {
+  visibility: hidden;
+  pointer-events: none;
+}
+
 /* ===== Reduced motion ===== */
 @media (prefers-reduced-motion: reduce) {
   * { animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; }

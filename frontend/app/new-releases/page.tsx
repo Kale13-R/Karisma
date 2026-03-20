@@ -4,6 +4,7 @@ import { useRef } from 'react'
 import Image from 'next/image'
 import { motion } from 'framer-motion'
 import NewReleasesGrid from '@/components/product/NewReleasesGrid'
+import Marquee from '@/components/ui/Marquee'
 
 export default function NewReleasesPage() {
   const shopRef = useRef<HTMLDivElement>(null)
@@ -100,6 +101,9 @@ export default function NewReleasesPage() {
           </button>
         </div>
       </div>
+
+      {/* MARQUEE */}
+      <Marquee text="KARISMA · SUMMER 2026 · NEW RELEASE · DROP NOW · KARISMA WORLDWIDE ·" />
 
       {/* PRODUCT GRID */}
       <div ref={shopRef} style={{ padding: '80px 48px', maxWidth: '1400px', margin: '0 auto' }}>
