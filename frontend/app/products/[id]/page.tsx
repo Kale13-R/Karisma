@@ -11,6 +11,7 @@ export default function ProductPage() {
   const params = useParams()
   const id = params.id as string
   const [product, setProduct] = useState<Product | null>(null)
+  const [colorVariantProducts, setColorVariantProducts] = useState<Record<string, Product>>({})
   const [relatedProducts, setRelatedProducts] = useState<Product[]>([])
   const [notFound, setNotFound] = useState(false)
 
@@ -18,9 +19,21 @@ export default function ProductPage() {
     get<Product>(`/products/${id}`)
       .then((p) => {
         setProduct(p)
-        // Get color variant IDs so we can exclude them from "related"
+
         const variantGroup = getColorVariants(id)
         const variantIds = new Set(variantGroup?.variants.map((v) => v.productId) ?? [])
+
+        // Prefetch sibling color variants so switching is instant (no navigation)
+        if (variantGroup) {
+          const siblings = variantGroup.variants.filter((v) => v.productId !== id)
+          Promise.all(siblings.map((v) => get<Product>(`/products/${v.productId}`))).then(
+            (fetched) => {
+              const map: Record<string, Product> = { [id]: p }
+              fetched.forEach((fp) => { map[fp.id] = fp })
+              setColorVariantProducts(map)
+            }
+          ).catch(() => {})
+        }
 
         get<Product[]>(`/products?drop=${p.dropId}`)
           .then((all) => {
@@ -53,5 +66,5 @@ export default function ProductPage() {
 
   if (!product) return null
 
-  return <ProductDetail product={product} relatedProducts={relatedProducts} />
+  return <ProductDetail product={product} colorVariantProducts={colorVariantProducts} relatedProducts={relatedProducts} />
 }
