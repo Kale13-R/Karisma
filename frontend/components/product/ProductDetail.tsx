@@ -3,9 +3,11 @@
 import { useState } from 'react'
 import Image from 'next/image'
 import Link from 'next/link'
+import { useRouter } from 'next/navigation'
 import { motion } from 'framer-motion'
 import { useCart } from '@/context/CartContext'
 import { useMediaQuery } from '@/lib/useMediaQuery'
+import { getColorVariants } from '@/lib/colorVariants'
 import type { Product } from '@/types'
 
 const SIZE_LABELS: Record<string, string> = {
@@ -58,9 +60,14 @@ export default function ProductDetail({ product, relatedProducts = [] }: Props) 
   const [careOpen, setCareOpen] = useState(false)
   const [sizeFitOpen, setSizeFitOpen] = useState(false)
   const { addItem } = useCart()
+  const router = useRouter()
 
   // Only used for animation direction — layout handled by CSS
   const isMobile = useMediaQuery('(max-width: 767px)')
+
+  // Color variants
+  const variantGroup = getColorVariants(product.id)
+  const currentVariant = variantGroup?.variants.find((v) => v.productId === product.id)
 
   const dropdownBtnStyle: React.CSSProperties = {
     width: '100%',
@@ -141,7 +148,7 @@ export default function ProductDetail({ product, relatedProducts = [] }: Props) 
           color: 'var(--fg)',
           margin: 0,
         }}>
-          {product.name}
+          {variantGroup ? variantGroup.displayName : product.name}
         </h1>
 
         <p style={{ fontFamily: 'monospace', fontSize: '16px', color: 'var(--fg-muted)', marginTop: '12px' }}>
@@ -151,6 +158,61 @@ export default function ProductDetail({ product, relatedProducts = [] }: Props) 
         <p style={{ fontSize: '18px', lineHeight: 1.8, color: 'var(--fg-muted)', marginTop: '20px' }}>
           {product.description}
         </p>
+
+        {/* Color Selection */}
+        {variantGroup && (
+          <div style={{ marginTop: '24px' }}>
+            <p style={{
+              fontSize: '11px',
+              fontWeight: 700,
+              letterSpacing: '0.15em',
+              color: 'var(--fg-muted)',
+              textTransform: 'uppercase',
+              marginBottom: '12px',
+            }}>
+              COLOR — {currentVariant?.colorName?.toUpperCase() || ''}
+            </p>
+            <div style={{ display: 'flex', gap: '12px', alignItems: 'center' }}>
+              {variantGroup.variants.map((variant) => {
+                const isActive = variant.productId === product.id
+                return (
+                  <button
+                    key={variant.productId}
+                    onClick={() => {
+                      if (!isActive) {
+                        router.push(`/products/${variant.productId}`)
+                      }
+                    }}
+                    aria-label={`Select ${variant.colorName}`}
+                    style={{
+                      width: '32px',
+                      height: '32px',
+                      borderRadius: '50%',
+                      background: variant.hex,
+                      border: isActive ? '2px solid var(--fg)' : '2px solid transparent',
+                      outline: isActive ? '2px solid var(--fg)' : 'none',
+                      outlineOffset: '3px',
+                      cursor: isActive ? 'default' : 'pointer',
+                      transition: 'outline 0.15s ease, border 0.15s ease',
+                      padding: 0,
+                    }}
+                    onMouseEnter={(e) => {
+                      if (!isActive) {
+                        e.currentTarget.style.outline = '2px solid var(--fg-muted)'
+                        e.currentTarget.style.outlineOffset = '3px'
+                      }
+                    }}
+                    onMouseLeave={(e) => {
+                      if (!isActive) {
+                        e.currentTarget.style.outline = 'none'
+                      }
+                    }}
+                  />
+                )
+              })}
+            </div>
+          </div>
+        )}
 
         {/* Size Selection — full width grid */}
         <div className="pdp-sizes">

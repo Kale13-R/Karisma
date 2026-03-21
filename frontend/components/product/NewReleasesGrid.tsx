@@ -7,20 +7,19 @@ import { motion } from 'framer-motion'
 import { get } from '@/lib/api'
 import type { Product } from '@/types'
 
+// Color variants that should be combined into a single card
+const COLOR_VARIANT_GROUPS: Record<string, { displayName: string; primaryId: string; variants: string[] }> = {
+  'karisma-drop-1': {
+    displayName: 'KARISMA DROP 1',
+    primaryId: 'new-black-tee',
+    variants: ['new-black-tee', 'new-red-tee'],
+  },
+}
+
 const FALLBACK_PRODUCTS: Product[] = [
   {
-    id: 'new-red-tee',
-    name: 'KARISMA — Red',
-    price: 148.00,
-    imageUrl: '/images/new/new-release-red-tee.jpg',
-    sizes: ['S', 'M', 'L', 'XL'],
-    inStock: true,
-    description: 'Limited SS26 release.',
-    dropId: 'ss26-new',
-  },
-  {
     id: 'new-black-tee',
-    name: 'KARISMA — Black',
+    name: 'KARISMA DROP 1',
     price: 148.00,
     imageUrl: '/images/new/new-release-black-tee.jpg',
     sizes: ['S', 'M', 'L', 'XL'],
@@ -29,6 +28,36 @@ const FALLBACK_PRODUCTS: Product[] = [
     dropId: 'ss26-new',
   },
 ]
+
+/** Combine color variants into a single card, using the primary variant's image */
+function combineVariants(products: Product[]): Product[] {
+  const variantIds = new Set<string>()
+  const combined: Product[] = []
+
+  // Build a lookup of which product IDs belong to a group
+  for (const group of Object.values(COLOR_VARIANT_GROUPS)) {
+    for (const vid of group.variants) {
+      variantIds.add(vid)
+    }
+  }
+
+  // Add combined cards for each group
+  for (const group of Object.values(COLOR_VARIANT_GROUPS)) {
+    const primary = products.find((p) => p.id === group.primaryId)
+    if (primary) {
+      combined.push({ ...primary, name: group.displayName })
+    }
+  }
+
+  // Add non-variant products as-is
+  for (const p of products) {
+    if (!variantIds.has(p.id)) {
+      combined.push(p)
+    }
+  }
+
+  return combined
+}
 
 function CardItem({ product }: { product: Product }) {
   return (
@@ -154,7 +183,7 @@ export default function NewReleasesGrid() {
       .finally(() => setLoading(false))
   }, [])
 
-  const displayed = products.length > 0 ? products : FALLBACK_PRODUCTS
+  const displayed = combineVariants(products.length > 0 ? products : FALLBACK_PRODUCTS)
 
   if (loading) {
     return (

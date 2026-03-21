@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react'
 import { useParams } from 'next/navigation'
 import ProductDetail from '@/components/product/ProductDetail'
 import { get } from '@/lib/api'
+import { getColorVariants } from '@/lib/colorVariants'
 import type { Product } from '@/types'
 
 export default function ProductPage() {
@@ -17,9 +18,15 @@ export default function ProductPage() {
     get<Product>(`/products/${id}`)
       .then((p) => {
         setProduct(p)
+        // Get color variant IDs so we can exclude them from "related"
+        const variantGroup = getColorVariants(id)
+        const variantIds = new Set(variantGroup?.variants.map((v) => v.productId) ?? [])
+
         get<Product[]>(`/products?drop=${p.dropId}`)
           .then((all) => {
-            setRelatedProducts(all.filter((r) => r.id !== id).slice(0, 4))
+            setRelatedProducts(
+              all.filter((r) => r.id !== id && !variantIds.has(r.id)).slice(0, 4)
+            )
           })
           .catch(() => {})
       })
