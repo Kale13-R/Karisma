@@ -5,7 +5,7 @@ import Image from 'next/image'
 import Link from 'next/link'
 import { motion } from 'framer-motion'
 import { useCart } from '@/context/CartContext'
-import { useMediaQuery } from '@/lib/useMediaQuery'
+import { getColorVariants } from '@/lib/colorVariants'
 import type { Product } from '@/types'
 
 const SIZE_LABELS: Record<string, string> = {
@@ -19,6 +19,7 @@ const SIZE_LABELS: Record<string, string> = {
 
 interface Props {
   product: Product
+  colorVariantProducts?: Record<string, Product>
   relatedProducts?: Product[]
 }
 
@@ -51,7 +52,8 @@ function RelatedCard({ related }: { related: Product }) {
   )
 }
 
-export default function ProductDetail({ product, relatedProducts = [] }: Props) {
+export default function ProductDetail({ product, colorVariantProducts = {}, relatedProducts = [] }: Props) {
+  const [activeProduct, setActiveProduct] = useState<Product>(product)
   const [selectedSize, setSelectedSize] = useState<string | null>(null)
   const [added, setAdded] = useState(false)
   const [shippingOpen, setShippingOpen] = useState(false)
@@ -59,8 +61,18 @@ export default function ProductDetail({ product, relatedProducts = [] }: Props) 
   const [sizeFitOpen, setSizeFitOpen] = useState(false)
   const { addItem } = useCart()
 
-  // Only used for animation direction — layout handled by CSS
-  const isMobile = useMediaQuery('(max-width: 767px)')
+  // Color variants
+  const variantGroup = getColorVariants(activeProduct.id)
+  const currentVariant = variantGroup?.variants.find((v) => v.productId === activeProduct.id)
+
+  const handleColorSelect = (productId: string) => {
+    if (productId === activeProduct.id) return
+    const next = colorVariantProducts[productId]
+    if (next) {
+      setActiveProduct(next)
+      setSelectedSize(null)
+    }
+  }
 
   const dropdownBtnStyle: React.CSSProperties = {
     width: '100%',
@@ -88,7 +100,7 @@ export default function ProductDetail({ product, relatedProducts = [] }: Props) 
 
   const handleAddToCart = () => {
     if (!selectedSize) return
-    addItem({ product, size: selectedSize, quantity: 1 })
+    addItem({ product: activeProduct, size: selectedSize, quantity: 1 })
     setAdded(true)
     setTimeout(() => setAdded(false), 2000)
   }
@@ -99,31 +111,41 @@ export default function ProductDetail({ product, relatedProducts = [] }: Props) 
       color: 'var(--fg)',
     }}>
       {/* LEFT / TOP — Image panel (sticky on desktop, 75vh block on mobile) */}
-      <motion.div
-        key={product.id}
-        initial={{ opacity: 0, scale: 0.97 }}
-        animate={{ opacity: 1, scale: 1 }}
-        transition={{ duration: 0.4, ease: [0.25, 0.46, 0.45, 0.94] }}
-        className="pdp-image"
-      >
-        <Image
-          src={product.imageUrl}
-          alt={product.name}
-          fill
-          sizes="(max-width: 767px) 100vw, 50vw"
-          style={{
-            objectFit: 'contain',
-            objectPosition: 'center',
-          }}
-          priority
-        />
-      </motion.div>
+      <div className="pdp-image">
+        {variantGroup ? variantGroup.variants.map((variant) => {
+          const vp = colorVariantProducts[variant.productId]
+          if (!vp) return null
+          const isActive = variant.productId === activeProduct.id
+          return (
+            <Image
+              key={variant.productId}
+              src={vp.imageUrl}
+              alt={vp.name}
+              fill
+              sizes="(max-width: 767px) 100vw, 50vw"
+              style={{
+                objectFit: 'contain',
+                objectPosition: 'center',
+                opacity: isActive ? 1 : 0,
+                transition: 'opacity 0.25s ease',
+              }}
+              priority={isActive}
+            />
+          )
+        }) : (
+          <Image
+            src={activeProduct.imageUrl}
+            alt={activeProduct.name}
+            fill
+            sizes="(max-width: 767px) 100vw, 50vw"
+            style={{ objectFit: 'contain', objectPosition: 'center' }}
+            priority
+          />
+        )}
+      </div>
 
       {/* RIGHT / BOTTOM — Scrollable content panel */}
-      <motion.div
-        initial={{ opacity: 0, x: isMobile ? 0 : 40, y: isMobile ? 20 : 0 }}
-        animate={{ opacity: 1, x: 0, y: 0 }}
-        transition={{ duration: 0.5, ease: [0.25, 0.46, 0.45, 0.94] }}
+      <div
         className="pdp-content"
         style={{
           padding: 'var(--pdp-content-pad)',
@@ -141,20 +163,71 @@ export default function ProductDetail({ product, relatedProducts = [] }: Props) 
           color: 'var(--fg)',
           margin: 0,
         }}>
-          {product.name}
+          {variantGroup ? variantGroup.displayName : activeProduct.name}
         </h1>
 
         <p style={{ fontFamily: 'monospace', fontSize: '16px', color: 'var(--fg-muted)', marginTop: '12px' }}>
-          ${product.price.toFixed(2)}
+          ${activeProduct.price.toFixed(2)}
         </p>
 
         <p style={{ fontSize: '18px', lineHeight: 1.8, color: 'var(--fg-muted)', marginTop: '20px' }}>
-          {product.description}
+          {activeProduct.description}
         </p>
+
+        {/* Color Selection */}
+        {variantGroup && (
+          <div style={{ marginTop: '24px' }}>
+            <p style={{
+              fontSize: '11px',
+              fontWeight: 700,
+              letterSpacing: '0.15em',
+              color: 'var(--fg-muted)',
+              textTransform: 'uppercase',
+              marginBottom: '12px',
+            }}>
+              COLOR — {currentVariant?.colorName?.toUpperCase() || ''}
+            </p>
+            <div style={{ display: 'flex', gap: '12px', alignItems: 'center' }}>
+              {variantGroup.variants.map((variant) => {
+                const isActive = variant.productId === activeProduct.id
+                return (
+                  <button
+                    key={variant.productId}
+                    onClick={() => handleColorSelect(variant.productId)}
+                    aria-label={`Select ${variant.colorName}`}
+                    style={{
+                      width: '32px',
+                      height: '32px',
+                      borderRadius: '50%',
+                      background: variant.hex,
+                      border: isActive ? '2px solid var(--fg)' : '2px solid transparent',
+                      outline: isActive ? '2px solid var(--fg)' : 'none',
+                      outlineOffset: '3px',
+                      cursor: isActive ? 'default' : 'pointer',
+                      transition: 'outline 0.15s ease, border 0.15s ease',
+                      padding: 0,
+                    }}
+                    onMouseEnter={(e) => {
+                      if (!isActive) {
+                        e.currentTarget.style.outline = '2px solid var(--fg-muted)'
+                        e.currentTarget.style.outlineOffset = '3px'
+                      }
+                    }}
+                    onMouseLeave={(e) => {
+                      if (!isActive) {
+                        e.currentTarget.style.outline = 'none'
+                      }
+                    }}
+                  />
+                )
+              })}
+            </div>
+          </div>
+        )}
 
         {/* Size Selection — full width grid */}
         <div className="pdp-sizes">
-          {product.sizes.map((size) => (
+          {activeProduct.sizes.map((size) => (
             <button
               key={size}
               onClick={() => setSelectedSize(prev => prev === size ? null : size)}
@@ -277,7 +350,7 @@ export default function ProductDetail({ product, relatedProducts = [] }: Props) 
             </div>
           </div>
         )}
-      </motion.div>
+      </div>
     </main>
   )
 }

@@ -45,8 +45,7 @@ describe('NewReleasesGrid — image flash prevention', () => {
       expect(screen.queryByText('LOADING')).not.toBeInTheDocument()
     })
 
-    expect(screen.getAllByText(/KARISMA — Red/i).length).toBeGreaterThan(0)
-    expect(screen.getAllByText(/KARISMA — Black/i).length).toBeGreaterThan(0)
+    expect(screen.getAllByText(/KARISMA DROP 1/i).length).toBeGreaterThan(0)
   })
 
   it('product images have onLoad handlers that fire without error', async () => {
@@ -56,7 +55,7 @@ describe('NewReleasesGrid — image flash prevention', () => {
     })
 
     const images = screen.getAllByRole('img')
-    expect(images.length).toBe(2)
+    expect(images.length).toBe(1)
 
     // Fire load event on each image — should not crash
     images.forEach(img => {
@@ -64,7 +63,7 @@ describe('NewReleasesGrid — image flash prevention', () => {
     })
 
     // Images still present after load events
-    expect(screen.getAllByRole('img')).toHaveLength(2)
+    expect(screen.getAllByRole('img')).toHaveLength(1)
   })
 
   it('card containers start with opacity 0 before image loads', async () => {
