@@ -23,6 +23,9 @@ export default function ProductPage() {
         const variantGroup = getColorVariants(id)
         const variantIds = new Set(variantGroup?.variants.map((v) => v.productId) ?? [])
 
+        // Seed the current product immediately so the image renders without waiting for siblings
+        setColorVariantProducts({ [id]: p })
+
         // Prefetch sibling color variants so switching is instant (no navigation)
         if (variantGroup) {
           const siblings = variantGroup.variants.filter((v) => v.productId !== id)
