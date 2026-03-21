@@ -1,6 +1,11 @@
 #Agents file
 AGENTS.MD
 
+# Project docs — local only
+CLAUDE.md
+KARISMA-SITE-AUDIT.md
+WORKFLOW-GUIDE.md
+
 
 # dependencies
 node_modules/
