@@ -112,7 +112,7 @@ export default function ProductDetail({ product, colorVariantProducts = {}, rela
       color: 'var(--fg)',
     }}>
       {/* LEFT / TOP — Image panel (sticky on desktop, 75vh block on mobile) */}
-      <div className="pdp-image" style={{ position: 'relative' }}>
+      <div className="pdp-image">
         {variantGroup ? variantGroup.variants.map((variant) => {
           const vp = colorVariantProducts[variant.productId]
           if (!vp) return null
