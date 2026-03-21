@@ -71,7 +71,6 @@ export default function ProductDetail({ product, colorVariantProducts = {}, rela
     if (next) {
       setActiveProduct(next)
       setSelectedSize(null)
-      window.history.replaceState(null, '', `/products/${productId}`)
     }
   }
 

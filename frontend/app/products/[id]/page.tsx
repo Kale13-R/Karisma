@@ -7,6 +7,9 @@ import { get } from '@/lib/api'
 import { getColorVariants } from '@/lib/colorVariants'
 import type { Product } from '@/types'
 
+// Module-level cache — survives soft navigations within the same browser session
+const productCache = new Map<string, Product>()
+
 export default function ProductPage() {
   const params = useParams()
   const id = params.id as string
@@ -16,23 +19,48 @@ export default function ProductPage() {
   const [notFound, setNotFound] = useState(false)
 
   useEffect(() => {
+    setNotFound(false)
+
+    const variantGroup = getColorVariants(id)
+    const variantIds = new Set(variantGroup?.variants.map((v) => v.productId) ?? [])
+
+    // If already cached (e.g. back button or sibling variant navigation), skip fetch entirely
+    const cached = productCache.get(id)
+    if (cached) {
+      setProduct(cached)
+      if (variantGroup) {
+        const map: Record<string, Product> = {}
+        variantGroup.variants.forEach((v) => {
+          const c = productCache.get(v.productId)
+          if (c) map[v.productId] = c
+        })
+        setColorVariantProducts(map)
+      } else {
+        setColorVariantProducts({ [id]: cached })
+      }
+      return
+    }
+
+    // Fresh fetch
+    setProduct(null)
+    setColorVariantProducts({})
+
     get<Product>(`/products/${id}`)
       .then((p) => {
+        productCache.set(id, p)
         setProduct(p)
-
-        const variantGroup = getColorVariants(id)
-        const variantIds = new Set(variantGroup?.variants.map((v) => v.productId) ?? [])
-
-        // Seed the current product immediately so the image renders without waiting for siblings
         setColorVariantProducts({ [id]: p })
 
-        // Prefetch sibling color variants so switching is instant (no navigation)
+        // Prefetch siblings so color switching is instant
         if (variantGroup) {
           const siblings = variantGroup.variants.filter((v) => v.productId !== id)
           Promise.all(siblings.map((v) => get<Product>(`/products/${v.productId}`))).then(
             (fetched) => {
               const map: Record<string, Product> = { [id]: p }
-              fetched.forEach((fp) => { map[fp.id] = fp })
+              fetched.forEach((fp) => {
+                productCache.set(fp.id, fp)
+                map[fp.id] = fp
+              })
               setColorVariantProducts(map)
             }
           ).catch(() => {})
