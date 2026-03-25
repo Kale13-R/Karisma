@@ -6,12 +6,15 @@ import PasswordEntry from '@/components/gate/PasswordEntry'
 import type { DropState } from '@/types'
 
 export default function GatePage() {
+  // Default 'open' so content renders on first paint — useEffect corrects to
+  // 'countdown' on next tick if NEXT_PUBLIC_DROP_TIMESTAMP is set
   const [dropState, setDropState] = useState<DropState>({
     status: 'open',
     timeRemaining: null,
   })
   const videoRef = useRef<HTMLVideoElement>(null)
 
+  // Drop-time check
   useEffect(() => {
     const dropTimestamp = process.env.NEXT_PUBLIC_DROP_TIMESTAMP
     if (!dropTimestamp) return
@@ -31,37 +34,20 @@ export default function GatePage() {
     return () => clearInterval(interval)
   }, [])
 
+  // Manual loop: seek to 0 when the video is ~0.15 s from its end so the
+  // browser never hits the native loop-seek frame which causes the flash
   useEffect(() => {
-    const v = videoRef.current
-    if (!v) return
+    const video = videoRef.current
+    if (!video) return
 
-    // Fade in as soon as the browser has decoded the first frame.
-    // We do this via direct DOM manipulation (not state) so it works even
-    // when the browser fires canplay before React has finished hydrating.
-    const showVideo = () => {
-      v.style.transition = 'opacity 0.4s ease'
-      v.style.opacity = '1'
-    }
-    if (v.readyState >= 2) {
-      // Already decoded — show immediately
-      showVideo()
-    } else {
-      v.addEventListener('canplay', showVideo, { once: true })
+    const handleTimeUpdate = () => {
+      if (video.duration && video.currentTime >= video.duration - 0.15) {
+        video.currentTime = 0
+      }
     }
 
-    // --- Seamless loop ---
-    // The video is trimmed to exactly 3 seconds so native looping resets
-    // cleanly without any visible reverse or black-frame flash.
-    const handleEnded = () => {
-      v.currentTime = 0
-      v.play().catch(() => {})
-    }
-    v.addEventListener('ended', handleEnded)
-
-    return () => {
-      v.removeEventListener('canplay', showVideo)
-      v.removeEventListener('ended', handleEnded)
-    }
+    video.addEventListener('timeupdate', handleTimeUpdate)
+    return () => video.removeEventListener('timeupdate', handleTimeUpdate)
   }, [])
 
   return (
@@ -69,7 +55,7 @@ export default function GatePage() {
       className="relative min-h-screen overflow-hidden"
       style={{ backgroundColor: '#000' }}
     >
-      {/* Video starts invisible; fades in when first frame is ready */}
+      {/* Video — no `loop` attr; manual seek handles it to avoid frame flash */}
       <video
         ref={videoRef}
         autoPlay
@@ -77,7 +63,7 @@ export default function GatePage() {
         playsInline
         preload="auto"
         className="absolute inset-0 w-full h-full object-cover"
-        style={{ opacity: 0 }}
+        style={{ backgroundColor: '#000' }}
       >
         <source src="/videos/karisma-gate.mp4" type="video/mp4" />
       </video>
