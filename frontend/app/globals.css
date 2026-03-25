@@ -295,3 +295,36 @@ main {
 @media (max-width: 767px) {
   .drop-title { text-align: center; }
 }
+
+/* ===== Gate page animations ===== */
+@keyframes fadeSlideUp {
+  from { opacity: 0; transform: translateY(24px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes fadeOut {
+  from { opacity: 1; transform: translateY(0); }
+  to   { opacity: 0; transform: translateY(-20px); }
+}
+
+@keyframes flyUp {
+  from { opacity: 0; transform: translateY(100px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.gate-fade-in {
+  animation: fadeSlideUp 0.45s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+.gate-fade-out {
+  animation: fadeOut 0.3s cubic-bezier(0.4, 0, 1, 1) forwards;
+}
+
+.gate-fly-up {
+  animation: flyUp 0.55s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+/* ===== New arrivals heading ===== */
+@media (max-width: 767px) {
+  .drop-title { text-align: center; }
+}
