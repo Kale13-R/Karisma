@@ -1,4 +1,3 @@
-import re
 from contextlib import asynccontextmanager
 
 from fastapi import FastAPI
@@ -26,24 +25,15 @@ async def lifespan(app: FastAPI):
     # Shutdown: nothing to clean up for SQLite
 
 
-def is_allowed_origin(origin: str) -> bool:
-    # Always allow localhost
-    if origin.startswith("http://localhost"):
-        return True
-    # Allow any Vercel preview or production URL for this project
-    if re.match(r"https://karisma.*\.vercel\.app$", origin):
-        return True
-    # Allow custom domain when configured
-    if settings.VERCEL_URL and origin == f"https://{settings.VERCEL_URL}":
-        return True
-    return False
-
-
 app = FastAPI(title="Karisma API", version="0.1.0", lifespan=lifespan)
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origin_regex=r"http://localhost:\d+|https://karisma.*\.vercel\.app",
+    allow_origin_regex=(
+        r"http://localhost:\d+"
+        r"|https://karisma.*\.vercel\.app"
+        r"|https://karismaworldwide\.store"
+    ),
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
