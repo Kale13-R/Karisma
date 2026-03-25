@@ -6,9 +6,8 @@ import type { GateAuthResponse } from '@/types'
 
 type Step = 'email' | 'transitioning' | 'password'
 
-/* SVG lock icons */
 const LockClosed = () => (
-  <svg width="22" height="26" viewBox="0 0 22 26" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <svg width="16" height="20" viewBox="0 0 22 26" fill="none" xmlns="http://www.w3.org/2000/svg">
     <rect x="1" y="11" width="20" height="14" rx="2" stroke="currentColor" strokeWidth="1.5" />
     <path d="M6 11V7a5 5 0 0 1 10 0v4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
     <circle cx="11" cy="18" r="1.5" fill="currentColor" />
@@ -16,7 +15,7 @@ const LockClosed = () => (
 )
 
 const LockOpen = () => (
-  <svg width="22" height="26" viewBox="0 0 22 26" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <svg width="16" height="20" viewBox="0 0 22 26" fill="none" xmlns="http://www.w3.org/2000/svg">
     <rect x="1" y="11" width="20" height="14" rx="2" stroke="currentColor" strokeWidth="1.5" />
     <path d="M6 11V7a5 5 0 0 1 10 0" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
     <circle cx="11" cy="18" r="1.5" fill="currentColor" />
@@ -24,13 +23,13 @@ const LockOpen = () => (
 )
 
 export default function PasswordEntry() {
-  const [step, setStep]               = useState<Step>('email')
-  const [email, setEmail]             = useState('')
-  const [password, setPassword]       = useState('')
-  const [emailClass, setEmailClass]   = useState('gate-fade-in')
-  const [passwordClass, setPasswordClass] = useState('')
-  const [error, setError]             = useState<string | null>(null)
-  const [loading, setLoading]         = useState(false)
+  const [step, setStep]             = useState<Step>('email')
+  const [email, setEmail]           = useState('')
+  const [password, setPassword]     = useState('')
+  const [emailClass, setEmailClass] = useState('gate-fade-in')
+  const [pwClass, setPwClass]       = useState('')
+  const [error, setError]           = useState<string | null>(null)
+  const [loading, setLoading]       = useState(false)
   const router = useRouter()
 
   const emailValid = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)
@@ -46,13 +45,9 @@ export default function PasswordEntry() {
     e.preventDefault()
     setError(null)
     if (!emailValid) { setError('Enter a valid email to continue.'); return }
-
     setEmailClass('gate-fade-out')
     setStep('transitioning')
-    setTimeout(() => {
-      setStep('password')
-      setPasswordClass('gate-fade-in')
-    }, 300)
+    setTimeout(() => { setStep('password'); setPwClass('gate-fade-in') }, 300)
   }
 
   const handlePasswordSubmit = async (e: React.FormEvent) => {
@@ -79,7 +74,7 @@ export default function PasswordEntry() {
   const goBack = () => {
     setStep('email')
     setEmailClass('gate-fade-in')
-    setPasswordClass('')
+    setPwClass('')
     setError(null)
     setPassword('')
   }
@@ -99,18 +94,6 @@ export default function PasswordEntry() {
     caretColor: '#fff',
   }
 
-  const btnStyle = (disabled: boolean): React.CSSProperties => ({
-    background: 'none',
-    border: '1px solid rgba(255,255,255,0.3)',
-    color: disabled ? 'rgba(255,255,255,0.25)' : '#fff',
-    padding: '11px 44px',
-    fontSize: '10px',
-    letterSpacing: '0.35em',
-    cursor: disabled ? 'default' : 'pointer',
-    fontFamily: 'inherit',
-    transition: 'border-color 0.2s, color 0.2s',
-  })
-
   return (
     <div
       style={{
@@ -121,7 +104,6 @@ export default function PasswordEntry() {
         alignItems: 'center',
         fontFamily: "'Inter', 'Helvetica Neue', Arial, sans-serif",
         padding: '24px',
-        position: 'relative',
       }}
     >
       {/* Brand */}
@@ -159,7 +141,6 @@ export default function PasswordEntry() {
           >
             <input
               id="gate-email"
-              name="email"
               type="email"
               value={email}
               onChange={e => { setEmail(e.target.value); setError(null) }}
@@ -168,20 +149,40 @@ export default function PasswordEntry() {
               autoComplete="email"
               style={inputStyle}
             />
-            <button type="submit" disabled={!emailValid} style={btnStyle(!emailValid)}>
+            <button
+              type="submit"
+              disabled={!emailValid}
+              style={{
+                background: 'none',
+                border: '1px solid rgba(255,255,255,0.3)',
+                color: emailValid ? '#fff' : 'rgba(255,255,255,0.25)',
+                padding: '11px 44px',
+                fontSize: '10px',
+                letterSpacing: '0.35em',
+                cursor: emailValid ? 'pointer' : 'default',
+                fontFamily: 'inherit',
+                transition: 'border-color 0.2s, color 0.2s',
+              }}
+            >
               CONTINUE
             </button>
           </form>
 
-          {/* Lock icon — dims until email is valid */}
+          {/* Lock icon + label */}
           <div
             style={{
-              marginTop: '8px',
-              color: emailValid ? 'rgba(255,255,255,0.75)' : 'rgba(255,255,255,0.2)',
+              display: 'flex',
+              alignItems: 'center',
+              gap: '8px',
+              marginTop: '4px',
+              color: emailValid ? 'rgba(255,255,255,0.7)' : 'rgba(255,255,255,0.18)',
               transition: 'color 0.4s ease',
             }}
           >
             {emailValid ? <LockOpen /> : <LockClosed />}
+            <span style={{ fontSize: '10px', letterSpacing: '0.3em', textTransform: 'uppercase' }}>
+              Password
+            </span>
           </div>
         </div>
       )}
@@ -189,6 +190,7 @@ export default function PasswordEntry() {
       {/* ── PASSWORD STEP ── */}
       {step === 'password' && (
         <div
+          className={pwClass}
           style={{
             display: 'flex',
             flexDirection: 'column',
@@ -196,41 +198,14 @@ export default function PasswordEntry() {
             gap: '28px',
             width: '100%',
             maxWidth: '300px',
-            position: 'relative',
           }}
         >
-          {/* ← back arrow — top-left of the form, doesn't stack below */}
-          <button
-            type="button"
-            onClick={goBack}
-            aria-label="Back to email"
-            style={{
-              position: 'absolute',
-              left: 0,
-              top: '50%',
-              transform: 'translateY(-50%)',
-              background: 'none',
-              border: 'none',
-              color: 'rgba(255,255,255,0.35)',
-              fontSize: '18px',
-              cursor: 'pointer',
-              fontFamily: 'inherit',
-              lineHeight: 1,
-              padding: '4px',
-              transition: 'color 0.2s',
-            }}
-          >
-            ←
-          </button>
-
           <form
             onSubmit={handlePasswordSubmit}
-            className={passwordClass}
             style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '28px', width: '100%' }}
           >
             <input
               id="gate-password"
-              name="password"
               type="password"
               value={password}
               onChange={e => { setPassword(e.target.value); setError(null) }}
@@ -238,24 +213,62 @@ export default function PasswordEntry() {
               autoComplete="current-password"
               style={inputStyle}
             />
-            <button type="submit" disabled={loading || !password} style={btnStyle(loading || !password)}>
-              {loading ? '—' : 'ENTER'}
-            </button>
+
+            {/* ← back and ENTER on the same row */}
+            <div style={{ display: 'flex', alignItems: 'center', gap: '12px', width: '100%', justifyContent: 'center' }}>
+              <button
+                type="button"
+                onClick={goBack}
+                aria-label="Back to email"
+                style={{
+                  background: 'none',
+                  border: '1px solid rgba(255,255,255,0.2)',
+                  color: 'rgba(255,255,255,0.45)',
+                  width: '42px',
+                  height: '42px',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  fontSize: '16px',
+                  cursor: 'pointer',
+                  fontFamily: 'inherit',
+                  transition: 'border-color 0.2s, color 0.2s',
+                  flexShrink: 0,
+                }}
+              >
+                ←
+              </button>
+              <button
+                type="submit"
+                disabled={loading || !password}
+                style={{
+                  background: 'none',
+                  border: '1px solid rgba(255,255,255,0.3)',
+                  color: (loading || !password) ? 'rgba(255,255,255,0.25)' : '#fff',
+                  padding: '11px 44px',
+                  fontSize: '10px',
+                  letterSpacing: '0.35em',
+                  cursor: (loading || !password) ? 'default' : 'pointer',
+                  fontFamily: 'inherit',
+                  transition: 'border-color 0.2s, color 0.2s',
+                }}
+              >
+                {loading ? '—' : 'ENTER'}
+              </button>
+            </div>
           </form>
         </div>
       )}
 
       {/* Error */}
       {error && (
-        <p
-          style={{
-            marginTop: '28px',
-            fontSize: '10px',
-            letterSpacing: '0.18em',
-            color: 'rgba(255,110,110,0.9)',
-            textTransform: 'uppercase',
-          }}
-        >
+        <p style={{
+          marginTop: '28px',
+          fontSize: '10px',
+          letterSpacing: '0.18em',
+          color: 'rgba(255,110,110,0.9)',
+          textTransform: 'uppercase',
+        }}>
           {error}
         </p>
       )}
