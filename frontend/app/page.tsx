@@ -143,7 +143,7 @@ export default function HomePage() {
 
       {/* PRODUCT GRID */}
       <div ref={shopRef} style={{ padding: '32px 48px 80px', maxWidth: '1400px', margin: '0 auto' }}>
-        <h2 style={{ fontSize: '28px', fontWeight: 700, letterSpacing: '0.06em', marginBottom: '48px' }}>NEW ARRIVALS</h2>
+        <h2 style={{ fontSize: '28px', fontWeight: 700, letterSpacing: '0.06em', marginBottom: '48px' }} className="drop-title">NEW ARRIVALS</h2>
         <NewReleasesGrid />
       </div>
 

@@ -5,12 +5,24 @@ import { useRouter } from 'next/navigation'
 import type { GateAuthResponse } from '@/types'
 
 export default function PasswordEntry() {
+  const [step, setStep] = useState<'email' | 'password'>('email')
+  const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [error, setError] = useState<string | null>(null)
   const [loading, setLoading] = useState(false)
   const router = useRouter()
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleEmailSubmit = (e: React.FormEvent) => {
+    e.preventDefault()
+    setError(null)
+    if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+      setError('Please enter a valid email address.')
+      return
+    }
+    setStep('password')
+  }
+
+  const handlePasswordSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setError(null)
     setLoading(true)
@@ -19,7 +31,7 @@ export default function PasswordEntry() {
       const response = await fetch('/api/auth/gate', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ password }),
+        body: JSON.stringify({ email, password }),
         credentials: 'include',
       })
 
@@ -37,6 +49,32 @@ export default function PasswordEntry() {
       setLoading(false)
     }
   }
+
+  const sharedInputStyle: React.CSSProperties = {
+    width: '100%',
+    background: 'none',
+    border: 'none',
+    borderBottom: '1px solid rgba(255,255,255,0.4)',
+    color: '#fff',
+    fontSize: '16px',
+    letterSpacing: '0.1em',
+    padding: '10px 0',
+    outline: 'none',
+    textAlign: 'center',
+    fontFamily: 'inherit',
+  }
+
+  const sharedBtnStyle = (disabled: boolean): React.CSSProperties => ({
+    background: 'none',
+    border: '1px solid rgba(255,255,255,0.4)',
+    color: disabled ? 'rgba(255,255,255,0.4)' : '#fff',
+    padding: '10px 40px',
+    fontSize: '10px',
+    letterSpacing: '0.3em',
+    cursor: disabled ? 'default' : 'pointer',
+    fontFamily: 'inherit',
+    transition: 'border-color 0.15s, color 0.15s',
+  })
 
   return (
     <div
@@ -63,58 +101,84 @@ export default function PasswordEntry() {
         KARISMA
       </p>
 
-      <form
-        onSubmit={handleSubmit}
-        style={{
-          display: 'flex',
-          flexDirection: 'column',
-          alignItems: 'center',
-          gap: '24px',
-          width: '100%',
-          maxWidth: '320px',
-        }}
-      >
-        <input
-          id="gate-password"
-          name="password"
-          type="password"
-          value={password}
-          onChange={e => setPassword(e.target.value)}
-          placeholder="enter password"
-          autoFocus
+      {step === 'email' ? (
+        <form
+          onSubmit={handleEmailSubmit}
           style={{
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'center',
+            gap: '24px',
             width: '100%',
-            background: 'none',
-            border: 'none',
-            borderBottom: '1px solid rgba(255,255,255,0.4)',
-            color: '#fff',
-            fontSize: '16px',
-            letterSpacing: '0.1em',
-            padding: '10px 0',
-            outline: 'none',
-            textAlign: 'center',
-            fontFamily: 'inherit',
-          }}
-        />
-
-        <button
-          type="submit"
-          disabled={loading || !password}
-          style={{
-            background: 'none',
-            border: '1px solid rgba(255,255,255,0.4)',
-            color: loading || !password ? 'rgba(255,255,255,0.4)' : '#fff',
-            padding: '10px 40px',
-            fontSize: '10px',
-            letterSpacing: '0.3em',
-            cursor: loading || !password ? 'default' : 'pointer',
-            fontFamily: 'inherit',
-            transition: 'border-color 0.15s, color 0.15s',
+            maxWidth: '320px',
           }}
         >
-          {loading ? '...' : 'ENTER'}
-        </button>
-      </form>
+          <input
+            id="gate-email"
+            name="email"
+            type="email"
+            value={email}
+            onChange={e => setEmail(e.target.value)}
+            placeholder="enter email"
+            autoFocus
+            style={sharedInputStyle}
+          />
+          <button
+            type="submit"
+            disabled={!email}
+            style={sharedBtnStyle(!email)}
+          >
+            CONTINUE
+          </button>
+        </form>
+      ) : (
+        <form
+          onSubmit={handlePasswordSubmit}
+          style={{
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'center',
+            gap: '24px',
+            width: '100%',
+            maxWidth: '320px',
+          }}
+        >
+          <input
+            id="gate-password"
+            name="password"
+            type="password"
+            value={password}
+            onChange={e => setPassword(e.target.value)}
+            placeholder="enter password"
+            autoFocus
+            style={sharedInputStyle}
+          />
+          <button
+            type="submit"
+            disabled={loading || !password}
+            style={sharedBtnStyle(loading || !password)}
+          >
+            {loading ? '...' : 'ENTER'}
+          </button>
+          <button
+            type="button"
+            onClick={() => { setStep('email'); setError(null) }}
+            style={{
+              background: 'none',
+              border: 'none',
+              color: 'rgba(255,255,255,0.35)',
+              fontSize: '10px',
+              letterSpacing: '0.2em',
+              cursor: 'pointer',
+              fontFamily: 'inherit',
+              marginTop: '-8px',
+              textDecoration: 'underline',
+            }}
+          >
+            back
+          </button>
+        </form>
+      )}
 
       {error && (
         <p

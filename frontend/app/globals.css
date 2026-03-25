@@ -290,3 +290,8 @@ main {
     grid-template-columns: 1fr;
   }
 }
+
+/* ===== New arrivals heading ===== */
+@media (max-width: 767px) {
+  .drop-title { text-align: center; }
+}
