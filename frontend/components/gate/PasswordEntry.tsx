@@ -6,22 +6,38 @@ import type { GateAuthResponse } from '@/types'
 
 type Step = 'email' | 'transitioning' | 'password'
 
+/* SVG lock icons */
+const LockClosed = () => (
+  <svg width="22" height="26" viewBox="0 0 22 26" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <rect x="1" y="11" width="20" height="14" rx="2" stroke="currentColor" strokeWidth="1.5" />
+    <path d="M6 11V7a5 5 0 0 1 10 0v4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
+    <circle cx="11" cy="18" r="1.5" fill="currentColor" />
+  </svg>
+)
+
+const LockOpen = () => (
+  <svg width="22" height="26" viewBox="0 0 22 26" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <rect x="1" y="11" width="20" height="14" rx="2" stroke="currentColor" strokeWidth="1.5" />
+    <path d="M6 11V7a5 5 0 0 1 10 0" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
+    <circle cx="11" cy="18" r="1.5" fill="currentColor" />
+  </svg>
+)
+
 export default function PasswordEntry() {
-  const [step, setStep] = useState<Step>('email')
-  const [email, setEmail] = useState('')
-  const [password, setPassword] = useState('')
-  const [emailClass, setEmailClass] = useState('gate-fade-in')
+  const [step, setStep]               = useState<Step>('email')
+  const [email, setEmail]             = useState('')
+  const [password, setPassword]       = useState('')
+  const [emailClass, setEmailClass]   = useState('gate-fade-in')
   const [passwordClass, setPasswordClass] = useState('')
-  const [error, setError] = useState<string | null>(null)
-  const [loading, setLoading] = useState(false)
+  const [error, setError]             = useState<string | null>(null)
+  const [loading, setLoading]         = useState(false)
   const router = useRouter()
 
-  // Auto-focus password input once it flies in
+  const emailValid = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)
+
   useEffect(() => {
     if (step === 'password') {
-      const t = setTimeout(() => {
-        document.getElementById('gate-password')?.focus()
-      }, 300)
+      const t = setTimeout(() => document.getElementById('gate-password')?.focus(), 50)
       return () => clearTimeout(t)
     }
   }, [step])
@@ -29,42 +45,29 @@ export default function PasswordEntry() {
   const handleEmailSubmit = (e: React.FormEvent) => {
     e.preventDefault()
     setError(null)
-    if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
-      setError('Enter a valid email to continue.')
-      return
-    }
+    if (!emailValid) { setError('Enter a valid email to continue.'); return }
 
-    // Step 1: fade email out
     setEmailClass('gate-fade-out')
     setStep('transitioning')
-
-    // Step 2: after email fades, fly password up
     setTimeout(() => {
       setStep('password')
-      setPasswordClass('gate-fly-up')
-    }, 320)
+      setPasswordClass('gate-fade-in')
+    }, 300)
   }
 
   const handlePasswordSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setError(null)
     setLoading(true)
-
     try {
-      const response = await fetch('/api/auth/gate', {
+      const res  = await fetch('/api/auth/gate', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email, password }),
         credentials: 'include',
       })
-
-      const data: GateAuthResponse = await response.json()
-
-      if (!response.ok || !data.success) {
-        setError(data.error || 'Invalid password.')
-        return
-      }
-
+      const data: GateAuthResponse = await res.json()
+      if (!res.ok || !data.success) { setError(data.error || 'Invalid password.'); return }
       router.push('/')
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Access denied.')
@@ -73,11 +76,19 @@ export default function PasswordEntry() {
     }
   }
 
+  const goBack = () => {
+    setStep('email')
+    setEmailClass('gate-fade-in')
+    setPasswordClass('')
+    setError(null)
+    setPassword('')
+  }
+
   const inputStyle: React.CSSProperties = {
     width: '100%',
     background: 'none',
     border: 'none',
-    borderBottom: '1px solid rgba(255,255,255,0.35)',
+    borderBottom: '1px solid rgba(255,255,255,0.3)',
     color: '#fff',
     fontSize: '16px',
     letterSpacing: '0.12em',
@@ -90,15 +101,14 @@ export default function PasswordEntry() {
 
   const btnStyle = (disabled: boolean): React.CSSProperties => ({
     background: 'none',
-    border: '1px solid rgba(255,255,255,0.35)',
-    color: disabled ? 'rgba(255,255,255,0.3)' : '#fff',
+    border: '1px solid rgba(255,255,255,0.3)',
+    color: disabled ? 'rgba(255,255,255,0.25)' : '#fff',
     padding: '11px 44px',
     fontSize: '10px',
     letterSpacing: '0.35em',
     cursor: disabled ? 'default' : 'pointer',
     fontFamily: 'inherit',
     transition: 'border-color 0.2s, color 0.2s',
-    marginTop: '8px',
   })
 
   return (
@@ -120,19 +130,18 @@ export default function PasswordEntry() {
         style={{
           fontSize: '11px',
           letterSpacing: '0.5em',
-          color: 'rgba(255,255,255,0.5)',
+          color: 'rgba(255,255,255,0.45)',
           textTransform: 'uppercase',
-          marginBottom: '56px',
+          marginBottom: '52px',
           userSelect: 'none',
         }}
       >
         KARISMA
       </p>
 
-      {/* Email step */}
+      {/* ── EMAIL STEP ── */}
       {(step === 'email' || step === 'transitioning') && (
-        <form
-          onSubmit={handleEmailSubmit}
+        <div
           className={emailClass}
           style={{
             display: 'flex',
@@ -144,32 +153,42 @@ export default function PasswordEntry() {
             position: step === 'transitioning' ? 'absolute' : 'relative',
           }}
         >
-          <input
-            id="gate-email"
-            name="email"
-            type="email"
-            value={email}
-            onChange={e => { setEmail(e.target.value); setError(null) }}
-            placeholder="EMAIL"
-            autoFocus
-            autoComplete="email"
-            style={inputStyle}
-          />
-          <button
-            type="submit"
-            disabled={!email}
-            style={btnStyle(!email)}
+          <form
+            onSubmit={handleEmailSubmit}
+            style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '28px', width: '100%' }}
           >
-            CONTINUE
-          </button>
-        </form>
+            <input
+              id="gate-email"
+              name="email"
+              type="email"
+              value={email}
+              onChange={e => { setEmail(e.target.value); setError(null) }}
+              placeholder="EMAIL"
+              autoFocus
+              autoComplete="email"
+              style={inputStyle}
+            />
+            <button type="submit" disabled={!emailValid} style={btnStyle(!emailValid)}>
+              CONTINUE
+            </button>
+          </form>
+
+          {/* Lock icon — dims until email is valid */}
+          <div
+            style={{
+              marginTop: '8px',
+              color: emailValid ? 'rgba(255,255,255,0.75)' : 'rgba(255,255,255,0.2)',
+              transition: 'color 0.4s ease',
+            }}
+          >
+            {emailValid ? <LockOpen /> : <LockClosed />}
+          </div>
+        </div>
       )}
 
-      {/* Password step — flies up from below */}
+      {/* ── PASSWORD STEP ── */}
       {step === 'password' && (
-        <form
-          onSubmit={handlePasswordSubmit}
-          className={passwordClass}
+        <div
           style={{
             display: 'flex',
             flexDirection: 'column',
@@ -177,50 +196,53 @@ export default function PasswordEntry() {
             gap: '28px',
             width: '100%',
             maxWidth: '300px',
+            position: 'relative',
           }}
         >
-          <input
-            id="gate-password"
-            name="password"
-            type="password"
-            value={password}
-            onChange={e => { setPassword(e.target.value); setError(null) }}
-            placeholder="PASSWORD"
-            autoComplete="current-password"
-            style={inputStyle}
-          />
-          <button
-            type="submit"
-            disabled={loading || !password}
-            style={btnStyle(loading || !password)}
-          >
-            {loading ? '—' : 'ENTER'}
-          </button>
+          {/* ← back arrow — top-left of the form, doesn't stack below */}
           <button
             type="button"
-            onClick={() => {
-              setStep('email')
-              setEmailClass('gate-fade-in')
-              setPasswordClass('')
-              setError(null)
-              setPassword('')
-            }}
+            onClick={goBack}
+            aria-label="Back to email"
             style={{
+              position: 'absolute',
+              left: 0,
+              top: '50%',
+              transform: 'translateY(-50%)',
               background: 'none',
               border: 'none',
-              color: 'rgba(255,255,255,0.3)',
-              fontSize: '10px',
-              letterSpacing: '0.2em',
+              color: 'rgba(255,255,255,0.35)',
+              fontSize: '18px',
               cursor: 'pointer',
               fontFamily: 'inherit',
-              marginTop: '-12px',
-              textDecoration: 'underline',
-              textUnderlineOffset: '3px',
+              lineHeight: 1,
+              padding: '4px',
+              transition: 'color 0.2s',
             }}
           >
-            back
+            ←
           </button>
-        </form>
+
+          <form
+            onSubmit={handlePasswordSubmit}
+            className={passwordClass}
+            style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '28px', width: '100%' }}
+          >
+            <input
+              id="gate-password"
+              name="password"
+              type="password"
+              value={password}
+              onChange={e => { setPassword(e.target.value); setError(null) }}
+              placeholder="PASSWORD"
+              autoComplete="current-password"
+              style={inputStyle}
+            />
+            <button type="submit" disabled={loading || !password} style={btnStyle(loading || !password)}>
+              {loading ? '—' : 'ENTER'}
+            </button>
+          </form>
+        </div>
       )}
 
       {/* Error */}
@@ -230,7 +252,7 @@ export default function PasswordEntry() {
             marginTop: '28px',
             fontSize: '10px',
             letterSpacing: '0.18em',
-            color: 'rgba(255, 120, 120, 0.9)',
+            color: 'rgba(255,110,110,0.9)',
             textTransform: 'uppercase',
           }}
         >
