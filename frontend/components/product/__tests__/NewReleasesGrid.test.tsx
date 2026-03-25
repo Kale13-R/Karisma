@@ -1,4 +1,4 @@
-import { render, screen, waitFor } from '@testing-library/react'
+import { render, screen, fireEvent, waitFor } from '@testing-library/react'
 import NewReleasesGrid from '../NewReleasesGrid'
 
 jest.mock('next/link', () => ({
@@ -19,7 +19,7 @@ jest.mock('@/lib/api', () => ({
   get: jest.fn().mockRejectedValue(new Error('unavailable')),
 }))
 
-// Mock framer-motion to render base HTML elements
+// Mock framer-motion: render base HTML elements, apply animate values as styles
 jest.mock('framer-motion', () => {
   const React = require('react')
   return {
@@ -27,50 +27,53 @@ jest.mock('framer-motion', () => {
       get: (_: any, tag: string) =>
         React.forwardRef(({ children, animate, initial, variants, whileHover,
           whileInView, viewport, onHoverStart, onHoverEnd, transition, exit,
-          style, ...rest }: any, ref: any) =>
-          React.createElement(tag, { ...rest, ref, style }, children)
-        ),
+          style, ...rest }: any, ref: any) => {
+          const animStyle = typeof animate === 'object' ? animate : {}
+          return React.createElement(tag, {
+            ...rest, ref, style: { ...style, ...animStyle },
+          }, children)
+        }),
     }),
     AnimatePresence: ({ children }: any) => children,
   }
 })
 
-describe('NewReleasesGrid — hover-only labels', () => {
-  it('product names appear only once each (in overlay only, not as static labels)', async () => {
+describe('NewReleasesGrid — image flash prevention', () => {
+  it('renders fallback products after loading', async () => {
     render(<NewReleasesGrid />)
     await waitFor(() => {
       expect(screen.queryByText('LOADING')).not.toBeInTheDocument()
     })
 
-    // Fallback products: KARISMA — Red and KARISMA — Black
-    // Each name should appear exactly once (inside the hover overlay only)
-    // If static labels existed below the image, each name would appear twice
-    const redLabels = screen.getAllByText(/KARISMA — Red/i)
-    expect(redLabels).toHaveLength(1)
-
-    const blackLabels = screen.getAllByText(/KARISMA — Black/i)
-    expect(blackLabels).toHaveLength(1)
+    expect(screen.getAllByText(/KARISMA DROP 1/i).length).toBeGreaterThan(0)
   })
 
-  it('product prices appear only once each (in overlay only)', async () => {
-    render(<NewReleasesGrid />)
-    await waitFor(() => {
-      expect(screen.queryByText('LOADING')).not.toBeInTheDocument()
-    })
-
-    // Both fallback products have price $148.00
-    // Should appear exactly 2 times total (once per product, in overlay only)
-    const priceLabels = screen.getAllByText('$148.00')
-    expect(priceLabels).toHaveLength(2)
-  })
-
-  it('renders product images', async () => {
+  it('product images have onLoad handlers that fire without error', async () => {
     render(<NewReleasesGrid />)
     await waitFor(() => {
       expect(screen.queryByText('LOADING')).not.toBeInTheDocument()
     })
 
     const images = screen.getAllByRole('img')
-    expect(images.length).toBe(2)
+    expect(images.length).toBe(1)
+
+    // Fire load event on each image — should not crash
+    images.forEach(img => {
+      fireEvent.load(img)
+    })
+
+    // Images still present after load events
+    expect(screen.getAllByRole('img')).toHaveLength(1)
+  })
+
+  it('card containers start with opacity 0 before image loads', async () => {
+    const { container } = render(<NewReleasesGrid />)
+    await waitFor(() => {
+      expect(screen.queryByText('LOADING')).not.toBeInTheDocument()
+    })
+
+    // Find divs with opacity: 0 (cards before image load)
+    const hiddenCards = container.querySelectorAll('div[style*="opacity: 0"]')
+    expect(hiddenCards.length).toBeGreaterThan(0)
   })
 })

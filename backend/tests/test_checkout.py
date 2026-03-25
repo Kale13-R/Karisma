@@ -27,7 +27,8 @@ def test_create_checkout_session_returns_checkout_url(client):
     mock_session = MagicMock()
     mock_session.url = "https://checkout.stripe.com/pay/cs_test_abc123"
 
-    with patch("stripe.checkout.Session.create", return_value=mock_session):
+    with patch("app.services.stripe_service._stripe_key", return_value="sk_test_dummy"), \
+         patch("stripe.checkout.Session.create", return_value=mock_session):
         response = client.post("/api/checkout/session", json=VALID_CART_PAYLOAD)
 
     assert response.status_code == 200

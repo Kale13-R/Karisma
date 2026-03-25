@@ -6,7 +6,7 @@ interface MarqueeProps {
 }
 
 export default function Marquee({
-  text = 'KARISMA · SS26 · NEW RELEASE · DROP NOW · KARISMA WORLDWIDE · ',
+  text = 'KARISMA · SUMMER 2026 · NEW RELEASE · DROP NOW · KARISMA WORLDWIDE ·',
   speed = 18,
 }: MarqueeProps) {
   return (
@@ -23,7 +23,7 @@ export default function Marquee({
         width: 'max-content',
         animation: `marquee ${speed}s linear infinite`,
       }}>
-        {[0, 1].map(i => (
+        {[0, 1, 2, 3, 4, 5].map(i => (
           <span key={i} style={{
             fontSize: '11px',
             fontWeight: 700,

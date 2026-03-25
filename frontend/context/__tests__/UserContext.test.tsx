@@ -85,4 +85,48 @@ describe('UserContext', () => {
 
     expect(result.current.user).toBeNull()
   })
+
+  it('register handles empty JSON response gracefully', async () => {
+    global.fetch = jest.fn()
+      .mockResolvedValueOnce({ ok: false, json: async () => ({ success: false }) } as Response)
+      .mockResolvedValueOnce({
+        ok: true,
+        status: 200,
+        json: async () => { throw new SyntaxError('Unexpected end of JSON input') },
+      } as Response)
+
+    const { result } = renderHook(() => useUser(), { wrapper })
+    await waitFor(() => expect(result.current.loading).toBe(false))
+
+    let response: any
+    await act(async () => {
+      response = await result.current.register('test@example.com', 'password123')
+    })
+
+    expect(response.success).toBe(false)
+    expect(response.error).toBe('Unexpected server response')
+    expect(result.current.user).toBeNull()
+  })
+
+  it('login handles server error with empty body', async () => {
+    global.fetch = jest.fn()
+      .mockResolvedValueOnce({ ok: false, json: async () => ({ success: false }) } as Response)
+      .mockResolvedValueOnce({
+        ok: false,
+        status: 500,
+        json: async () => { throw new SyntaxError('Unexpected end of JSON input') },
+      } as Response)
+
+    const { result } = renderHook(() => useUser(), { wrapper })
+    await waitFor(() => expect(result.current.loading).toBe(false))
+
+    let response: any
+    await act(async () => {
+      response = await result.current.login('test@example.com', 'password123')
+    })
+
+    expect(response.success).toBe(false)
+    expect(response.error).toBe('Server error (500)')
+    expect(result.current.user).toBeNull()
+  })
 })

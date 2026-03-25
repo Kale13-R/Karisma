@@ -6,6 +6,8 @@ import { UserProvider } from '@/context/UserContext'
 import Header from '@/components/layout/Header'
 import CartDrawer from '@/components/layout/CartDrawer'
 import Footer from '@/components/layout/Footer'
+import FilmGrain from '@/components/effects/FilmGrain'
+import Marquee from '@/components/effects/Marquee'
 
 export const metadata: Metadata = {
   title: 'KARISMA',
@@ -28,7 +30,9 @@ export default function RootLayout({
       <body suppressHydrationWarning className="flex flex-col min-h-screen">
         <UserProvider>
           <CartProvider>
+            <FilmGrain />
             <Header />
+            <Marquee />
             <CartDrawer />
             <div className="flex-1">
               <AnimateWrapper>{children}</AnimateWrapper>

@@ -19,9 +19,21 @@ describe('GatePage', () => {
 
   // ─── Basic rendering ───────────────────────────────────────────────────────
 
+  afterEach(() => {
+    jest.restoreAllMocks()
+  })
+
   it('renders the video element', async () => {
     await act(async () => { render(<GatePage />) })
     expect(document.querySelector('video')).toBeInTheDocument()
+  })
+
+  it('does NOT have loop attribute on video (ended handler restarts playback)', async () => {
+    await act(async () => {
+      render(<GatePage />)
+    })
+    const video = document.querySelector('video')
+    expect(video?.hasAttribute('loop')).toBe(false)
   })
 
   it('shows PasswordEntry when no drop timestamp is set', async () => {

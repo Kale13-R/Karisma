@@ -13,12 +13,27 @@ interface UserContextValue {
 
 const UserContext = createContext<UserContextValue | null>(null)
 
+// Use relative Next.js proxy routes so the browser never needs to reach
+// the backend directly — this works whether the backend is on localhost or a VM.
+const PROXY_BASE = '/api/accounts'
+
+async function safeJson(res: Response): Promise<AccountAuthResponse> {
+  try {
+    return await res.json() as AccountAuthResponse
+  } catch {
+    return {
+      success: false,
+      error: res.ok ? 'Unexpected server response' : `Server error (${res.status})`,
+    }
+  }
+}
+
 export function UserProvider({ children }: { children: React.ReactNode }) {
   const [user, setUser] = useState<User | null>(null)
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
-    fetch('/api/accounts/me', { credentials: 'include' })
+    fetch(`${PROXY_BASE}/me`, { credentials: 'include' })
       .then(r => r.ok ? r.json() : null)
       .then((data: AccountAuthResponse | null) => {
         if (data?.success && data.user) setUser(data.user)
@@ -28,13 +43,13 @@ export function UserProvider({ children }: { children: React.ReactNode }) {
   }, [])
 
   const register = async (email: string, password: string): Promise<AccountAuthResponse> => {
-    const res = await fetch('/api/accounts/register', {
+    const res = await fetch(`${PROXY_BASE}/register`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       credentials: 'include',
       body: JSON.stringify({ email, password }),
     })
-    const data: AccountAuthResponse = await res.json()
+    const data = await safeJson(res)
     if (data.success && data.user) setUser(data.user)
     if (!res.ok && !data.error && data.detail) {
       return { success: false, error: data.detail }
@@ -43,13 +58,13 @@ export function UserProvider({ children }: { children: React.ReactNode }) {
   }
 
   const login = async (email: string, password: string): Promise<AccountAuthResponse> => {
-    const res = await fetch('/api/accounts/login', {
+    const res = await fetch(`${PROXY_BASE}/login`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       credentials: 'include',
       body: JSON.stringify({ email, password }),
     })
-    const data: AccountAuthResponse = await res.json()
+    const data = await safeJson(res)
     if (data.success && data.user) setUser(data.user)
     if (!res.ok && !data.error && data.detail) {
       return { success: false, error: data.detail }
@@ -58,7 +73,7 @@ export function UserProvider({ children }: { children: React.ReactNode }) {
   }
 
   const logout = async () => {
-    await fetch('/api/accounts/logout', { method: 'POST', credentials: 'include' })
+    await fetch(`${PROXY_BASE}/logout`, { method: 'POST', credentials: 'include' })
     setUser(null)
   }
 

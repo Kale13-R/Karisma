@@ -97,7 +97,7 @@ describe('ProductDetail — mobile responsive CSS classes', () => {
 
   it('size buttons do NOT have inline width/height (controlled by CSS class)', () => {
     renderPDP()
-    const sizeBtn = screen.getByRole('button', { name: 'S' })
+    const sizeBtn = screen.getByRole('button', { name: 'Small' })
     const styleAttr = sizeBtn.getAttribute('style') || ''
     expect(styleAttr).not.toContain('width')
     expect(styleAttr).not.toContain('height')

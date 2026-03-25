@@ -3,11 +3,12 @@ import { NextRequest, NextResponse } from 'next/server'
 const BACKEND = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000'
 
 export async function POST(request: NextRequest) {
-  const body = await request.json()
+  // Forward the raw body text to avoid any re-serialization issues
+  const rawBody = await request.text()
   const res = await fetch(`${BACKEND}/api/accounts/register`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify(body),
+    body: rawBody,
   })
   const data = await res.json()
   if (!res.ok) return NextResponse.json(data, { status: res.status })

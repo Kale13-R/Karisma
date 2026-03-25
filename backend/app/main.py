@@ -19,6 +19,9 @@ async def lifespan(app: FastAPI):
     # Startup: create tables and seed initial data
     Base.metadata.create_all(bind=engine)
     seed.seed()
+    key = settings.STRIPE_SECRET_KEY
+    masked = f"{key[:8]}...{key[-4:]}" if len(key) > 12 else "(not set)"
+    print(f"[startup] STRIPE_SECRET_KEY loaded: {masked}")
     yield
     # Shutdown: nothing to clean up for SQLite
 

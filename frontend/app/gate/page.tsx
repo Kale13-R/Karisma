@@ -65,7 +65,7 @@ export default function GatePage() {
         className="absolute inset-0 w-full h-full object-cover"
         style={{ backgroundColor: '#000' }}
       >
-        <source src="/videos/RPReplay_Final1730345188.mp4" type="video/mp4" />
+        <source src="/videos/karisma-gate.mp4" type="video/mp4" />
       </video>
 
       {/* Dark overlay */}

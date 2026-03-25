@@ -10,11 +10,12 @@ def send_welcome_email(user_email: str) -> None:
         print(f"[EMAIL SKIPPED] No RESEND_API_KEY set. Would have sent welcome to {user_email}")
         return
 
-    resend.Emails.send({
-        "from": settings.RESEND_FROM_EMAIL,
-        "to": user_email,
-        "subject": "Welcome to Karisma",
-        "html": f"""
+    try:
+        resend.Emails.send({
+            "from": settings.RESEND_FROM_EMAIL,
+            "to": user_email,
+            "subject": "Welcome to Karisma",
+            "html": f"""
         <div style="background:#ffffff;color:#000000;font-family:'Courier New',Courier,monospace;padding:48px;max-width:600px;margin:0 auto;">
             <h1 style="font-size:28px;letter-spacing:0.2em;font-weight:900;margin-bottom:4px;border-bottom:4px solid #000;padding-bottom:16px;">
                 KARISMA: ACCESS GRANTED
@@ -39,7 +40,9 @@ def send_welcome_email(user_email: str) -> None:
             </div>
         </div>
         """,
-    })
+        })
+    except Exception as e:
+        print(f"[EMAIL ERROR] Failed to send welcome email to {user_email}: {e}")
 
 
 def send_order_confirmation(
@@ -52,7 +55,8 @@ def send_order_confirmation(
         print(f"[EMAIL SKIPPED] No RESEND_API_KEY set. Would have sent to {customer_email}")
         return
 
-    resend.Emails.send({
+    try:
+      resend.Emails.send({
         "from": settings.RESEND_FROM_EMAIL,
         "to": customer_email,
         "subject": "Your Karisma Order is Confirmed",
@@ -87,4 +91,6 @@ def send_order_confirmation(
             </div>
         </div>
         """,
-    })
+      })
+    except Exception as e:
+        print(f"[EMAIL ERROR] Failed to send order confirmation to {customer_email}: {e}")
