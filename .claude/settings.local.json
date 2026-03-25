@@ -17,7 +17,10 @@
       "Bash(ls frontend/tailwind.config* frontend/postcss.config*)",
       "Bash(python -c \":*)",
       "Bash(timeout 8 python -m uvicorn app.main:app)",
-      "WebFetch(domain:vertabraeclothing.com)"
+      "WebFetch(domain:vertabraeclothing.com)",
+      "Bash(npm test:*)",
+      "Bash(ln -s /c/Users/plk_l/Karisma-1/frontend/node_modules /c/Users/plk_l/Karisma-1/.claude/worktrees/nifty-bell/frontend/node_modules)",
+      "Bash(node_modules/.bin/jest --testPathPattern=\"GatePage\" --watchAll=false)"
     ],
     "additionalDirectories": [
       "C:\\Users\\plk_l\\Karisma-1\\.git"
