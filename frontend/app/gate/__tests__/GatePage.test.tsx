@@ -27,10 +27,10 @@ function mockCurrentTime(video: HTMLVideoElement, initialValue = 0) {
 // Suite
 // ---------------------------------------------------------------------------
 
-describe('GatePage — gate video timing & flash-fix', () => {
+describe('GatePage â€” gate video timing & flash-fix', () => {
   beforeEach(() => {
     delete process.env.NEXT_PUBLIC_DROP_TIMESTAMP
-    // Reset readyState to 0 (HAVE_NOTHING) — the "not cached" default
+    // Reset readyState to 0 (HAVE_NOTHING) â€” the "not cached" default
     Object.defineProperty(HTMLMediaElement.prototype, 'readyState', {
       get: jest.fn().mockReturnValue(0),
       configurable: true,
@@ -52,14 +52,14 @@ describe('GatePage — gate video timing & flash-fix', () => {
 
   it('shows PasswordEntry when no drop timestamp is set', async () => {
     await act(async () => { render(<GatePage />) })
-    expect(screen.getByPlaceholderText('enter email')).toBeInTheDocument()
+    expect(screen.getByPlaceholderText('EMAIL')).toBeInTheDocument()
   })
 
   // -------------------------------------------------------------------------
-  // 1. Loop via `ended` event — NOT ping-pong / rAF reversal
+  // 1. Loop via `ended` event â€” NOT ping-pong / rAF reversal
   // -------------------------------------------------------------------------
 
-  it('does NOT have loop attribute — ended handler owns restart logic', async () => {
+  it('does NOT have loop attribute â€” ended handler owns restart logic', async () => {
     await act(async () => { render(<GatePage />) })
     expect(getVideo().hasAttribute('loop')).toBe(false)
   })
@@ -82,7 +82,7 @@ describe('GatePage — gate video timing & flash-fix', () => {
     const { getCurrentTime } = mockCurrentTime(video, 3)
     jest.spyOn(video, 'play').mockResolvedValue(undefined)
 
-    // Dispatch synchronously — reset must happen before any async tick
+    // Dispatch synchronously â€” reset must happen before any async tick
     video.dispatchEvent(new Event('ended'))
 
     expect(getCurrentTime()).toBe(0)
@@ -135,12 +135,12 @@ describe('GatePage — gate video timing & flash-fix', () => {
   })
 
   // -------------------------------------------------------------------------
-  // 2. Direct DOM ref — not React state — for ready detection
+  // 2. Direct DOM ref â€” not React state â€” for ready detection
   // -------------------------------------------------------------------------
 
   it('video starts with opacity 0 in the initial render (not dependent on state update)', async () => {
     await act(async () => { render(<GatePage />) })
-    // opacity:0 is set via the JSX style prop — visible before any effect runs
+    // opacity:0 is set via the JSX style prop â€” visible before any effect runs
     expect(getVideo().style.opacity).toBe('0')
   })
 
@@ -166,7 +166,7 @@ describe('GatePage — gate video timing & flash-fix', () => {
   })
 
   // -------------------------------------------------------------------------
-  // 3. rAF tick (pre-end pause guard) — implemented as timeupdate / ended reset
+  // 3. rAF tick (pre-end pause guard) â€” implemented as timeupdate / ended reset
   //    The 3-second trim means the browser never reaches a natural stale frame;
   //    we verify the reset fires before any detectable "after-end" state.
   // -------------------------------------------------------------------------
@@ -177,7 +177,7 @@ describe('GatePage — gate video timing & flash-fix', () => {
     const { getCurrentTime } = mockCurrentTime(video, 3)
     jest.spyOn(video, 'play').mockResolvedValue(undefined)
 
-    // ended fires → handler resets immediately; video should never sit at end
+    // ended fires â†’ handler resets immediately; video should never sit at end
     video.dispatchEvent(new Event('ended'))
 
     // currentTime must be back to 0 before we even yield the event loop
@@ -185,7 +185,7 @@ describe('GatePage — gate video timing & flash-fix', () => {
   })
 
   // -------------------------------------------------------------------------
-  // 4. No black-frame flash — video resets before browser repaints end frame
+  // 4. No black-frame flash â€” video resets before browser repaints end frame
   // -------------------------------------------------------------------------
 
   it('currentTime is 0 immediately after ended fires (no yielding to the paint queue)', async () => {
@@ -194,12 +194,12 @@ describe('GatePage — gate video timing & flash-fix', () => {
     const { getCurrentTime } = mockCurrentTime(video, 3)
     jest.spyOn(video, 'play').mockResolvedValue(undefined)
 
-    // Intentionally NOT using await act — the reset must be synchronous
+    // Intentionally NOT using await act â€” the reset must be synchronous
     video.dispatchEvent(new Event('ended'))
     expect(getCurrentTime()).toBe(0)
   })
 
-  it('does not call pause() on loop — avoids frozen frame between loops', async () => {
+  it('does not call pause() on loop â€” avoids frozen frame between loops', async () => {
     await act(async () => { render(<GatePage />) })
     const video = getVideo()
     mockCurrentTime(video, 3)
@@ -254,10 +254,10 @@ describe('GatePage — gate video timing & flash-fix', () => {
     await act(async () => { render(<GatePage />) })
     const video = getVideo()
 
-    // Still hidden — no canplay yet
+    // Still hidden â€” no canplay yet
     expect(video.style.opacity).toBe('0')
 
-    // canplay fires → should become visible
+    // canplay fires â†’ should become visible
     await act(async () => { video.dispatchEvent(new Event('canplay')) })
     expect(video.style.opacity).toBe('1')
   })
@@ -274,7 +274,7 @@ describe('GatePage — gate video timing & flash-fix', () => {
     const video = getVideo()
     const addSpy = jest.spyOn(video, 'addEventListener')
 
-    // Trigger another effect cycle — no canplay listener should be registered
+    // Trigger another effect cycle â€” no canplay listener should be registered
     // because readyState >= 2 takes the immediate showVideo() path
     await act(async () => { /* flush effects */ })
 
@@ -305,7 +305,7 @@ describe('GatePage — gate video timing & flash-fix', () => {
   })
 
   // -------------------------------------------------------------------------
-  // 7. Cleanup — no event-listener leaks
+  // 7. Cleanup â€” no event-listener leaks
   // -------------------------------------------------------------------------
 
   it('removes ended and canplay listeners on unmount', async () => {
@@ -342,8 +342,8 @@ describe('GatePage — gate video timing & flash-fix', () => {
 
     video.dispatchEvent(new Event('ended'))
 
-    // No new play() calls — the ended handler was cleaned up on unmount
+    // No new play() calls â€” the ended handler was cleaned up on unmount
     expect(playSpy.mock.calls.length).toBe(callsAfterUnmount)
-    expect(getCurrentTime()).toBe(3) // unchanged — handler was removed
+    expect(getCurrentTime()).toBe(3) // unchanged â€” handler was removed
   })
 })
