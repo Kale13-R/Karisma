@@ -6,8 +6,11 @@ const createJestConfig = nextJest({
 })
 
 const config: Config = {
+  // Runs before the test framework — sets NODE_ENV=test so React loads its
+  // development build (React.act is only exported in dev/test mode).
+  setupFiles: ['<rootDir>/jest.env.setup.js'],
   setupFilesAfterEnv: ['<rootDir>/jest.setup.ts'],
-  testEnvironment: 'jsdom',
+  testEnvironment: 'jest-environment-jsdom',
   moduleNameMapper: {
     '^@/(.*)$': '<rootDir>/$1',
   },
