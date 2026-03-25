@@ -181,7 +181,7 @@ export default function PasswordEntry() {
           >
             {emailValid ? <LockOpen /> : <LockClosed />}
             <span style={{ fontSize: '10px', letterSpacing: '0.3em', textTransform: 'uppercase' }}>
-              Password
+              Drop Password
             </span>
           </div>
         </div>
