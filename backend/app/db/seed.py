@@ -1,19 +1,13 @@
 import json
+import os
 
 from app.core.config import settings
 from app.db import models
 from app.db.base import Base, SessionLocal, engine
 
 
-def seed():
-    Base.metadata.create_all(bind=engine)
-    db = SessionLocal()
-
-    # Always replace products so reruns reflect the current seed
-    db.query(models.Product).delete()
-    db.commit()
-
-    products = [
+def _get_product_list():
+    return [
         # ─── SS26 NEW RELEASES ───────────────────────────────────────────
         models.Product(
             id="new-red-tee",
@@ -41,7 +35,7 @@ def seed():
             id="karisma-archive-001",
             name="Karisma Archive 001",
             price=148.00,
-            description="Cut from brushed fleece in a colour that refuses definition.",
+            description="Karisma.",
             image_url="/images/IMG_8709.png",
             sizes=json.dumps(["S", "M", "L", "XL"]),
             in_stock=True,
@@ -51,7 +45,7 @@ def seed():
             id="karisma-archive-002",
             name="Karisma Archive 002",
             price=68.00,
-            description="Heavyweight 280gsm cotton, washed until the black becomes something else.",
+            description="Karisma.",
             image_url="/images/IMG_8711.png",
             sizes=json.dumps(["S", "M", "L", "XL"]),
             in_stock=True,
@@ -61,7 +55,7 @@ def seed():
             id="karisma-archive-003",
             name="Karisma Archive 003",
             price=218.00,
-            description="Structured where structure matters.",
+            description="Karisma.",
             image_url="/images/IMG_8712.png",
             sizes=json.dumps(["S", "M", "L", "XL"]),
             in_stock=True,
@@ -71,7 +65,7 @@ def seed():
             id="karisma-archive-004",
             name="Karisma Archive 004",
             price=128.00,
-            description="Tapered from the knee. Side-zip ankles close like a statement.",
+            description="Karisma.",
             image_url="/images/IMG_8713.png",
             sizes=json.dumps(["S", "M", "L", "XL"]),
             in_stock=True,
@@ -81,7 +75,7 @@ def seed():
             id="karisma-archive-005",
             name="Karisma Archive 005",
             price=98.00,
-            description="The shirt as a proposition.",
+            description="Karisma.",
             image_url="/images/IMG_8715.png",
             sizes=json.dumps(["S", "M", "L", "XL"]),
             in_stock=True,
@@ -91,7 +85,7 @@ def seed():
             id="karisma-archive-006",
             name="Karisma Archive 006",
             price=158.00,
-            description="A second study in weight.",
+            description="Karisma.",
             image_url="/images/IMG_8726.png",
             sizes=json.dumps(["S", "M", "L", "XL"]),
             in_stock=True,
@@ -101,7 +95,7 @@ def seed():
             id="karisma-archive-007",
             name="Karisma Archive 007",
             price=72.00,
-            description="What remains after intention is stripped away.",
+            description="Karisma.",
             image_url="/images/IMG_8728.png",
             sizes=json.dumps(["S", "M", "L", "XL"]),
             in_stock=True,
@@ -111,7 +105,7 @@ def seed():
             id="karisma-archive-008",
             name="Karisma Archive 008",
             price=228.00,
-            description="Lighter than the first.",
+            description="Karisma.",
             image_url="/images/IMG_8736.png",
             sizes=json.dumps(["S", "M", "L", "XL"]),
             in_stock=True,
@@ -121,7 +115,7 @@ def seed():
             id="karisma-archive-009",
             name="Karisma Archive 009",
             price=138.00,
-            description="Wide through the thigh, drawn in at the ankle.",
+            description="Karisma.",
             image_url="/images/IMG_8742.png",
             sizes=json.dumps(["S", "M", "L", "XL"]),
             in_stock=True,
@@ -220,7 +214,26 @@ def seed():
         ),
     ]
 
-    db.add_all(products)
+
+def seed():
+    Base.metadata.create_all(bind=engine)
+    db = SessionLocal()
+
+    force = os.environ.get("FORCE_RESEED", "").lower() == "true"
+
+    if force:
+        db.query(models.Product).delete()
+        db.commit()
+        print("[seed] FORCE_RESEED — wiping and reseeding all products")
+
+    existing_ids = {p.id for p in db.query(models.Product.id).all()}
+
+    new_products = [p for p in _get_product_list() if p.id not in existing_ids]
+    if new_products:
+        db.add_all(new_products)
+        print(f"[seed] Added {len(new_products)} new products")
+    else:
+        print("[seed] Products already seeded — skipping")
 
     existing_config = db.query(models.SiteConfig).filter_by(id=1).first()
     if existing_config:

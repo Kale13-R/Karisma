@@ -107,8 +107,8 @@ export default function NewReleasesPage() {
 
       {/* PRODUCT GRID */}
       <div ref={shopRef} style={{ padding: '80px 48px', maxWidth: '1400px', margin: '0 auto' }}>
-        <p style={{ fontSize: '10px', letterSpacing: '0.3em', color: 'var(--fg-muted)', marginBottom: '8px', textTransform: 'uppercase' }}>SUMMER 2026 DROP</p>
-        <h2 style={{ fontSize: '28px', fontWeight: 700, letterSpacing: '0.06em', marginBottom: '48px' }}>NEW ARRIVALS</h2>
+        <p style={{ fontSize: '10px', letterSpacing: '0.3em', color: 'var(--fg-muted)', marginBottom: '8px', textTransform: 'uppercase', textAlign: 'center' }}>SUMMER 2026 DROP</p>
+        <h2 style={{ fontSize: '28px', fontWeight: 700, letterSpacing: '0.06em', marginBottom: '48px', textAlign: 'center' }}>NEW ARRIVALS</h2>
         <NewReleasesGrid />
       </div>
 
