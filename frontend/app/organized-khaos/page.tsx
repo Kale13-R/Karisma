@@ -1,35 +1,13 @@
 'use client'
 
-import { useState, useRef } from 'react'
+import { useState, useRef, useEffect } from 'react'
 import Link from 'next/link'
 import Image from 'next/image'
 import { motion } from 'framer-motion'
 import { useCart } from '@/context/CartContext'
 import Marquee from '@/components/ui/Marquee'
+import { get } from '@/lib/api'
 import type { Product } from '@/types'
-
-// All SPRING 24 / Organized Khaos archive products
-// Includes existing 9 products + karisma.live items
-const ARCHIVE_PRODUCTS = [
-  { id: 'karisma-archive-001', name: 'Karisma Archive 001', price: 148.00, imageUrl: '/images/IMG_8709.png', sizes: ['S','M','L','XL'], inStock: true, dropId: 'spring24', description: 'Cut from brushed fleece in a colour that refuses definition.' },
-  { id: 'karisma-archive-002', name: 'Karisma Archive 002', price: 68.00, imageUrl: '/images/IMG_8711.png', sizes: ['S','M','L','XL'], inStock: true, dropId: 'spring24', description: 'Heavyweight 280gsm cotton, washed until the black becomes something else.' },
-  { id: 'karisma-archive-003', name: 'Karisma Archive 003', price: 218.00, imageUrl: '/images/IMG_8712.png', sizes: ['S','M','L','XL'], inStock: true, dropId: 'spring24', description: 'Structured where structure matters.' },
-  { id: 'karisma-archive-004', name: 'Karisma Archive 004', price: 128.00, imageUrl: '/images/IMG_8713.png', sizes: ['S','M','L','XL'], inStock: true, dropId: 'spring24', description: 'Tapered from the knee. Side-zip ankles close like a statement.' },
-  { id: 'karisma-archive-005', name: 'Karisma Archive 005', price: 98.00, imageUrl: '/images/IMG_8715.png', sizes: ['S','M','L','XL'], inStock: true, dropId: 'spring24', description: 'The shirt as a proposition.' },
-  { id: 'karisma-archive-006', name: 'Karisma Archive 006', price: 158.00, imageUrl: '/images/IMG_8726.png', sizes: ['S','M','L','XL'], inStock: true, dropId: 'spring24', description: 'A second study in weight.' },
-  { id: 'karisma-archive-007', name: 'Karisma Archive 007', price: 72.00, imageUrl: '/images/IMG_8728.png', sizes: ['S','M','L','XL'], inStock: true, dropId: 'spring24', description: 'What remains after intention is stripped away.' },
-  { id: 'karisma-archive-008', name: 'Karisma Archive 008', price: 228.00, imageUrl: '/images/IMG_8736.png', sizes: ['S','M','L','XL'], inStock: true, dropId: 'spring24', description: 'Lighter than the first.' },
-  { id: 'karisma-archive-009', name: 'Karisma Archive 009', price: 138.00, imageUrl: '/images/IMG_8742.png', sizes: ['S','M','L','XL'], inStock: true, dropId: 'spring24', description: 'Wide through the thigh, drawn in at the ankle.' },
-  // karisma.live additions
-  { id: 'krsm-snapback-green', name: 'RismaSnapBack — Green', price: 35.00, imageUrl: '/images/archive/risma-snapback-green.png', sizes: ['ONE SIZE'], inStock: true, dropId: 'spring24', description: 'Hand-painted trucker snapback. One of a kind.' },
-  { id: 'krsm-logo-hoodie', name: 'Logo Hoodie', price: 40.00, imageUrl: '/images/archive/logo-hoodie.png', sizes: ['S','M','L','XL'], inStock: true, dropId: 'spring24', description: 'Classic Karisma logo hoodie.' },
-  { id: 'krsm-trenches-tee', name: 'Made in The Trenches Tee', price: 50.00, imageUrl: '/images/archive/made-in-trenches-tee.png', sizes: ['S','M','L','XL'], inStock: false, dropId: 'spring24', description: 'Made in The Trenches. Sold out.' },
-  { id: 'krsm-lavender-zip', name: 'Baby Lavender Crop Zip Up', price: 70.00, imageUrl: '/images/archive/baby-lavender-crop-zip.png', sizes: ['XS','S','M'], inStock: false, dropId: 'spring24', description: 'Baby lavender crop zip up hoodie.' },
-  { id: 'krsm-white-hoodie', name: 'WhiteMARS Long Sleeve', price: 65.00, imageUrl: '/images/archive/white-banned-hoodie.png', sizes: ['S','M','L','XL'], inStock: false, dropId: 'spring24', description: 'WhiteMARS long sleeve graphic tee.' },
-  { id: 'krsm-black-hoodie', name: 'BlackMars Long Sleeve', price: 65.00, imageUrl: '/images/archive/black-banned-shirt.png', sizes: ['S','M','L','XL'], inStock: false, dropId: 'spring24', description: 'BlackMars long sleeve tee.' },
-  { id: 'krsm-blue-hoodie', name: 'Blue KOLOSSAL Hoodie', price: 60.00, imageUrl: '/images/archive/blue-colossal-hoodie.png', sizes: ['S','M','L','XL'], inStock: false, dropId: 'spring24', description: 'Blue KOLOSSAL heavyweight hoodie.' },
-  { id: 'krsm-marisma', name: 'Marisma :)', price: 50.00, imageUrl: '/images/archive/marisma.png', sizes: ['S','M','L','XL'], inStock: true, dropId: 'spring24', description: 'Marisma graphic tee.' },
-]
 
 const gridVariants = {
   hidden: {},
@@ -51,7 +29,7 @@ const SIZE_LABELS: Record<string, string> = {
 }
 
 function ArchiveCard({ product, selectedSize, onSelectSize }: {
-  product: typeof ARCHIVE_PRODUCTS[number]
+  product: Product
   selectedSize?: string
   onSelectSize: (size: string) => void
 }) {
@@ -63,7 +41,7 @@ function ArchiveCard({ product, selectedSize, onSelectSize }: {
     e.preventDefault()
     e.stopPropagation()
     if (!selectedSize) return
-    addItem({ product: product as Product, size: selectedSize, quantity: 1 })
+    addItem({ product, size: selectedSize, quantity: 1 })
     setAdded(true)
     setTimeout(() => setAdded(false), 2000)
   }
@@ -186,8 +164,15 @@ function ArchiveCard({ product, selectedSize, onSelectSize }: {
 }
 
 export default function OrganizedKhaosPage() {
+  const [products, setProducts] = useState<Product[]>([])
   const [selectedSizes, setSelectedSizes] = useState<Record<string, string>>({})
   const shopRef = useRef<HTMLDivElement>(null)
+
+  useEffect(() => {
+    get<Product[]>('/products?drop=spring24')
+      .then(setProducts)
+      .catch(() => setProducts([]))
+  }, [])
 
   const scrollToShop = () => {
     shopRef.current?.scrollIntoView({ behavior: 'smooth' })
@@ -293,7 +278,7 @@ export default function OrganizedKhaosPage() {
           whileInView="visible"
           viewport={{ once: true, amount: 0.1 }}
         >
-          {ARCHIVE_PRODUCTS.map(product => (
+          {products.map(product => (
             <ArchiveCard
               key={product.id}
               product={product}
