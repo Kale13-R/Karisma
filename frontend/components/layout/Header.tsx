@@ -93,6 +93,19 @@ export default function Header() {
 
         {/* Right — Actions */}
         <nav style={{ display: 'flex', gap: 'var(--nav-gap)', alignItems: 'center' }}>
+          <Link
+            href="/account"
+            className="desktop-only"
+            style={{
+              fontSize: '13px',
+              letterSpacing: '0.1em',
+              color: 'var(--fg)',
+              textDecoration: 'none',
+              textTransform: 'uppercase',
+            }}
+          >
+            ACCOUNT
+          </Link>
           <button
             onClick={openDrawer}
             style={{
@@ -164,6 +177,24 @@ export default function Header() {
               onMouseLeave={(e) => (e.currentTarget.style.color = '#666')}
             >
               Organized Khaos
+            </Link>
+          </div>
+
+          {/* ACCOUNT — mobile only */}
+          <div className="mobile-only">
+            <Link
+              href="/account"
+              style={{
+                fontWeight: 900,
+                fontSize: '14px',
+                letterSpacing: '0.08em',
+                textTransform: 'uppercase',
+                color: '#0a0a0a',
+                textDecoration: 'none',
+                display: 'block',
+              }}
+            >
+              ACCOUNT
             </Link>
           </div>
 
