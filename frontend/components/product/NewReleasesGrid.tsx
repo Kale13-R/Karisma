@@ -180,7 +180,7 @@ export default function NewReleasesGrid() {
     setLoading(true)
     let cancelled = false
 
-    const attempt = async (tries = 3, delay = 1000) => {
+    const attempt = async (tries = 5, delay = 3000) => {
       for (let i = 0; i < tries; i++) {
         try {
           const data = await get<Product[]>('/products?drop=ss26-new')
@@ -191,7 +191,7 @@ export default function NewReleasesGrid() {
           return
         } catch {
           if (i < tries - 1) {
-            await new Promise(r => setTimeout(r, delay * (i + 1)))
+            await new Promise(r => setTimeout(r, delay))
           }
         }
       }
