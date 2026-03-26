@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useRef, useEffect } from 'react'
+import { useState, useRef, useEffect, useCallback } from 'react'
 import Link from 'next/link'
 import Image from 'next/image'
 import { motion } from 'framer-motion'
@@ -36,6 +36,12 @@ function ArchiveCard({ product, selectedSize, onSelectSize }: {
   const [imageLoaded, setImageLoaded] = useState(false)
   const [added, setAdded] = useState(false)
   const { addItem } = useCart()
+
+  useEffect(() => {
+    // Fallback: cached images load synchronously before onLoad handler attaches
+    const t = setTimeout(() => setImageLoaded(true), 400)
+    return () => clearTimeout(t)
+  }, [])
 
   const handleAddToCart = (e: React.MouseEvent) => {
     e.preventDefault()
@@ -166,13 +172,43 @@ function ArchiveCard({ product, selectedSize, onSelectSize }: {
 export default function OrganizedKhaosPage() {
   const [products, setProducts] = useState<Product[]>([])
   const [selectedSizes, setSelectedSizes] = useState<Record<string, string>>({})
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState(false)
   const shopRef = useRef<HTMLDivElement>(null)
 
-  useEffect(() => {
-    get<Product[]>('/products?drop=spring24')
-      .then(setProducts)
-      .catch(() => setProducts([]))
+  const fetchProducts = useCallback(async () => {
+    setLoading(true)
+    setError(false)
+    let cancelled = false
+
+    const attempt = async (tries = 5, delay = 3000) => {
+      for (let i = 0; i < tries; i++) {
+        try {
+          const data = await get<Product[]>('/products?drop=spring24')
+          if (!cancelled) {
+            setProducts(data)
+            setLoading(false)
+          }
+          return
+        } catch {
+          if (i < tries - 1) {
+            await new Promise(r => setTimeout(r, delay))
+          }
+        }
+      }
+      if (!cancelled) {
+        setError(true)
+        setLoading(false)
+      }
+    }
+
+    attempt()
+    return () => { cancelled = true }
   }, [])
+
+  useEffect(() => {
+    fetchProducts()
+  }, [fetchProducts])
 
   const scrollToShop = () => {
     shopRef.current?.scrollIntoView({ behavior: 'smooth' })
@@ -180,6 +216,42 @@ export default function OrganizedKhaosPage() {
 
   const selectSize = (productId: string, size: string) => {
     setSelectedSizes(prev => ({ ...prev, [productId]: size }))
+  }
+
+  if (loading) {
+    return (
+      <div style={{ backgroundColor: 'var(--bg)', color: 'var(--fg)', minHeight: '100vh',
+        display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+        <span style={{ fontSize: '10px', letterSpacing: '0.3em', color: 'var(--fg-muted)' }}>LOADING</span>
+      </div>
+    )
+  }
+
+  if (error) {
+    return (
+      <div style={{ backgroundColor: 'var(--bg)', color: 'var(--fg)', minHeight: '100vh',
+        display: 'flex', flexDirection: 'column', alignItems: 'center',
+        justifyContent: 'center', gap: '24px' }}>
+        <p style={{ fontFamily: 'monospace', fontSize: '11px', letterSpacing: '0.2em', color: 'var(--fg-muted)' }}>
+          FAILED TO LOAD
+        </p>
+        <button
+          onClick={fetchProducts}
+          style={{
+            fontFamily: 'monospace',
+            fontSize: '10px',
+            letterSpacing: '0.15em',
+            background: 'var(--fg)',
+            color: 'var(--bg)',
+            border: 'none',
+            padding: '12px 32px',
+            cursor: 'pointer',
+          }}
+        >
+          RETRY
+        </button>
+      </div>
+    )
   }
 
   return (
