@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useCallback } from 'react'
 import Link from 'next/link'
 import Image from 'next/image'
 import { motion } from 'framer-motion'
@@ -176,12 +176,37 @@ export default function NewReleasesGrid() {
   const [products, setProducts] = useState<Product[]>([])
   const [loading, setLoading] = useState(true)
 
-  useEffect(() => {
-    get<Product[]>('/products?drop=ss26-new')
-      .then(setProducts)
-      .catch(() => setProducts([]))
-      .finally(() => setLoading(false))
+  const fetchProducts = useCallback(async () => {
+    setLoading(true)
+    let cancelled = false
+
+    const attempt = async (tries = 3, delay = 1000) => {
+      for (let i = 0; i < tries; i++) {
+        try {
+          const data = await get<Product[]>('/products?drop=ss26-new')
+          if (!cancelled) {
+            setProducts(data)
+            setLoading(false)
+          }
+          return
+        } catch {
+          if (i < tries - 1) {
+            await new Promise(r => setTimeout(r, delay * (i + 1)))
+          }
+        }
+      }
+      if (!cancelled) {
+        setLoading(false)
+      }
+    }
+
+    attempt()
+    return () => { cancelled = true }
   }, [])
+
+  useEffect(() => {
+    fetchProducts()
+  }, [fetchProducts])
 
   const displayed = combineVariants(products.length > 0 ? products : FALLBACK_PRODUCTS)
 
