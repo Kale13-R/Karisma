@@ -33,7 +33,6 @@ function ArchiveCard({ product, selectedSize, onSelectSize }: {
   selectedSize?: string
   onSelectSize: (size: string) => void
 }) {
-  const [imageLoaded, setImageLoaded] = useState(false)
   const [added, setAdded] = useState(false)
   const { addItem } = useCart()
 
@@ -64,7 +63,7 @@ function ArchiveCard({ product, selectedSize, onSelectSize }: {
             <motion.div
               variants={{ rest: { scale: 1 }, hover: { scale: 1.04 } }}
               transition={{ duration: 0.4, ease: [0.25, 0.46, 0.45, 0.94] }}
-              style={{ position: 'relative', width: '100%', height: '100%', opacity: imageLoaded ? 1 : 0, transition: 'opacity 0.4s ease' }}
+              style={{ position: 'relative', width: '100%', height: '100%' }}
             >
               <Image
                 src={product.imageUrl}
@@ -73,7 +72,6 @@ function ArchiveCard({ product, selectedSize, onSelectSize }: {
                 unoptimized
                 style={{ objectFit: 'cover' }}
                 sizes="(max-width: 640px) 50vw, (max-width: 1024px) 50vw, 33vw"
-                onLoad={() => setImageLoaded(true)}
               />
             </motion.div>
 
@@ -344,6 +342,7 @@ export default function OrganizedKhaosPage() {
       {/* PRODUCT GRID */}
       <div ref={shopRef} style={{ padding: 'var(--ok-section-pad)', maxWidth: '1400px', margin: '0 auto' }}>
         <motion.div
+          key={products.length > 0 ? 'loaded' : 'empty'}
           className="ok-grid"
           variants={gridVariants}
           initial="hidden"
