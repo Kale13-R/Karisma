@@ -37,6 +37,13 @@ function ArchiveCard({ product, selectedSize, onSelectSize }: {
   const [added, setAdded] = useState(false)
   const { addItem } = useCart()
 
+  useEffect(() => {
+    // Cached images load synchronously before React attaches onLoad — stay at opacity:0 forever.
+    // Fallback: force visible after 400ms if onLoad never fires.
+    const t = setTimeout(() => setImageLoaded(true), 400)
+    return () => clearTimeout(t)
+  }, [])
+
   const handleAddToCart = (e: React.MouseEvent) => {
     e.preventDefault()
     e.stopPropagation()
